@@ -1,14 +1,8 @@
+# ruff: noqa: F403, F405
+
 import importlib.util
 
-from .base import (
-    BASE_DIR,
-    INSTALLED_APPS,
-    MIDDLEWARE,
-    read_env,
-    read_env_flag,
-    read_env_list,
-    read_secret,
-)
+from .base import *
 
 INSTALLED_APPS = INSTALLED_APPS.copy()
 MIDDLEWARE = MIDDLEWARE.copy()

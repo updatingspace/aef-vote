@@ -1,4 +1,5 @@
-from .base import BASE_DIR, read_env, read_env_flag, read_env_list, read_secret
+# ruff: noqa: F403, F405
+from .base import *
 
 DEBUG = read_env_flag("DJANGO_DEBUG", False)
 
