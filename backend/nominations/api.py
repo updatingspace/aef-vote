@@ -23,7 +23,8 @@ router = Router(tags=["nominations"])
 @router.get("/", response=list[NominationSchema])
 def get_all_nominations(request, voting: str | None = None):
     """
-    Опционально можно передать код голосования (?voting=test), чтобы получить только связанные номинации.
+    Опционально можно передать код голосования (?voting=test), чтобы получить только
+    связанные номинации.
     """
     return list_nominations(request.user, voting_code=voting)
 

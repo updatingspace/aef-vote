@@ -7,7 +7,6 @@ from django.contrib.auth import get_user_model
 from django.contrib.sessions.models import Session
 from django.test import Client, TestCase
 
-
 User = get_user_model()
 
 

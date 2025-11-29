@@ -3,15 +3,14 @@ from __future__ import annotations
 from datetime import datetime
 from typing import Any
 
+from allauth.account import app_settings as allauth_settings
+from allauth.account.models import EmailAddress
 from django.contrib.auth import get_user_model
 from django.contrib.auth.password_validation import validate_password
 from django.contrib.sessions.models import Session
 from django.core.exceptions import ValidationError
 from django.http import HttpRequest
 from django.utils import timezone
-
-from allauth.account import app_settings as allauth_settings
-from allauth.account.models import EmailAddress
 
 from .schemas import SessionSchema, UserSchema
 

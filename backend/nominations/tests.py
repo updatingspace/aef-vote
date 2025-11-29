@@ -11,7 +11,6 @@ from django.utils import timezone
 from .data import NOMINATIONS, seed_nominations_from_fixture
 from .models import NominationVote, Voting
 
-
 User = get_user_model()
 
 

@@ -1,4 +1,17 @@
-from .base import *
+import importlib.util
+
+from .base import (
+    BASE_DIR,
+    INSTALLED_APPS,
+    MIDDLEWARE,
+    read_env,
+    read_env_flag,
+    read_env_list,
+    read_secret,
+)
+
+INSTALLED_APPS = INSTALLED_APPS.copy()
+MIDDLEWARE = MIDDLEWARE.copy()
 
 DEBUG = read_env_flag("DJANGO_DEBUG", True)
 
@@ -34,12 +47,7 @@ else:
     }
 
 if read_env_flag("ENABLE_DEBUG_TOOLBAR", False):
-    try:
-        import debug_toolbar  # type: ignore
-
+    if importlib.util.find_spec("debug_toolbar"):
         INSTALLED_APPS += ["debug_toolbar"]
         MIDDLEWARE.insert(0, "debug_toolbar.middleware.DebugToolbarMiddleware")
         INTERNAL_IPS = ["127.0.0.1", "localhost"]
-    except ImportError:
-        # Debug toolbar is optional; skip when not installed
-        pass

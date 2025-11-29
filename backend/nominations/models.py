@@ -103,7 +103,7 @@ class VotingSettings(models.Model):
         return timezone.now() <= self.deadline_at
 
     @classmethod
-    def get_solo(cls) -> "VotingSettings":
+    def get_solo(cls) -> VotingSettings:
         obj, _ = cls.objects.get_or_create(
             pk=1, defaults={"name": "Основное голосование"}
         )

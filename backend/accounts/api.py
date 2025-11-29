@@ -1,13 +1,12 @@
 from __future__ import annotations
 
+from allauth.account import app_settings as allauth_settings
+from allauth.account.utils import perform_login
 from django.contrib.auth import authenticate, get_user_model
 from django.contrib.auth import logout as django_logout
 from django.core.exceptions import ValidationError
 from ninja import Router
 from ninja.errors import HttpError
-
-from allauth.account import app_settings as allauth_settings
-from allauth.account.utils import perform_login
 
 from .schemas import (
     AuthResponseSchema,
@@ -51,7 +50,7 @@ def register(request, payload: RegisterRequestSchema):
         user = create_local_user(payload.username, payload.email, payload.password)
     except ValidationError as exc:
         message = "; ".join(exc.messages) if hasattr(exc, "messages") else str(exc)
-        raise HttpError(400, message)
+        raise HttpError(400, message) from exc
 
     perform_login(request, user, email_verification=allauth_settings.EMAIL_VERIFICATION)
     return _auth_response(request, user)
@@ -70,7 +69,7 @@ def login(request, payload: LoginRequestSchema):
         if existing:
             user = authenticate(
                 request,
-                username=getattr(existing, "username"),
+                username=existing.username,
                 password=payload.password,
             )
 

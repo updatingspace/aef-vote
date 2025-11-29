@@ -173,8 +173,7 @@ def seed_nominations_from_fixture(
     - If force=True, existing nominations/options are wiped before loading.
     - Returns True when anything was created/updated.
     """
-    from .models import Nomination, NominationOption
-    from .models import Voting
+    from .models import Nomination, NominationOption, Voting
 
     db_alias = using or "default"
 
