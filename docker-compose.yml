@@ -3,6 +3,7 @@ services:
     build:
       context: ./backend
       dockerfile: Dockerfile
+      target: dev
       args:
         INSTALL_DEV: ${INSTALL_DEV:-true}
     environment:

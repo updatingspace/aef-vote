@@ -5,3 +5,4 @@ django-allauth==65.4.1
 django-cors-headers==4.7.0
 email-validator==2.2.0
 psycopg[binary]==3.2.4
+gunicorn==21.2.0

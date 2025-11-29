@@ -1,8 +1,14 @@
 .git
+.gitignore
+.idea
 .venv
 __pycache__
 **/__pycache__
 *.pyc
 *.pyo
-.ruff_cache
+*.log
+*.sqlite3
 db.sqlite3
+.env
+.env.*
+secrets
