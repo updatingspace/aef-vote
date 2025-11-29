@@ -1,12 +1,6 @@
-version: "3.9"
-
 services:
   backend:
-    build:
-      context: ./backend
-      dockerfile: Dockerfile
-      args:
-        INSTALL_DEV: ${INSTALL_DEV:-false}
+    image: ghcr.io/updatingspace/aef-vote-backend:latest
     environment:
       DJANGO_SETTINGS_MODULE: ${DJANGO_SETTINGS_MODULE:-aef_backend.settings.prod}
       DJANGO_DEBUG: ${DJANGO_DEBUG:-False}
@@ -25,7 +19,7 @@ services:
     command: >
       sh -c "python manage.py migrate && python manage.py runserver 0.0.0.0:8000"
     networks:
-      - aef-internal
+      - aef-vote-internal
       - proxy
     deploy:
       replicas: 1
@@ -33,18 +27,16 @@ services:
         condition: on-failure
       labels:
         - "traefik.enable=true"
-        - "traefik.http.services/aef-vote-backend.loadbalancer.server.port=8000"
-        - "traefik.http.routers/aef-vote-backend.rule=Host(`aef-vote.updspace.com`) && PathPrefix(`/api`)"
-        - "traefik.http.routers/aef-vote-backend.entrypoints=websecure"
-        - "traefik.http.routers/aef-vote-backend.tls=true"
-        - "traefik.http.routers/aef-vote-backend.priority=10"
-        - "traefik.http.middlewares/aef-vote-backend-strip.stripprefix.prefixes=/api"
-        - "traefik.http.routers/aef-vote-backend.middlewares=aef-vote-backend-strip"
+        - "traefik.http.services.aef-vote-backend.loadbalancer.server.port=8000"
+        - "traefik.http.routers.aef-vote-backend.rule=Host(`aef-vote.updspace.com`) && PathPrefix(`/api`)"
+        - "traefik.http.routers.aef-vote-backend.entrypoints=websecure"
+        - "traefik.http.routers.aef-vote-backend.tls=true"
+        - "traefik.http.routers.aef-vote-backend.priority=10"
+        - "traefik.http.middlewares.aef-vote-backend-strip.stripprefix.prefixes=/api"
+        - "traefik.http.routers.aef-vote-backend.middlewares=aef-vote-backend-strip"
 
   frontend:
-    build:
-      context: .
-      dockerfile: Dockerfile.frontend
+    image: ghcr.io/updatingspace/aef-vote-frontend:latest
     environment:
       VITE_API_BASE_URL: ${VITE_API_BASE_URL:-https://aef-vote.updspace.com/api}
     command: >
@@ -57,10 +49,10 @@ services:
         condition: on-failure
       labels:
         - "traefik.enable=true"
-        - "traefik.http.services/aef-vote-frontend.loadbalancer.server.port=5173"
-        - "traefik.http.routers/aef-vote-frontend.rule=Host(`aef-vote.updspace.com`) && PathPrefix(`/`)"
-        - "traefik.http.routers/aef-vote-frontend.entrypoints=websecure"
-        - "traefik.http.routers/aef-vote-frontend.tls=true"
+        - "traefik.http.services.aef-vote-frontend.loadbalancer.server.port=5173"
+        - "traefik.http.routers.aef-vote-frontend.rule=Host(`aef-vote.updspace.com`) && PathPrefix(`/`)"
+        - "traefik.http.routers.aef-vote-frontend.entrypoints=websecure"
+        - "traefik.http.routers.aef-vote-frontend.tls=true"
 
   db:
     image: postgres:16-alpine
@@ -71,7 +63,7 @@ services:
     volumes:
       - pgdata:/var/lib/postgresql/data
     networks:
-      - aef-internal
+      - aef-vote-internal
     deploy:
       replicas: 1
       restart_policy:
@@ -79,15 +71,15 @@ services:
 
 secrets:
   django_secret_key:
-    file: secrets/django_secret_key
+    external: true
 
 networks:
-  aef-internal:
+  aef-vote-internal:
     driver: overlay
     attachable: true
   proxy:
     external: true
-    name: updspace_proxy
+    name: net_public
 
 volumes:
   pgdata:
