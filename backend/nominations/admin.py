@@ -6,7 +6,14 @@ from .models import Nomination, NominationOption, NominationVote, Voting, Voting
 
 @admin.register(Voting)
 class VotingAdmin(admin.ModelAdmin):
-    list_display = ("title", "code", "is_active", "show_vote_counts", "deadline_at", "updated_at")
+    list_display = (
+        "title",
+        "code",
+        "is_active",
+        "show_vote_counts",
+        "deadline_at",
+        "updated_at",
+    )
     search_fields = ("title", "code", "description")
     list_filter = ("is_active", "show_vote_counts")
     ordering = ("order", "title")
@@ -66,7 +73,15 @@ class NominationOptionInline(admin.TabularInline):
     model = NominationOption
     form = NominationOptionInlineForm
     extra = 1
-    fields = ("id", "title", "image_url", "order", "is_active", "created_at", "updated_at")
+    fields = (
+        "id",
+        "title",
+        "image_url",
+        "order",
+        "is_active",
+        "created_at",
+        "updated_at",
+    )
     readonly_fields = ("created_at", "updated_at")
     prepopulated_fields = {"id": ("title",)}
     ordering = ("order", "title")
@@ -81,7 +96,15 @@ class NominationOptionInline(admin.TabularInline):
 
 @admin.register(Nomination)
 class NominationAdmin(admin.ModelAdmin):
-    list_display = ("title", "id", "voting", "is_active", "order", "options_count", "updated_at")
+    list_display = (
+        "title",
+        "id",
+        "voting",
+        "is_active",
+        "order",
+        "options_count",
+        "updated_at",
+    )
     search_fields = ("title", "id", "description")
     list_filter = ("is_active", "voting")
     ordering = ("voting__order", "order", "title")

@@ -93,7 +93,9 @@ def get_current_session_schema(request: HttpRequest) -> SessionSchema:
     )
 
 
-def list_user_sessions(user: Any, current_session_key: str | None = None) -> list[SessionSchema]:
+def list_user_sessions(
+    user: Any, current_session_key: str | None = None
+) -> list[SessionSchema]:
     active_sessions = Session.objects.filter(expire_date__gt=timezone.now())
     result: list[SessionSchema] = []
 

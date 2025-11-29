@@ -64,9 +64,13 @@ def get_vote_counts(nomination_id: str) -> VoteCounts:
     return {item["option_id"]: item["total"] for item in votes}
 
 
-def get_vote_counts_map(nomination_ids: Iterable[str] | None = None) -> dict[str, VoteCounts]:
+def get_vote_counts_map(
+    nomination_ids: Iterable[str] | None = None,
+) -> dict[str, VoteCounts]:
     result: dict[str, VoteCounts] = defaultdict(dict)
-    votes_qs = NominationVote.objects.values("nomination_id", "option_id").annotate(total=Count("id"))
+    votes_qs = NominationVote.objects.values("nomination_id", "option_id").annotate(
+        total=Count("id")
+    )
     if nomination_ids is not None:
         votes_qs = votes_qs.filter(nomination_id__in=list(nomination_ids))
     votes = votes_qs
@@ -78,7 +82,9 @@ def get_vote_counts_map(nomination_ids: Iterable[str] | None = None) -> dict[str
 def get_user_votes_map(user) -> dict[str, str]:
     if not user or not getattr(user, "is_authenticated", False):
         return {}
-    votes = NominationVote.objects.filter(user=user).values_list("nomination_id", "option_id")
+    votes = NominationVote.objects.filter(user=user).values_list(
+        "nomination_id", "option_id"
+    )
     return {nomination_id: option_id for nomination_id, option_id in votes}
 
 
@@ -111,8 +117,7 @@ def list_votings_overview() -> list[dict[str, Any]]:
     """
     ensure_nominations_seeded()
     votings = list(
-        Voting.objects.order_by("order", "title")
-        .prefetch_related(NOMINATIONS_PREFETCH)
+        Voting.objects.order_by("order", "title").prefetch_related(NOMINATIONS_PREFETCH)
     )
 
     result: list[dict[str, Any]] = []
@@ -177,9 +182,15 @@ def list_nominations(user=None, voting_code: str | None = None) -> list[dict[str
     )
 
     nomination_ids_with_counts = [
-        nomination.id for nomination in nominations if nomination.voting.expose_vote_counts
+        nomination.id
+        for nomination in nominations
+        if nomination.voting.expose_vote_counts
     ]
-    counts_map = get_vote_counts_map(nomination_ids_with_counts) if nomination_ids_with_counts else {}
+    counts_map = (
+        get_vote_counts_map(nomination_ids_with_counts)
+        if nomination_ids_with_counts
+        else {}
+    )
 
     return [
         _build_nomination_payload(
@@ -220,13 +231,19 @@ def get_nomination_with_status(nomination_id: str, user=None) -> dict[str, Any] 
     )
 
 
-def record_vote(nomination_id: str, option_id: str, user) -> tuple[VoteCounts | None, Nomination]:
+def record_vote(
+    nomination_id: str, option_id: str, user
+) -> tuple[VoteCounts | None, Nomination]:
     nomination = get_nomination(nomination_id)
     if not nomination:
         raise NominationNotFoundError(nomination_id)
 
     option = next(
-        (opt for opt in nomination.options.all() if opt.id == option_id and opt.is_active),
+        (
+            opt
+            for opt in nomination.options.all()
+            if opt.id == option_id and opt.is_active
+        ),
         None,
     )
     if not option:

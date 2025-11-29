@@ -134,7 +134,9 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name="nominationvote",
             name="nomination_id",
-            field=models.CharField(db_column="nomination_id", db_index=True, max_length=64),
+            field=models.CharField(
+                db_column="nomination_id", db_index=True, max_length=64
+            ),
         ),
         migrations.AlterField(
             model_name="nominationvote",

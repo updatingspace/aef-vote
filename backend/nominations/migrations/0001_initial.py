@@ -14,8 +14,19 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name="VotingSettings",
             fields=[
-                ("id", models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name="ID")),
-                ("name", models.CharField(default="Основное голосование", max_length=100)),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "name",
+                    models.CharField(default="Основное голосование", max_length=100),
+                ),
                 (
                     "deadline_at",
                     models.DateTimeField(
@@ -35,7 +46,15 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name="NominationVote",
             fields=[
-                ("id", models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name="ID")),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
                 ("nomination_id", models.CharField(db_index=True, max_length=64)),
                 ("option_id", models.CharField(db_index=True, max_length=64)),
                 ("created_at", models.DateTimeField(auto_now_add=True)),

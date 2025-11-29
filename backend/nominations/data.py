@@ -8,6 +8,7 @@ from django.utils import timezone
 
 DEFAULT_VOTING_CODE = "main"
 
+
 class NominationOptionData(TypedDict):
     id: str
     title: str
@@ -95,14 +96,17 @@ def seed_votings_from_fixture(force: bool = False, using: str | None = None) -> 
         deadline_at = None
         if deadline_value:
             try:
-                deadline_at = timezone.make_aware(timezone.datetime.fromisoformat(deadline_value))
+                deadline_at = timezone.make_aware(
+                    timezone.datetime.fromisoformat(deadline_value)
+                )
             except Exception:
                 deadline_at = None
 
         voting, created = Voting.objects.using(db_alias).update_or_create(
             code=voting_data.get("code", DEFAULT_VOTING_CODE),
             defaults={
-                "title": voting_data.get("title") or voting_data.get("code", DEFAULT_VOTING_CODE),
+                "title": voting_data.get("title")
+                or voting_data.get("code", DEFAULT_VOTING_CODE),
                 "description": voting_data.get("description") or "",
                 "order": voting_data.get("order", index),
                 "is_active": voting_data.get("is_active", True),
@@ -135,7 +139,9 @@ def _load_votings_fixture() -> list[VotingData]:
     except FileNotFoundError as exc:
         raise RuntimeError(f"Fixture not found: {VOTINGS_FIXTURE_PATH}") from exc
     except json.JSONDecodeError as exc:
-        raise RuntimeError(f"Invalid JSON in fixture {VOTINGS_FIXTURE_PATH}: {exc}") from exc
+        raise RuntimeError(
+            f"Invalid JSON in fixture {VOTINGS_FIXTURE_PATH}: {exc}"
+        ) from exc
 
     votings: list[VotingData] = []
     for index, item in enumerate(raw):
@@ -157,7 +163,9 @@ def _load_votings_fixture() -> list[VotingData]:
 VOTINGS: list[VotingData] = _load_votings_fixture()
 
 
-def seed_nominations_from_fixture(force: bool = False, using: str | None = None) -> bool:
+def seed_nominations_from_fixture(
+    force: bool = False, using: str | None = None
+) -> bool:
     """
     Populate the database from the JSON fixture.
 
@@ -174,7 +182,9 @@ def seed_nominations_from_fixture(force: bool = False, using: str | None = None)
     seed_votings_from_fixture(force=False, using=db_alias)
 
     nominations = _load_fixture()
-    default_voting = Voting.objects.using(db_alias).filter(code=DEFAULT_VOTING_CODE).first()
+    default_voting = (
+        Voting.objects.using(db_alias).filter(code=DEFAULT_VOTING_CODE).first()
+    )
     if default_voting is None:
         default_voting = Voting.objects.using(db_alias).create(
             code=DEFAULT_VOTING_CODE,
@@ -213,7 +223,9 @@ def seed_nominations_from_fixture(force: bool = False, using: str | None = None)
 
         seen_option_ids: set[str] = set()
         for opt_index, option_data in enumerate(nomination_data.get("options", [])):
-            option, opt_created = NominationOption.objects.using(db_alias).update_or_create(
+            option, opt_created = NominationOption.objects.using(
+                db_alias
+            ).update_or_create(
                 id=option_data["id"],
                 defaults={
                     "nomination": nomination,

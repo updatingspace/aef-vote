@@ -64,11 +64,13 @@ class Voting(models.Model):
         super().save(*args, **kwargs)
 
     def _generate_code(self) -> str:
-        base_slug = (slugify(self.title or "") or "voting")
+        base_slug = slugify(self.title or "") or "voting"
         max_length = self._meta.get_field("code").max_length
         candidate = base_slug[:max_length]
         suffix_index = 1
-        while self.__class__.objects.exclude(pk=self.pk).filter(code=candidate).exists():
+        while (
+            self.__class__.objects.exclude(pk=self.pk).filter(code=candidate).exists()
+        ):
             suffix = f"-{suffix_index}"
             trunc_length = max(max_length - len(suffix), 1)
             base_part = base_slug[:trunc_length] or "voting"
@@ -102,7 +104,9 @@ class VotingSettings(models.Model):
 
     @classmethod
     def get_solo(cls) -> "VotingSettings":
-        obj, _ = cls.objects.get_or_create(pk=1, defaults={"name": "Основное голосование"})
+        obj, _ = cls.objects.get_or_create(
+            pk=1, defaults={"name": "Основное голосование"}
+        )
         return obj
 
 

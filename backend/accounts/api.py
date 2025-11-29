@@ -37,7 +37,9 @@ def _auth_guard(request):
 
 def _auth_response(request, user) -> AuthResponseSchema:
     touch_session_metadata(request)
-    return AuthResponseSchema(user=serialize_user(user), session=get_current_session_schema(request))
+    return AuthResponseSchema(
+        user=serialize_user(user), session=get_current_session_schema(request)
+    )
 
 
 @router.post("/register", response=AuthResponseSchema)

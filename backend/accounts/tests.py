@@ -27,7 +27,9 @@ class AuthApiTests(TestCase):
         password: str | None = None,
         is_active: bool = True,
     ):
-        user = User.objects.create_user(username=username, email=email, password=password or self.password)
+        user = User.objects.create_user(
+            username=username, email=email, password=password or self.password
+        )
         if not is_active:
             user.is_active = False
             user.save(update_fields=["is_active"])
@@ -53,7 +55,9 @@ class AuthApiTests(TestCase):
 
         self.assertEqual(response.status_code, 200)
         data = response.json()
-        self.assertTrue(User.objects.filter(username="newuser", email="new@example.com").exists())
+        self.assertTrue(
+            User.objects.filter(username="newuser", email="new@example.com").exists()
+        )
         self.assertEqual(data["user"]["username"], payload["username"])
         self.assertEqual(data["user"]["email"], payload["email"])
 
@@ -103,7 +107,9 @@ class AuthApiTests(TestCase):
         self.assertIn("Неверный логин или пароль", response.json()["detail"])
 
     def test_login_rejects_inactive_user(self):
-        user = self._create_user(username="inactive", email="inactive@example.com", is_active=False)
+        user = self._create_user(
+            username="inactive", email="inactive@example.com", is_active=False
+        )
         response = post_json(
             self.client,
             "/api/auth/login",
@@ -141,7 +147,9 @@ class AuthApiTests(TestCase):
         self.assertEqual(data["user"]["username"], "masha")
         self.assertEqual(len(data["sessions"]), 1)
         self.assertTrue(data["sessions"][0]["is_current"])
-        self.assertEqual(data["sessions"][0]["session_key"], self.client.session.session_key)
+        self.assertEqual(
+            data["sessions"][0]["session_key"], self.client.session.session_key
+        )
 
     def test_sessions_endpoint_requires_authentication(self):
         response = self.client.get("/api/auth/sessions")
