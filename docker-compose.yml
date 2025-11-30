@@ -19,6 +19,10 @@ services:
       POSTGRES_HOST: ${POSTGRES_HOST:-db}
       POSTGRES_PORT: ${POSTGRES_PORT:-5432}
       ENABLE_DEBUG_TOOLBAR: ${ENABLE_DEBUG_TOOLBAR:-False}
+      TELEGRAM_BOT_TOKEN: ${TELEGRAM_BOT_TOKEN:-}
+      TELEGRAM_LOGIN_MAX_AGE: ${TELEGRAM_LOGIN_MAX_AGE:-86400}
+      TELEGRAM_REQUIRE_LINK_FOR_VOTING: ${TELEGRAM_REQUIRE_LINK_FOR_VOTING:-False}
+      TELEGRAM_ADMIN_IDS: ${TELEGRAM_ADMIN_IDS:-}
     secrets:
       - django_secret_key
     volumes:
@@ -37,6 +41,7 @@ services:
       target: dev
     environment:
       VITE_API_BASE_URL: ${VITE_API_BASE_URL:-http://localhost:8000/api}
+      VITE_TELEGRAM_BOT_NAME: ${VITE_TELEGRAM_BOT_NAME:-}
     ports:
       - "${FRONTEND_PORT:-5173}:5173"
     volumes:

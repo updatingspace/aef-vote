@@ -24,6 +24,7 @@ export type Nomination = {
   userVote?: string | null;
   isVotingOpen?: boolean;
   canVote?: boolean;
+  requiresTelegramLink?: boolean;
   votingDeadline?: string | null;
   voting?: Voting | null;
 };

@@ -884,6 +884,13 @@ body {
   gap: 0.75rem;
 }
 
+.telegram-widget-container {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem;
+}
+
 .session-list {
   display: flex;
   flex-direction: column;

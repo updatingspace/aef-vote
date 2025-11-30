@@ -11,6 +11,7 @@ from .schemas import (
 from .services import (
     NominationNotFoundError,
     OptionNotFoundError,
+    TelegramLinkRequiredError,
     VotingClosedError,
     get_nomination_with_status,
     list_nominations,
@@ -53,6 +54,8 @@ def vote_for_option(request, nomination_id: str, payload: VoteRequestSchema):
         if exc.deadline_at:
             detail = f"{detail}. Дедлайн: {exc.deadline_at.isoformat()}"
         raise HttpError(403, detail) from exc
+    except TelegramLinkRequiredError as exc:
+        raise HttpError(403, str(exc)) from exc
 
     voting = nomination.voting
     is_open = voting.is_open and voting.is_active and nomination.is_active
@@ -64,5 +67,6 @@ def vote_for_option(request, nomination_id: str, payload: VoteRequestSchema):
         "user_vote": payload.option_id,
         "is_voting_open": is_open,
         "can_vote": is_open,
+        "requires_telegram_link": False,
         "voting_deadline": voting.deadline_at,
     }

@@ -1,8 +1,10 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Button, Card, Loader, TextInput } from '@gravity-ui/uikit';
 
 import type { ProfileResponse, SessionInfo } from '../api/auth';
 import {
+  authWithTelegram,
+  deleteAccount,
   fetchProfile,
   loginUser,
   logoutUser,
@@ -33,12 +35,24 @@ const SessionBadge: React.FC<{ label: string }> = ({ label }) => (
   </span>
 );
 
+type TelegramWidgetPayload = {
+  id: number;
+  first_name: string;
+  last_name?: string;
+  username?: string;
+  photo_url?: string;
+  auth_date: number;
+  hash: string;
+};
+
 export const ProfilePage: React.FC = () => {
   const [profile, setProfile] = useState<ProfileResponse | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState<AuthMode | null>(null);
   const [sessionAction, setSessionAction] = useState<string | null>(null);
   const [bulkSessionsAction, setBulkSessionsAction] = useState(false);
+  const [telegramAction, setTelegramAction] = useState<'link' | 'login' | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   const [loginForm, setLoginForm] = useState({ login: '', password: '' });
   const [registerForm, setRegisterForm] = useState({
@@ -47,6 +61,10 @@ export const ProfilePage: React.FC = () => {
     password: '',
     passwordConfirm: '',
   });
+
+  const telegramContainerRef = useRef<HTMLDivElement | null>(null);
+  const telegramBotName = import.meta.env.VITE_TELEGRAM_BOT_NAME as string | undefined;
+  const telegramCallbackName = 'aefTelegramAuth';
 
   const loadProfile = useCallback(async () => {
     setIsLoading(true);
@@ -67,6 +85,41 @@ export const ProfilePage: React.FC = () => {
   useEffect(() => {
     loadProfile();
   }, [loadProfile]);
+
+  const handleTelegramAuth = useCallback(
+    async (payload: TelegramWidgetPayload) => {
+      setTelegramAction(profile?.user ? 'link' : 'login');
+
+      try {
+        await authWithTelegram({
+          id: payload.id,
+          firstName: payload.first_name,
+          lastName: payload.last_name ?? null,
+          username: payload.username ?? null,
+          photoUrl: payload.photo_url ?? null,
+          authDate: payload.auth_date,
+          hash: payload.hash,
+        });
+
+        toaster.add({
+          name: `telegram-${Date.now()}`,
+          title: profile?.user ? 'Telegram привязан' : 'Вход через Telegram',
+          content: profile?.user
+            ? 'Аккаунт связан с Telegram, можно голосовать и управлять доступом.'
+            : 'Сессия создана через Telegram. Теперь можно настроить профиль.',
+          theme: 'success',
+          autoHiding: 4500,
+        });
+
+        await loadProfile();
+      } catch (err) {
+        notifyApiError(err, 'Не удалось подтвердить Telegram');
+      } finally {
+        setTelegramAction(null);
+      }
+    },
+    [loadProfile, profile?.user],
+  );
 
   const submitLogin = async (event: React.FormEvent) => {
     event.preventDefault();
@@ -203,6 +256,67 @@ export const ProfilePage: React.FC = () => {
     }
   };
 
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    if (!telegramBotName || !telegramContainerRef.current) return;
+
+    (window as any)[telegramCallbackName] = (userData: TelegramWidgetPayload) => {
+      handleTelegramAuth(userData);
+    };
+
+    telegramContainerRef.current.innerHTML = '';
+    const script = document.createElement('script');
+    script.src = 'https://telegram.org/js/telegram-widget.js?22';
+    script.async = true;
+    script.setAttribute('data-telegram-login', telegramBotName);
+    script.setAttribute('data-size', 'large');
+    script.setAttribute('data-userpic', 'false');
+    script.setAttribute('data-onauth', telegramCallbackName);
+    script.setAttribute('data-request-access', 'write');
+    telegramContainerRef.current.appendChild(script);
+
+    return () => {
+      if ((window as any)[telegramCallbackName]) {
+        delete (window as any)[telegramCallbackName];
+      }
+    };
+  }, [telegramBotName, telegramCallbackName, handleTelegramAuth]);
+
+  const handleDeleteAccount = async () => {
+    if (!profile?.user) {
+      toaster.add({
+        name: `delete-blocked-${Date.now()}`,
+        title: 'Сначала войдите',
+        content: 'Чтобы удалить аккаунт, нужно войти или восстановить сессию.',
+        theme: 'warning',
+        autoHiding: 4000,
+      });
+      return;
+    }
+
+    const confirmed = window.confirm(
+      'Удалить аккаунт и все ваши голоса? Это действие нельзя отменить.'
+    );
+    if (!confirmed) return;
+
+    setIsDeleting(true);
+    try {
+      await deleteAccount();
+      setProfile(null);
+      toaster.add({
+        name: `delete-${Date.now()}`,
+        title: 'Аккаунт удалён',
+        content: 'Профиль, голоса и привязка Telegram удалены.',
+        theme: 'success',
+        autoHiding: 4500,
+      });
+    } catch (err) {
+      notifyApiError(err, 'Не удалось удалить аккаунт');
+    } finally {
+      setIsDeleting(false);
+    }
+  };
+
   const userChip = useMemo(() => {
     if (!profile?.user) {
       return (
@@ -214,6 +328,11 @@ export const ProfilePage: React.FC = () => {
       <div className="d-inline-flex align-items-center gap-2">
         <SessionBadge label="В сети" />
         <span className="fw-semibold">{profile.user.username}</span>
+        {profile.user.telegramLinked && (
+          <SessionBadge
+            label={profile.user.telegramUsername ? `@${profile.user.telegramUsername}` : 'TG привязан'}
+          />
+        )}
         {profile.user.email && (
           <span className="text-muted small">{profile.user.email}</span>
         )}
@@ -222,6 +341,60 @@ export const ProfilePage: React.FC = () => {
   }, [profile]);
 
   const hasSessions = (profile?.sessions.length ?? 0) > 0;
+
+  const renderTelegramCard = () => {
+    const telegramLinked = profile?.user?.telegramLinked ?? false;
+    const telegramUsername = profile?.user?.telegramUsername;
+    const telegramId = profile?.user?.telegramId;
+
+    return (
+      <Card className="profile-card">
+        <div className="d-flex align-items-center justify-content-between mb-2">
+          <div>
+            <div className="profile-card-title mb-1">Telegram</div>
+            <div className="text-muted small">
+              Авторизация и привязка через Telegram ID с проверкой подписи.
+            </div>
+          </div>
+          <SessionBadge label={telegramLinked ? 'Привязан' : 'Не привязан'} />
+        </div>
+
+        {telegramLinked ? (
+          <div className="status-block status-block-success">
+            <div className="status-title">Связь подтверждена</div>
+            <p className="text-muted mb-0">
+              {telegramUsername ? `@${telegramUsername}` : 'Без юзернейма'} · ID {telegramId ?? '—'}
+            </p>
+          </div>
+        ) : (
+          <div className="status-block status-block-warning">
+            <div className="status-title">Telegram не привязан</div>
+            <p className="text-muted mb-0">
+              Авторизуйтесь через Telegram, чтобы голосовать и назначать права по ID.
+            </p>
+          </div>
+        )}
+
+        {telegramBotName ? (
+          <div className="telegram-widget-container">
+            <div ref={telegramContainerRef} />
+            {telegramAction && (
+              <div className="text-muted small mt-2">
+                Ждём подтверждения в Telegram...
+              </div>
+            )}
+          </div>
+        ) : (
+          <div className="status-block status-block-info">
+            <div className="status-title">Нужно имя бота</div>
+            <p className="text-muted mb-0">
+              Укажите VITE_TELEGRAM_BOT_NAME в окружении фронтенда, чтобы отрисовать кнопку Telegram.
+            </p>
+          </div>
+        )}
+      </Card>
+    );
+  };
 
   const renderSessionCard = () => (
     <Card className="profile-card">
@@ -304,6 +477,23 @@ export const ProfilePage: React.FC = () => {
     </Card>
   );
 
+  const renderDangerCard = () => (
+    <Card className="profile-card">
+      <div className="profile-card-title text-danger">Удалить аккаунт</div>
+      <p className="text-muted small mb-3">
+        Удаление стирает профиль, все голоса и привязку Telegram. Вернуть данные будет нельзя.
+      </p>
+      <Button
+        view="outlined"
+        className="text-danger border-danger"
+        onClick={handleDeleteAccount}
+        disabled={isDeleting || !profile?.user}
+      >
+        {isDeleting ? 'Удаляем...' : 'Удалить аккаунт и голоса'}
+      </Button>
+    </Card>
+  );
+
   return (
     <div className="page-section profile-page">
       <div className="container">
@@ -319,7 +509,7 @@ export const ProfilePage: React.FC = () => {
               <div>
                 <h1 className="page-title">Профиль и сессии</h1>
                 <p className="text-muted mb-2">
-                  Логин/регистрация через AllAuth + управление сессионными куками.
+                  Вход через почту/пароль или Telegram, управление сессиями и удаление аккаунта.
                 </p>
               </div>
               {userChip}
@@ -455,9 +645,12 @@ export const ProfilePage: React.FC = () => {
                     </div>
                   </form>
                 </Card>
+
+                {renderDangerCard()}
               </div>
 
               <div className="profile-column">
+                {renderTelegramCard()}
                 {renderSessionCard()}
               </div>
             </div>

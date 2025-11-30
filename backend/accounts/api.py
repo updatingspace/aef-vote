@@ -14,11 +14,18 @@ from .schemas import (
     ProfileResponseSchema,
     RegisterRequestSchema,
     SessionSchema,
+    TelegramAuthRequestSchema,
 )
 from .services import (
+    authenticate_with_telegram,
     create_local_user,
+    delete_user_and_related,
     ensure_session_key,
     get_current_session_schema,
+    TelegramAccountConflictError,
+    TelegramAuthError,
+    TelegramAuthExpiredError,
+    TelegramConfigError,
     list_user_sessions,
     revoke_session_for_user,
     serialize_user,
@@ -83,6 +90,25 @@ def login(request, payload: LoginRequestSchema):
     return _auth_response(request, user)
 
 
+@router.post("/telegram", response=AuthResponseSchema)
+def telegram_auth(request, payload: TelegramAuthRequestSchema):
+    current_user = request.user if request.user.is_authenticated else None
+
+    try:
+        user = authenticate_with_telegram(payload.model_dump(), current_user=current_user)
+    except TelegramAccountConflictError as exc:
+        raise HttpError(409, str(exc)) from exc
+    except TelegramAuthExpiredError as exc:
+        raise HttpError(401, str(exc)) from exc
+    except TelegramConfigError as exc:
+        raise HttpError(503, str(exc)) from exc
+    except TelegramAuthError as exc:
+        raise HttpError(400, str(exc)) from exc
+
+    perform_login(request, user, email_verification=allauth_settings.EMAIL_VERIFICATION)
+    return _auth_response(request, user)
+
+
 @router.post("/logout", response={204: None})
 def logout(request):
     if request.user.is_authenticated:
@@ -131,4 +157,13 @@ def drop_all_sessions(request):
         if session.session_key != current_key:
             revoke_session_for_user(session.session_key, request.user)
 
+    return 204, None
+
+
+@router.delete("/me", response={204: None})
+def delete_account(request):
+    _auth_guard(request)
+    user = request.user
+    delete_user_and_related(user)
+    django_logout(request)
     return 204, None

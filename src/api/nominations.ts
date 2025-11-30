@@ -35,6 +35,8 @@ type ApiNomination = {
   is_voting_open?: boolean;
   canVote?: boolean;
   can_vote?: boolean;
+  requiresTelegramLink?: boolean;
+  requires_telegram_link?: boolean;
   votingDeadline?: string | null;
   voting_deadline?: string | null;
   voting?: ApiVoting | null;
@@ -52,6 +54,8 @@ type VoteResponse = {
   is_voting_open?: boolean;
   canVote?: boolean;
   can_vote?: boolean;
+  requiresTelegramLink?: boolean;
+  requires_telegram_link?: boolean;
   votingDeadline?: string | null;
   voting_deadline?: string | null;
 };
@@ -63,6 +67,7 @@ export type VoteResult = {
   userVote: string | null;
   isVotingOpen: boolean;
   canVote: boolean;
+  requiresTelegramLink?: boolean;
   votingDeadline: string | null;
 };
 
@@ -100,6 +105,8 @@ const mapNomination = (nomination: ApiNomination): Nomination => ({
   userVote: nomination.userVote ?? nomination.user_vote ?? null,
   isVotingOpen: nomination.isVotingOpen ?? nomination.is_voting_open ?? true,
   canVote: nomination.canVote ?? nomination.can_vote ?? false,
+  requiresTelegramLink:
+    nomination.requiresTelegramLink ?? nomination.requires_telegram_link ?? false,
   votingDeadline: nomination.votingDeadline ?? nomination.voting_deadline ?? null,
   voting: mapVoting(nomination.voting),
 });
@@ -116,6 +123,8 @@ const mapVoteResponse = (response: VoteResponse): VoteResult => ({
     null,
   isVotingOpen: response.isVotingOpen ?? response.is_voting_open ?? true,
   canVote: response.canVote ?? response.can_vote ?? false,
+  requiresTelegramLink:
+    response.requiresTelegramLink ?? response.requires_telegram_link ?? false,
   votingDeadline: response.votingDeadline ?? response.voting_deadline ?? null,
 });
 

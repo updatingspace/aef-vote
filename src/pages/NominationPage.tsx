@@ -208,8 +208,10 @@ export const NominationPage: React.FC = () => {
       toaster.add({
         name: `vote-auth-${Date.now()}`,
         theme: 'warning',
-        title: 'Требуется вход',
-        content: 'Авторизуйтесь в профиле, чтобы отдать голос.',
+        title: needsTelegramLink ? 'Нужна привязка Telegram' : 'Требуется вход',
+        content: needsTelegramLink
+          ? 'Привяжите Telegram в профиле, чтобы проголосовать.'
+          : 'Авторизуйтесь в профиле, чтобы отдать голос.',
         autoHiding: 4500,
       });
       return;
@@ -230,6 +232,8 @@ export const NominationPage: React.FC = () => {
               counts: nextCounts ?? undefined,
               isVotingOpen: response.isVotingOpen,
               canVote: response.canVote,
+              requiresTelegramLink:
+                response.requiresTelegramLink ?? prev.requiresTelegramLink,
               votingDeadline: response.votingDeadline ?? prev.votingDeadline,
             }
           : prev,
@@ -290,7 +294,8 @@ export const NominationPage: React.FC = () => {
   const canGoPrev = currentPageIndex > 0;
   const canGoNext = currentPageIndex < pageCount - 1;
   const isVotingClosed = nomination.isVotingOpen === false;
-  const canVoteNow = nomination.canVote ?? false;
+  const needsTelegramLink = nomination.requiresTelegramLink ?? false;
+  const canVoteNow = (nomination.canVote ?? false) && !needsTelegramLink;
   const disableVoting = isVotingClosed || !canVoteNow;
   const deadlineLabel = formatDeadline(nomination.votingDeadline);
   const hasVoteCounts = voteCounts !== null;
@@ -302,7 +307,9 @@ export const NominationPage: React.FC = () => {
     ? 'Голосование закрыто, кнопки неактивны.'
     : canVoteNow
       ? 'Отмечайте фаворита и отправляйте голос.'
-      : 'Авторизуйтесь, чтобы проголосовать.';
+      : needsTelegramLink
+        ? 'Привяжите Telegram в профиле, чтобы голосовать.'
+        : 'Авторизуйтесь, чтобы проголосовать.';
 
   const handlePrev = () => {
     setPageIndex((prev) => Math.max(prev - 1, 0));
@@ -322,7 +329,7 @@ export const NominationPage: React.FC = () => {
   const modalVoteLabel = (() => {
     if (isVoting) return 'Отправляем...';
     if (isVotingClosed) return 'Голосование завершено';
-    if (!canVoteNow) return 'Нужна авторизация';
+    if (!canVoteNow) return needsTelegramLink ? 'Привяжите Telegram' : 'Нужна авторизация';
     return 'Отдать голос за эту игру';
   })();
 
@@ -373,9 +380,19 @@ export const NominationPage: React.FC = () => {
 
             {!isVotingClosed && !canVoteNow && (
               <div className="status-block status-block-warning">
-                <div className="status-title">Требуется авторизация</div>
+                <div className="status-title">
+                  {needsTelegramLink ? 'Нужна привязка Telegram' : 'Требуется авторизация'}
+                </div>
                 <p className="text-muted mb-0">
-                  Войдите во вкладке «Профиль», чтобы проголосовать. Пока можно изучить варианты.
+                  {needsTelegramLink ? (
+                    <>
+                      Привяжите Telegram во вкладке «Профиль», чтобы участвовать в голосовании.
+                      {' '}
+                      <Link to="/profile">Открыть профиль</Link>
+                    </>
+                  ) : (
+                    'Войдите во вкладке «Профиль», чтобы проголосовать. Пока можно изучить варианты.'
+                  )}
                 </p>
               </div>
             )}
@@ -419,7 +436,9 @@ export const NominationPage: React.FC = () => {
                       ? isVoting
                         ? 'Отправляем...'
                         : 'Отдать голос игре'
-                      : 'Нужна авторизация'}
+                      : needsTelegramLink
+                        ? 'Привяжите Telegram'
+                        : 'Нужна авторизация'}
                 </Button>
               </div>
 
@@ -457,7 +476,7 @@ export const NominationPage: React.FC = () => {
                     const voteButtonLabel = (() => {
                       if (isVoting) return 'Отправляем...';
                       if (isVotingClosed) return 'Голосование завершено';
-                      if (!canVoteNow) return 'Нужна авторизация';
+                      if (!canVoteNow) return needsTelegramLink ? 'Привяжите Telegram' : 'Нужна авторизация';
                       if (isUserChoice) return 'Обновить голос';
                       return 'Проголосовать';
                     })();
