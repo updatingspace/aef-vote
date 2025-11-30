@@ -14,6 +14,11 @@ export type UserInfo = {
   id: number;
   username: string;
   email?: string | null;
+  telegramId?: number | null;
+  telegramUsername?: string | null;
+  telegramLinked: boolean;
+  isStaff?: boolean;
+  isSuperuser?: boolean;
 };
 
 export type AuthResponse = {
@@ -40,6 +45,16 @@ type ApiUser = {
   id: number;
   username: string;
   email?: string | null;
+  telegram_id?: number | null;
+  telegramId?: number | null;
+  telegram_username?: string | null;
+  telegramUsername?: string | null;
+  telegram_linked?: boolean;
+  telegramLinked?: boolean;
+  is_staff?: boolean;
+  isStaff?: boolean;
+  is_superuser?: boolean;
+  isSuperuser?: boolean;
 };
 
 const mapSession = (session: ApiSession): SessionInfo => ({
@@ -56,6 +71,11 @@ const mapUser = (user: ApiUser): UserInfo => ({
   id: user.id,
   username: user.username,
   email: user.email,
+  telegramId: user.telegram_id ?? user.telegramId ?? null,
+  telegramUsername: user.telegram_username ?? user.telegramUsername ?? null,
+  telegramLinked: Boolean(user.telegram_linked ?? user.telegramLinked ?? false),
+  isStaff: user.is_staff ?? user.isStaff ?? false,
+  isSuperuser: user.is_superuser ?? user.isSuperuser ?? false,
 });
 
 export async function registerUser(payload: {
@@ -113,4 +133,38 @@ export async function revokeSession(sessionKey: string): Promise<void> {
 
 export async function revokeOtherSessions(): Promise<void> {
   await request('/auth/sessions/revoke_all', { method: 'POST' });
+}
+
+export type TelegramAuthPayload = {
+  id: number;
+  firstName: string;
+  lastName?: string | null;
+  username?: string | null;
+  photoUrl?: string | null;
+  authDate: number;
+  hash: string;
+};
+
+export async function authWithTelegram(payload: TelegramAuthPayload): Promise<AuthResponse> {
+  const data = await request<{ user: ApiUser; session: ApiSession }>('/auth/telegram', {
+    method: 'POST',
+    body: {
+      id: payload.id,
+      first_name: payload.firstName,
+      last_name: payload.lastName,
+      username: payload.username,
+      photo_url: payload.photoUrl,
+      auth_date: payload.authDate,
+      hash: payload.hash,
+    },
+  });
+
+  return {
+    user: mapUser(data.user),
+    session: mapSession(data.session),
+  };
+}
+
+export async function deleteAccount(): Promise<void> {
+  await request('/auth/me', { method: 'DELETE' });
 }

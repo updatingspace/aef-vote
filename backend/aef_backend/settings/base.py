@@ -147,3 +147,20 @@ CORS_ALLOWED_ORIGINS = read_env_list(
     [],
 )
 CORS_ALLOW_CREDENTIALS = True
+
+TELEGRAM_BOT_TOKEN = read_secret("TELEGRAM_BOT_TOKEN", "")
+try:
+    TELEGRAM_LOGIN_MAX_AGE = int(os.getenv("TELEGRAM_LOGIN_MAX_AGE", "86400"))
+except ValueError:
+    TELEGRAM_LOGIN_MAX_AGE = 86400
+TELEGRAM_REQUIRE_LINK_FOR_VOTING = read_env_flag(
+    "TELEGRAM_REQUIRE_LINK_FOR_VOTING",
+    False,
+)
+TELEGRAM_ADMIN_IDS: list[int] = []
+for raw_value in read_env_list("TELEGRAM_ADMIN_IDS", []):
+    try:
+        TELEGRAM_ADMIN_IDS.append(int(raw_value))
+    except (TypeError, ValueError):
+        # Игнорируем нечисловые значения, чтобы не ломать загрузку настроек
+        continue

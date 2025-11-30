@@ -14,6 +14,10 @@ services:
       POSTGRES_HOST: ${POSTGRES_HOST:-db}
       POSTGRES_PORT: ${POSTGRES_PORT:-5432}
       ENABLE_DEBUG_TOOLBAR: ${ENABLE_DEBUG_TOOLBAR:-False}
+      TELEGRAM_BOT_TOKEN: /run/secrets/telegram_bot_token
+      TELEGRAM_LOGIN_MAX_AGE: ${TELEGRAM_LOGIN_MAX_AGE:-86400}
+      TELEGRAM_REQUIRE_LINK_FOR_VOTING: ${TELEGRAM_REQUIRE_LINK_FOR_VOTING:-False}
+      TELEGRAM_ADMIN_IDS: ${TELEGRAM_ADMIN_IDS:-}
     secrets:
       - django_secret_key
     networks:
@@ -30,8 +34,6 @@ services:
         - "traefik.http.routers.aef-vote-backend.entrypoints=websecure"
         - "traefik.http.routers.aef-vote-backend.tls=true"
         - "traefik.http.routers.aef-vote-backend.priority=10"
-        - "traefik.http.middlewares.aef-vote-backend-strip.stripprefix.prefixes=/api"
-        - "traefik.http.routers.aef-vote-backend.middlewares=aef-vote-backend-strip"
         - "com.centurylinklabs.watchtower.enable=true"
 
   frontend:
@@ -68,6 +70,8 @@ services:
 
 secrets:
   django_secret_key:
+    external: true
+  telegram_bot_token:
     external: true
 
 networks:

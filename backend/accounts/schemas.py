@@ -9,6 +9,11 @@ class UserSchema(BaseModel):
     id: int
     username: str
     email: EmailStr | None = None
+    telegram_id: int | None = None
+    telegram_username: str | None = None
+    telegram_linked: bool = False
+    is_staff: bool = False
+    is_superuser: bool = False
 
 
 class SessionSchema(BaseModel):
@@ -41,3 +46,13 @@ class RegisterRequestSchema(BaseModel):
     email: EmailStr
     password: str = Field(..., min_length=8, max_length=128)
     password_confirm: str = Field(..., min_length=8, max_length=128)
+
+
+class TelegramAuthRequestSchema(BaseModel):
+    id: int = Field(..., description="Уникальный Telegram ID пользователя")
+    first_name: str = Field(..., min_length=1, max_length=255)
+    last_name: str | None = Field(None, max_length=255)
+    username: str | None = Field(None, max_length=64)
+    photo_url: str | None = Field(None, max_length=500)
+    auth_date: int = Field(..., description="Unix timestamp с момента авторизации")
+    hash: str = Field(..., min_length=1, max_length=200)

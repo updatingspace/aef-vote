@@ -4,7 +4,10 @@ from collections import defaultdict
 from collections.abc import Iterable
 from typing import Any
 
+from django.conf import settings
 from django.db.models import Count, Prefetch
+
+from accounts.services import user_has_telegram_link
 
 from .data import seed_nominations_from_fixture, seed_votings_from_fixture
 from .models import Nomination, NominationOption, NominationVote, Voting
@@ -24,6 +27,12 @@ class VotingClosedError(PermissionError):
         super().__init__("Voting is closed")
 
 
+class TelegramLinkRequiredError(PermissionError):
+    """
+    Возникает, если правила требуют привязку Telegram для голосования.
+    """
+
+
 VoteCounts = dict[str, int]
 
 OPTIONS_PREFETCH = Prefetch(
@@ -35,6 +44,20 @@ NOMINATIONS_PREFETCH = Prefetch(
     "nominations",
     queryset=Nomination.objects.order_by("order", "title"),
 )
+
+
+def _resolve_vote_permissions(user: Any) -> tuple[bool, bool]:
+    is_authenticated = bool(user and getattr(user, "is_authenticated", False))
+    if not is_authenticated:
+        return False, False
+
+    require_telegram = bool(
+        getattr(settings, "TELEGRAM_REQUIRE_LINK_FOR_VOTING", False)
+    )
+    if require_telegram and not user_has_telegram_link(user):
+        return False, True
+
+    return True, False
 
 
 def ensure_votings_seeded() -> None:
@@ -148,6 +171,7 @@ def _build_nomination_payload(
     user_vote: str | None,
     counts: VoteCounts | None,
     can_vote: bool,
+    requires_telegram_link: bool,
 ) -> dict[str, Any]:
     options = [_serialize_option(option) for option in nomination.options.all()]
     is_voting_open = voting.is_open and voting.is_active and nomination.is_active
@@ -163,13 +187,14 @@ def _build_nomination_payload(
         "voting_deadline": voting.deadline_at,
         "is_voting_open": is_voting_open,
         "can_vote": can_vote and is_voting_open,
+        "requires_telegram_link": requires_telegram_link,
         "voting": _serialize_voting(voting),
     }
 
 
 def list_nominations(user=None, voting_code: str | None = None) -> list[dict[str, Any]]:
     ensure_nominations_seeded()
-    user_can_vote = bool(user and getattr(user, "is_authenticated", False))
+    user_can_vote, requires_telegram_link = _resolve_vote_permissions(user)
     user_votes = get_user_votes_map(user) if user_can_vote else {}
 
     nominations_qs = Nomination.objects.filter(is_active=True)
@@ -200,6 +225,7 @@ def list_nominations(user=None, voting_code: str | None = None) -> list[dict[str
             user_vote=user_votes.get(nomination.id),
             counts=counts_map.get(nomination.id),
             can_vote=user_can_vote,
+            requires_telegram_link=requires_telegram_link,
         )
         for nomination in nominations
     ]
@@ -210,7 +236,7 @@ def get_nomination_with_status(nomination_id: str, user=None) -> dict[str, Any] 
     if not nomination:
         return None
 
-    user_can_vote = bool(user and getattr(user, "is_authenticated", False))
+    user_can_vote, requires_telegram_link = _resolve_vote_permissions(user)
     user_vote = None
     voting = nomination.voting
 
@@ -229,6 +255,7 @@ def get_nomination_with_status(nomination_id: str, user=None) -> dict[str, Any] 
         user_vote=user_vote,
         counts=counts,
         can_vote=user_can_vote,
+        requires_telegram_link=requires_telegram_link,
     )
 
 
@@ -254,7 +281,12 @@ def record_vote(
     if not voting.is_open or not nomination.is_active or not voting.is_active:
         raise VotingClosedError(voting.deadline_at)
 
-    if not user or not getattr(user, "is_authenticated", False):
+    can_vote, requires_telegram_link = _resolve_vote_permissions(user)
+    if not can_vote:
+        if requires_telegram_link:
+            raise TelegramLinkRequiredError(
+                "Для голосования привяжите Telegram в профиле"
+            )
         raise PermissionError("Authentication required")
 
     NominationVote.objects.update_or_create(

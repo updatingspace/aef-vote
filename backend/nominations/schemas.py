@@ -42,6 +42,7 @@ class NominationSchema(CamelSchema):
     user_vote: str | None = None
     is_voting_open: bool
     can_vote: bool
+    requires_telegram_link: bool = False
     voting_deadline: datetime | None = None
     voting: VotingSchema | None = None
 
@@ -57,6 +58,7 @@ class VoteResponseSchema(CamelSchema):
     user_vote: str | None = None
     is_voting_open: bool
     can_vote: bool
+    requires_telegram_link: bool = False
     voting_deadline: datetime | None = None
 
 
