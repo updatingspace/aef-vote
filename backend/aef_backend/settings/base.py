@@ -200,6 +200,13 @@ for raw_value in read_env_list("TELEGRAM_ADMIN_IDS", []):
         # Игнорируем нечисловые значения, чтобы не ломать загрузку настроек
         continue
 
+# WebAuthn / Passkeys config
+MFA_WEBAUTHN_RP_ID = read_env("MFA_WEBAUTHN_RP_ID")
+MFA_WEBAUTHN_RP_NAME = read_env("MFA_WEBAUTHN_RP_NAME", "AEF Vote")
+MFA_WEBAUTHN_ALLOW_INSECURE_ORIGIN = read_env_flag(
+    "MFA_WEBAUTHN_ALLOW_INSECURE_ORIGIN", False
+)
+
 HEADLESS_TOKEN_STRATEGY = "allauth.headless.tokens.sessions.SessionTokenStrategy"
 
 NINJA_JWT = {

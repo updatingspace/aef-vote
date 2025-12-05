@@ -8,3 +8,5 @@ email-validator==2.2.0
 psycopg[binary]==3.2.4
 gunicorn==21.2.0
 fido2==1.1.2
+qrcode==7.4.2
+pillow==10.4.0
