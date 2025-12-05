@@ -18,6 +18,8 @@ services:
       TELEGRAM_LOGIN_MAX_AGE: ${TELEGRAM_LOGIN_MAX_AGE:-86400}
       TELEGRAM_REQUIRE_LINK_FOR_VOTING: ${TELEGRAM_REQUIRE_LINK_FOR_VOTING:-False}
       TELEGRAM_ADMIN_IDS: ${TELEGRAM_ADMIN_IDS:-}
+      MFA_WEBAUTHN_RP_ID: ${MFA_WEBAUTHN_RP_ID:-aef-vote.updspace.com}
+      MFA_WEBAUTHN_RP_NAME: ${MFA_WEBAUTHN_RP_NAME:-AEF Vote}
     secrets:
       - django_secret_key
       - telegram_bot_token

@@ -8,6 +8,7 @@ from allauth.usersessions.models import UserSession
 from django.contrib.auth import get_user_model
 from django.contrib.auth import logout as dj_logout
 from django.contrib.sessions.models import Session
+from django.db import transaction
 from django.utils import timezone
 from ninja.errors import HttpError
 from ninja_jwt.token_blacklist.models import BlacklistedToken, OutstandingToken
@@ -79,15 +80,19 @@ class SessionService:
             return
 
         key_for_meta = dj_key or token
-        meta, created = UserSessionMeta.objects.select_for_update().get_or_create(
-            user=user,
-            session_key=key_for_meta,
-            defaults={
-                "session_token": token or None,
-                "ip": SessionService._client_ip(request) or "",
-                "user_agent": SessionService._ua(request) or "",
-            },
-        )
+        with transaction.atomic():
+            meta, created = (
+                UserSessionMeta.objects.select_for_update()
+                .get_or_create(
+                    user=user,
+                    session_key=key_for_meta,
+                    defaults={
+                        "session_token": token or None,
+                        "ip": SessionService._client_ip(request) or "",
+                        "user_agent": SessionService._ua(request) or "",
+                    },
+                )
+            )
         if created:
             logger.info(
                 "Session metadata created",
