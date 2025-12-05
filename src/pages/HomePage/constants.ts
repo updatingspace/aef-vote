@@ -5,7 +5,15 @@ export const accentPalettes: readonly [string, string][] = [
   ['#0070c0', '#00b7ff'],
 ];
 
-export const updatesFeed = [
+type UpdateFeedItem = {
+  id: string;
+  tone: 'success' | 'warning' | 'info';
+  title: string;
+  text: string;
+  badge: string;
+};
+
+export const updatesFeed: UpdateFeedItem[] = [
   {
     id: 'release',
     tone: 'success',

@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
-import { Avatar, Button, DropdownMenu } from '@gravity-ui/uikit';
+import { Avatar, Button, DropdownMenu, type DropdownMenuItem } from '@gravity-ui/uikit';
 
 import { useAuth } from '../contexts/AuthContext';
 import { useAuthUI } from '../contexts/AuthUIContext';
@@ -19,14 +19,12 @@ export const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
   const { setUser } = useAuth();
   const isSuperuser = Boolean(user?.isSuperuser);
 
-  const userMenuItems = useMemo(
+  const userMenuItems = useMemo<DropdownMenuItem[]>(
     () =>
       user
         ? [
-            { action: () => navigate('/profile'), text: 'Безопасность', data: 'profile' },
-            ...(isSuperuser
-              ? [{ action: () => navigate('/admin'), text: 'Админка', data: 'admin' }]
-              : []),
+            { action: () => navigate('/profile'), text: 'Безопасность' },
+            ...(isSuperuser ? [{ action: () => navigate('/admin'), text: 'Админка' }] : []),
             {
               action: async () => {
                 try {
@@ -39,7 +37,6 @@ export const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
                 navigate('/');
               },
               text: 'Выйти',
-              data: 'logout',
             },
           ]
         : [],
@@ -59,7 +56,7 @@ export const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
           <nav className="app-header-nav">
             {!user && (
               <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                <Avatar size="m" theme="warning" />
+                <Avatar size="m" text="?" />
                 <Button size="m" view="outlined" onClick={() => openAuthModal('login')}>
                   Войти
                 </Button>
@@ -68,13 +65,12 @@ export const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
             {user && (
               <DropdownMenu
                 items={userMenuItems}
-                onItemClick={(item) => item.action?.()}
                 renderSwitcher={(props) => (
                   <div
                     {...props}
                     style={{ display: 'flex', alignItems: 'center', gap: 8, cursor: 'pointer' }}
                   >
-                    <Avatar size="m" theme="info" name={user.username} />
+                    <Avatar size="m" text={user.username} />
                     <span>{user.username}</span>
                   </div>
                 )}
