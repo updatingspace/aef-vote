@@ -1,6 +1,6 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import PropTypes from "prop-types";
-import { Modal, Button, TextInput, useToaster } from "@gravity-ui/uikit";
+import { Modal, Button, TextInput, useToaster, type ToastProps } from "@gravity-ui/uikit";
 import {
   beginPasskeyLogin,
   completePasskeyLogin,
@@ -11,7 +11,12 @@ import {
 } from "../services/api";
 import { useAuth } from "../contexts/AuthContext";
 
-export default function AuthModal({ open = false, onClose }) {
+type AuthModalProps = {
+  open?: boolean;
+  onClose?: () => void;
+};
+
+export default function AuthModal({ open = false, onClose }: AuthModalProps) {
   const [mode, setMode] = useState<"login" | "signup" | "mfa">("login");
   const [busy, setBusy] = useState(false);
   const { refreshProfile } = useAuth();
@@ -27,6 +32,12 @@ export default function AuthModal({ open = false, onClose }) {
   const [suPassword2, setSuPassword2] = useState("");
 
   const toaster = useToaster();
+  const toastSeq = useRef(0);
+  const addToast = (payload: Omit<ToastProps, "name"> & { name?: string }) =>
+    toaster.add({
+      name: payload.name ?? `auth-${Date.now()}-${toastSeq.current++}`,
+      ...payload,
+    });
   const isLogin = mode === "login";
   const title = useMemo(() => {
     if (mode === "signup") return "Регистрация";
@@ -127,13 +138,13 @@ export default function AuthModal({ open = false, onClose }) {
   async function onLoginSubmit(e: React.FormEvent) {
     e.preventDefault();
     const err = validateLogin();
-    if (err) return toaster.add({ title: err, theme: "warning" });
+    if (err) return addToast({ title: err, theme: "warning" });
     setBusy(true);
     try {
       await doLogin({ email, password });
       const p = await refreshProfile();
       if (p) {
-        toaster.add({
+        addToast({
           title: "Готово!",
           content: `Здравствуйте, ${p.username}.`,
           theme: "success",
@@ -147,13 +158,13 @@ export default function AuthModal({ open = false, onClose }) {
         (typeof msg === "string" && msg.toLowerCase().includes("mfa"));
       if (isMfa) {
         setMode("mfa");
-        toaster.add({
+        addToast({
           title: "Требуется код 2FA",
           theme: "info",
           content: "Введите 6-значный код из приложения.",
         });
       } else {
-        toaster.add({ title: msg || "Ошибка входа", theme: "danger" });
+        addToast({ title: msg || "Ошибка входа", theme: "danger" });
       }
     } finally {
       setBusy(false);
@@ -163,7 +174,7 @@ export default function AuthModal({ open = false, onClose }) {
   async function onSignupSubmit(e: React.FormEvent) {
     e.preventDefault();
     const err = validateSignup();
-    if (err) return toaster.add({ title: err, theme: "warning" });
+    if (err) return addToast({ title: err, theme: "warning" });
     setBusy(true);
     try {
       await doSignupAndLogin({
@@ -173,7 +184,7 @@ export default function AuthModal({ open = false, onClose }) {
       });
       const p = await refreshProfile();
       if (p) {
-        toaster.add({
+        addToast({
           title: "Аккаунт создан",
           content: `Добро пожаловать, ${p.username}!`,
           theme: "success",
@@ -182,7 +193,7 @@ export default function AuthModal({ open = false, onClose }) {
       close();
     } catch (ex: unknown) {
       const msg = getErrorMessage(ex, "Ошибка регистрации");
-      toaster.add({ title: msg, theme: "danger" });
+      addToast({ title: msg, theme: "danger" });
     } finally {
       setBusy(false);
     }
@@ -193,7 +204,7 @@ export default function AuthModal({ open = false, onClose }) {
     const code = mfaCodeValue();
     const neededLen = recoveryMode ? 8 : 6;
     if (code.length !== neededLen) {
-      toaster.add({
+      addToast({
         title: recoveryMode ? "Введите 8-значный код восстановления" : "Введите 6-значный код",
         theme: "warning",
       });
@@ -204,7 +215,7 @@ export default function AuthModal({ open = false, onClose }) {
       await doLogin({ email, password, mfa_code: code });
       const p = await refreshProfile();
       if (p) {
-        toaster.add({
+        addToast({
           title: "Готово!",
           content: `Здравствуйте, ${p.username}.`,
           theme: "success",
@@ -213,7 +224,7 @@ export default function AuthModal({ open = false, onClose }) {
       close();
     } catch (err: unknown) {
       const msg = getErrorMessage(err, "Код не подошёл");
-      toaster.add({ title: msg, theme: "danger" });
+      addToast({ title: msg, theme: "danger" });
     } finally {
       setBusy(false);
     }
@@ -221,7 +232,7 @@ export default function AuthModal({ open = false, onClose }) {
 
   async function onPasskeyLogin() {
     if (!("credentials" in navigator)) {
-      toaster.add({ title: "Passkey не поддерживается", theme: "warning" });
+      addToast({ title: "Passkey не поддерживается", theme: "warning" });
       return;
     }
     setBusy(true);
@@ -262,7 +273,7 @@ export default function AuthModal({ open = false, onClose }) {
       await completePasskeyLogin(assertionPayload);
       const p = await refreshProfile();
       if (p) {
-        toaster.add({
+        addToast({
           title: "Готово!",
           content: `Здравствуйте, ${p.username}.`,
           theme: "success",
@@ -271,7 +282,7 @@ export default function AuthModal({ open = false, onClose }) {
       close();
     } catch (err: unknown) {
       const msg = getErrorMessage(err, "Не удалось войти по Passkey");
-      toaster.add({ title: msg, theme: "danger" });
+      addToast({ title: msg, theme: "danger" });
     } finally {
       setBusy(false);
     }

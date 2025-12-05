@@ -38,7 +38,9 @@ export const NominationPreviewPanel: React.FC<PreviewPanelProps> = ({
         <div>
           <h3 className="nomination-preview-title">{nomination.title}</h3>
           <p className="text-muted small">
-            {nomination.status === 'active' ? 'Активная номинация' : 'Архивная номинация'}
+            {(nomination.status ?? (nomination.isVotingOpen ?? nomination.voting?.isActive) ?? false)
+              ? 'Активная номинация'
+              : 'Архивная номинация'}
           </p>
         </div>
         <Button size="s" view="outlined" onClick={onOpenDialog}>
@@ -74,9 +76,12 @@ export const NominationPreviewPanel: React.FC<PreviewPanelProps> = ({
                   <div className="option-card-title">{option.title}</div>
                   <div className="option-card-votes text-muted">
                     Голосов:{' '}
-                    {option.counts
-                      ? Object.values(option.counts).reduce((sum, value) => sum + value, 0)
-                      : '—'}
+                    {(() => {
+                      const voteCount = option.counts
+                        ? Object.values(option.counts).reduce((sum, value) => sum + value, 0)
+                        : nomination.counts?.[option.id] ?? null;
+                      return typeof voteCount === 'number' ? voteCount : '—';
+                    })()}
                   </div>
                 </div>
                 <div className="option-card-subtitle text-muted">

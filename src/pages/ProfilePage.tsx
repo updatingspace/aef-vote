@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import { toaster } from "@gravity-ui/uikit/toaster-singleton";
-import { me } from "../services/api";
+import { me, type AccountProfile } from "../services/api";
 import { logger } from "../utils/logger";
 
 import AccountHero from "../components/account/AccountHero";
@@ -77,7 +77,7 @@ function AccountSecuritySkeleton() {
 }
 
 export default function ProfilePage() {
-  const [profile, setProfile] = useState(null);
+  const [profile, setProfile] = useState<AccountProfile | null>(null);
   const [loading, setLoading] = useState(true);
   const { openAuthModal } = useAuthUI();
 
@@ -108,7 +108,7 @@ export default function ProfilePage() {
       } catch (e) {
         if (cancelledRef?.current) return;
         setProfile(null);
-        toaster.add({ title: failureTitle, theme: "danger" });
+        toaster.add({ name: `profile-${reason}`, title: failureTitle, theme: "danger" });
         logger.warn("Profile load failed", {
           area: "profile",
           event: "load",
