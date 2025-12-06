@@ -1,7 +1,11 @@
 from __future__ import annotations
 
 import json
+import shutil
+import tempfile
 import time
+from io import BytesIO
+from types import SimpleNamespace
 from unittest.mock import patch
 
 from allauth.account.models import EmailAddress
@@ -12,7 +16,9 @@ from django.core import mail
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.test import Client, TestCase, override_settings
 from django.utils import timezone
+from ninja.errors import HttpError
 from ninja_jwt.tokens import RefreshToken
+from PIL import Image
 
 from core.models import UserSessionMeta, UserSessionToken
 
@@ -38,6 +44,15 @@ class AccountsApiTests(TestCase):
         self.client = Client()
         self.password = "StrongPass123!"
         self.user = self._create_user()
+        self.media_root = tempfile.mkdtemp()
+        self.addCleanup(shutil.rmtree, self.media_root, ignore_errors=True)
+        override = override_settings(
+            MEDIA_ROOT=self.media_root,
+            MEDIA_URL="/media/",
+            GRAVATAR_AUTOLOAD_ENABLED=False,
+        )
+        override.enable()
+        self.addCleanup(override.disable)
 
     def _create_user(
         self,
@@ -66,6 +81,13 @@ class AccountsApiTests(TestCase):
         self.assertTrue(token)
         return str(token)
 
+    def _image_file(self, name: str = "avatar.png", size=(512, 640)):
+        img = Image.new("RGB", size, color=(12, 34, 56))
+        buf = BytesIO()
+        img.save(buf, format="PNG")
+        buf.seek(0)
+        return SimpleUploadedFile(name, buf.getvalue(), content_type="image/png")
+
     def test_headless_login_and_profile_requires_auth(self):
         resp = self.client.get("/api/auth/me")
         self.assertEqual(resp.status_code, 401)
@@ -80,6 +102,9 @@ class AccountsApiTests(TestCase):
         self.assertEqual(data["oauth_providers"], [])
         self.assertFalse(data["is_staff"])
         self.assertFalse(data["is_superuser"])
+        self.assertIsNone(data["avatar_url"])
+        self.assertEqual(data["avatar_source"], "none")
+        self.assertTrue(data["avatar_gravatar_enabled"])
 
     def test_headless_login_rejects_invalid_credentials(self):
         resp = post_json(
@@ -175,7 +200,7 @@ class AccountsApiTests(TestCase):
         self.user.refresh_from_db()
         self.assertTrue(self.user.check_password("BetterPass123!"))
 
-    def test_profile_update_and_avatar_without_field(self):
+    def test_profile_update_avatar_upload_and_delete(self):
         token = self.login_and_get_token()
 
         resp_update = patch_json(
@@ -189,18 +214,35 @@ class AccountsApiTests(TestCase):
         self.assertEqual(self.user.first_name, "Alice")
         self.assertEqual(self.user.last_name, "Smith")
 
-        fake_avatar = SimpleUploadedFile(
-            "avatar.png", b"binarydata", content_type="image/png"
-        )
         resp_avatar = self.client.post(
             "/api/auth/avatar",
-            data={"avatar": fake_avatar},
+            data={"avatar": self._image_file()},
             HTTP_X_SESSION_TOKEN=token,
         )
         self.assertEqual(resp_avatar.status_code, 200)
         data = resp_avatar.json()
         self.assertTrue(data["ok"])
-        self.assertIn("Поле avatar отсутствует", data["message"])
+        self.assertEqual(data["avatar_source"], "upload")
+        self.user.refresh_from_db()
+        profile = self.user.profile
+        profile.refresh_from_db()
+        self.assertTrue(profile.avatar)
+        self.assertEqual(profile.avatar_source, "upload")
+        self.assertFalse(profile.gravatar_enabled)
+
+        resp_delete = self.client.delete(
+            "/api/auth/avatar",
+            HTTP_X_SESSION_TOKEN=token,
+        )
+        self.assertEqual(resp_delete.status_code, 200)
+        deleted = resp_delete.json()
+        self.assertTrue(deleted["ok"])
+        self.assertIsNone(deleted["avatar_url"])
+        self.assertEqual(deleted["avatar_source"], "none")
+        self.assertFalse(deleted["avatar_gravatar_enabled"])
+        profile.refresh_from_db()
+        self.assertFalse(profile.avatar)
+        self.assertEqual(profile.avatar_source, "none")
 
     def test_email_status_and_resend(self):
         token = self.login_and_get_token()
@@ -442,3 +484,76 @@ class AccountsApiTests(TestCase):
         body = resp_begin.json()
         self.assertIn("creation_options", body)
         self.assertIn("publicKey", body["creation_options"])
+
+    def test_passkeys_complete_returns_recovery_codes(self):
+        token = self.login_and_get_token()
+        now = timezone.now()
+
+        class DummyRc:
+            class Type:
+                RECOVERY_CODES = "rc"
+
+            type = "rc"
+
+        dummy_auth = SimpleNamespace(
+            id="a1",
+            data={"name": "MyPasskey"},
+            created_at=now,
+            last_used_at=None,
+        )
+
+        with patch(
+            "accounts.services.passkeys.PasskeyService.complete_registration",
+            return_value=(dummy_auth, DummyRc()),
+        ) as complete_mock, patch(
+            "allauth.mfa.recovery_codes.internal.auth.RecoveryCodes"
+        ) as rc_mock:
+            rc_mock.return_value.get_unused_codes.return_value = ["111111", "222222"]
+            resp = post_json(
+                self.client,
+                "/api/auth/passkeys/complete",
+                {"name": "MyPasskey", "credential": {"rawId": "abc"}},
+                token=token,
+            )
+
+        self.assertEqual(resp.status_code, 200)
+        payload = resp.json()
+        self.assertEqual(payload["authenticator"]["name"], "MyPasskey")
+        self.assertEqual(payload["recovery_codes"], ["111111", "222222"])
+        complete_mock.assert_called_once()
+        rc_mock.return_value.get_unused_codes.assert_called_once()
+
+    def test_passkeys_delete_requires_reauth(self):
+        token = self.login_and_get_token()
+        with patch(
+            "accounts.services.passkeys.PasskeyService.delete",
+            side_effect=HttpError(401, "reauth_required"),
+        ):
+            resp = post_json(
+                self.client,
+                "/api/auth/passkeys/delete",
+                {"ids": ["a1", "a2"]},
+                token=token,
+            )
+        self.assertEqual(resp.status_code, 401)
+        self.assertIn("reauth_required", resp.json().get("detail", ""))
+
+    def test_headless_passkey_login_complete_issues_session_token(self):
+        user = self._create_user(username="passkey", email="pk@example.com")
+        with patch(
+            "accounts.api.router_headless.PasskeyService.complete_login",
+            return_value=(user, None),
+        ), patch(
+            "accounts.api.router_headless.HeadlessService.issue_session_token",
+            return_value="headless-token",
+        ):
+            resp = post_json(
+                self.client,
+                "/api/auth/passkeys/login/complete",
+                {"credential": {"rawId": "cred"}},
+            )
+
+        self.assertEqual(resp.status_code, 200)
+        self.assertEqual(resp.headers.get("X-Session-Token"), "headless-token")
+        body = resp.json()
+        self.assertEqual(body["meta"]["session_token"], "headless-token")

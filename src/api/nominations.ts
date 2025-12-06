@@ -8,6 +8,7 @@ type ApiNominationOption = {
   imageUrl?: string | null;
   image_url?: string | null;
   game?: ApiGame | null;
+  payload?: Record<string, unknown> | null;
 };
 
 type ApiVoting = {
@@ -18,6 +19,8 @@ type ApiVoting = {
   is_active?: boolean;
   isOpen?: boolean;
   is_open?: boolean;
+  isPublic?: boolean;
+  is_public?: boolean;
   deadlineAt?: string | null;
   deadline_at?: string | null;
   showVoteCounts?: boolean;
@@ -42,6 +45,8 @@ type ApiNomination = {
   votingDeadline?: string | null;
   voting_deadline?: string | null;
   voting?: ApiVoting | null;
+  kind?: string | null;
+  config?: Record<string, unknown> | null;
 };
 
 type VoteResponse = {
@@ -78,6 +83,7 @@ const mapOption = (option: ApiNominationOption): NominationOption => ({
   title: option.title,
   imageUrl: option.imageUrl ?? option.image_url ?? undefined,
   game: option.game ? mapGame(option.game) : undefined,
+  payload: option.payload ?? undefined,
 });
 
 const mapVoting = (value?: ApiVoting | null): Voting | null => {
@@ -93,6 +99,7 @@ const mapVoting = (value?: ApiVoting | null): Voting | null => {
     description: value.description ?? undefined,
     isActive: value.isActive ?? value.is_active ?? true,
     isOpen: value.isOpen ?? value.is_open ?? true,
+    isPublic: value.isPublic ?? value.is_public ?? true,
     deadlineAt,
     showVoteCounts: value.showVoteCounts ?? value.show_vote_counts ?? undefined,
     rules: value.rules ?? undefined,
@@ -112,6 +119,8 @@ const mapNomination = (nomination: ApiNomination): Nomination => ({
     nomination.requiresTelegramLink ?? nomination.requires_telegram_link ?? false,
   votingDeadline: nomination.votingDeadline ?? nomination.voting_deadline ?? null,
   voting: mapVoting(nomination.voting),
+  kind: nomination.kind ?? 'game',
+  config: nomination.config ?? null,
 });
 
 const mapVoteResponse = (response: VoteResponse): VoteResult => ({

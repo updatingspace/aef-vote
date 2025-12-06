@@ -20,18 +20,31 @@ export type UserInfo = {
   isStaff: boolean;
   firstName?: string | null;
   lastName?: string | null;
+  displayName: string;
   emailVerified?: boolean;
+  avatarUrl?: string | null;
+  avatarSource?: string | null;
+  avatarGravatarEnabled?: boolean | null;
 };
 
-const mapProfileToUser = (profile: AccountProfile): UserInfo => ({
-  username: profile.username,
-  email: profile.email ?? null,
-  isSuperuser: profile.is_superuser ?? false,
-  isStaff: profile.is_staff ?? false,
-  firstName: profile.first_name ?? null,
-  lastName: profile.last_name ?? null,
-  emailVerified: profile.email_verified ?? false,
-});
+const mapProfileToUser = (profile: AccountProfile): UserInfo => {
+  const displayName =
+    [profile.first_name, profile.last_name].filter(Boolean).join(" ").trim() || profile.username;
+
+  return {
+    username: profile.username,
+    email: profile.email ?? null,
+    isSuperuser: profile.is_superuser ?? false,
+    isStaff: profile.is_staff ?? false,
+    firstName: profile.first_name ?? null,
+    lastName: profile.last_name ?? null,
+    displayName,
+    emailVerified: profile.email_verified ?? false,
+    avatarUrl: profile.avatar_url ?? null,
+    avatarSource: profile.avatar_source ?? null,
+    avatarGravatarEnabled: profile.avatar_gravatar_enabled ?? null,
+  };
+};
 
 type AuthContextValue = {
   user: UserInfo | null;

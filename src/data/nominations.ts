@@ -5,6 +5,7 @@ export type NominationOption = {
   title: string;
   imageUrl?: string;
   game?: Game | null;
+  payload?: Record<string, unknown>;
   counts?: Record<string, number>;
 };
 
@@ -14,6 +15,7 @@ export type Voting = {
   description?: string;
   isActive: boolean;
   isOpen: boolean;
+  isPublic?: boolean;
   deadlineAt?: string | null;
   showVoteCounts?: boolean;
   rules?: Record<string, unknown>;
@@ -32,6 +34,8 @@ export type Nomination = {
   requiresTelegramLink?: boolean;
   votingDeadline?: string | null;
   voting?: Voting | null;
+  kind?: string;
+  config?: Record<string, unknown> | null;
 };
 
 const votingTemplates: Voting[] = [
@@ -81,6 +85,8 @@ export const nominations: Nomination[] = Array.from(
       id: String(index + 1),
       title: `Номинация ${index + 1}`,
       description: 'Краткое описание номинации. Текст-заглушка.',
+      kind: 'game',
+      config: null,
       options,
       voting,
     };

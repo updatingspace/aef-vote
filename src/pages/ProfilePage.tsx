@@ -3,7 +3,7 @@ import { toaster } from "@gravity-ui/uikit/toaster-singleton";
 import { me, type AccountProfile } from "../services/api";
 import { logger } from "../utils/logger";
 
-import AccountHero from "../components/account/AccountHero";
+import AvatarCard from "../components/account/AvatarCard";
 import ProfileCard from "../components/account/ProfileCard";
 import EmailCard from "../components/account/EmailCard";
 import PasswordCard from "../components/account/PasswordCard";
@@ -163,7 +163,7 @@ export default function ProfilePage() {
         )}
       </div>
 
-      <AccountHero profile={profile} />
+      <AvatarCard profile={profile} onUpdated={reload} />
       <ProfileCard profile={profile} onUpdated={reload} />
       <EmailCard />
       <PasswordCard />

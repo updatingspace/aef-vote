@@ -56,6 +56,8 @@ def vote_for_option(request, nomination_id: str, payload: VoteRequestSchema):
         raise HttpError(403, detail) from exc
     except TelegramLinkRequiredError as exc:
         raise HttpError(403, str(exc)) from exc
+    except PermissionError as exc:
+        raise HttpError(403, str(exc)) from exc
 
     voting = nomination.voting
     is_open = voting.is_open and voting.is_active and nomination.is_active

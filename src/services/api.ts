@@ -1,4 +1,4 @@
-import { ApiError, apiBaseUrl, request, isApiError } from '../api/client';
+import { ApiError, apiBaseUrl, extractApiErrorMessage, request, isApiError } from '../api/client';
 export { ApiError } from '../api/client';
 import {
   clearSessionToken,
@@ -12,6 +12,8 @@ export type AccountProfile = {
   first_name?: string | null;
   last_name?: string | null;
   avatar_url?: string | null;
+  avatar_source?: string | null;
+  avatar_gravatar_enabled?: boolean | null;
   has_2fa: boolean;
   oauth_providers: string[];
   email_verified: boolean;
@@ -33,6 +35,13 @@ export type SessionRow = {
 };
 
 type OkOut = { ok: boolean; message?: string | null };
+export type AvatarResponse = {
+  ok: boolean;
+  message?: string | null;
+  avatar_url?: string | null;
+  avatar_source?: string | null;
+  avatar_gravatar_enabled?: boolean | null;
+};
 
 const toApiUrl = (path: string) =>
   `${apiBaseUrl}${path.startsWith('/') ? path : `/${path}`}`;
@@ -45,15 +54,16 @@ const statusToKind = (status: number) => {
   return 'unknown' as const;
 };
 
-const parseErrorMessage = async (response: Response) => {
+const parseErrorMessage = async (
+  response: Response,
+): Promise<{ message: string | null; details: unknown | null }> => {
   try {
     const data = await response.clone().json();
-    if (typeof data?.detail === 'string') return data.detail;
-    if (typeof data?.message === 'string') return data.message;
+    return { message: extractApiErrorMessage(data), details: data };
   } catch {
     /* ignore */
   }
-  return null;
+  return { message: null, details: null };
 };
 
 type AuthResponseMeta = {
@@ -81,12 +91,13 @@ async function fetchJsonWithHeaders<T = unknown>(
   });
 
   if (!response.ok) {
-    const messageFromBody = await parseErrorMessage(response);
+    const { message: messageFromBody, details } = await parseErrorMessage(response);
     const message =
       messageFromBody ?? `Запрос завершился с ошибкой (${response.status})`;
     throw new ApiError(message, {
       status: response.status,
       kind: statusToKind(response.status),
+      details,
     });
   }
   const data = (response.status === 204 ? null : await response.json()) as T;
@@ -160,7 +171,7 @@ export async function updateProfile(body: {
   return request('/auth/profile', { method: 'PATCH', body });
 }
 
-export async function uploadAvatar(file: File): Promise<OkOut> {
+export async function uploadAvatar(file: File): Promise<AvatarResponse> {
   const form = new FormData();
   form.append('avatar', file);
   const headers: Record<string, string> = {};
@@ -173,12 +184,35 @@ export async function uploadAvatar(file: File): Promise<OkOut> {
     credentials: 'include',
   });
   if (!response.ok) {
+    const { message: messageFromBody, details } = await parseErrorMessage(response);
     const message =
-      (await parseErrorMessage(response)) ??
-      `Запрос завершился с ошибкой (${response.status})`;
+      messageFromBody ?? `Запрос завершился с ошибкой (${response.status})`;
     throw new ApiError(message, {
       status: response.status,
       kind: statusToKind(response.status),
+      details,
+    });
+  }
+  return response.json();
+}
+
+export async function deleteAvatar(): Promise<AvatarResponse> {
+  const headers: Record<string, string> = {};
+  const token = getSessionToken();
+  if (token) headers['X-Session-Token'] = token;
+  const response = await fetch(toApiUrl('/auth/avatar'), {
+    method: 'DELETE',
+    headers,
+    credentials: 'include',
+  });
+  if (!response.ok) {
+    const { message: messageFromBody, details } = await parseErrorMessage(response);
+    const message =
+      messageFromBody ?? `Запрос завершился с ошибкой (${response.status})`;
+    throw new ApiError(message, {
+      status: response.status,
+      kind: statusToKind(response.status),
+      details,
     });
   }
   return response.json();

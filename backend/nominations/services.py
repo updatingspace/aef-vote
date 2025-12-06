@@ -1,13 +1,16 @@
 from __future__ import annotations
 
 import logging
+import time
 from collections import defaultdict
 from collections.abc import Iterable
+from threading import RLock
 from typing import Any
 
 from django.conf import settings
-from django.db import IntegrityError
-from django.db.models import Count, Prefetch, Q
+from django.db import IntegrityError, OperationalError
+from django.db.models import Count, Prefetch, Q, F
+from django.utils import timezone
 
 from accounts.services import user_has_telegram_link
 
@@ -50,6 +53,37 @@ NOMINATIONS_PREFETCH = Prefetch(
     "nominations",
     queryset=Nomination.objects.order_by("order", "title"),
 )
+
+_seed_lock = RLock()
+_votings_seeded = False
+_nominations_seeded = False
+
+
+def _run_seed_with_retry(fn) -> bool:
+    """
+    Run a seeding callable with a few retries to survive transient SQLite locks.
+    Returns True when the callable finished (even if it changed nothing).
+    """
+    delays = (0, 0.15, 0.3)
+    for delay in delays:
+        try:
+            fn()
+            return True
+        except OperationalError as exc:
+            message = str(exc).lower()
+            if "locked" not in message:
+                raise
+            logger.warning(
+                "Seeding skipped due to locked database, retrying",
+                exc_info=True,
+                extra={"delay": delay},
+            )
+            time.sleep(delay)
+        except Exception:
+            # Bubble up non-database errors to catch real issues early
+            raise
+    logger.error("Seeding failed due to locked database after retries")
+    return False
 
 
 def _serialize_game(game: Game) -> dict[str, Any]:
@@ -210,12 +244,28 @@ def _resolve_vote_permissions(user: Any) -> tuple[bool, bool]:
 
 
 def ensure_votings_seeded() -> None:
-    seed_votings_from_fixture(force=False)
+    global _votings_seeded
+    if _votings_seeded:
+        return
+    with _seed_lock:
+        if _votings_seeded:
+            return
+        success = _run_seed_with_retry(lambda: seed_votings_from_fixture(force=False))
+        _votings_seeded = bool(success)
 
 
 def ensure_nominations_seeded() -> None:
-    ensure_votings_seeded()
-    seed_nominations_from_fixture(force=False)
+    global _nominations_seeded
+    if _nominations_seeded:
+        return
+    with _seed_lock:
+        if _nominations_seeded:
+            return
+        ensure_votings_seeded()
+        success = _run_seed_with_retry(
+            lambda: seed_nominations_from_fixture(force=False)
+        )
+        _nominations_seeded = bool(success)
 
 
 def get_nomination(nomination_id: str) -> Nomination | None:
@@ -268,6 +318,7 @@ def _serialize_voting(voting: Voting) -> dict[str, Any]:
         "description": voting.description or None,
         "is_active": voting.is_active,
         "is_open": voting.is_open,
+        "is_public": voting.is_public,
         "deadline_at": voting.deadline_at,
         "show_vote_counts": voting.expose_vote_counts,
         "rules": voting.rules or {},
@@ -279,12 +330,13 @@ def _serialize_nomination_summary(nomination: Nomination) -> dict[str, Any]:
         "id": nomination.id,
         "title": nomination.title,
         "description": nomination.description or None,
+        "kind": nomination.kind,
         "is_active": nomination.is_active,
         "order": nomination.order,
     }
 
 
-def list_votings_overview() -> list[dict[str, Any]]:
+def list_votings_overview(include_non_public: bool = False) -> list[dict[str, Any]]:
     """
     Return all votings with lightweight nomination metadata to drive the frontend overview.
     """
@@ -295,6 +347,8 @@ def list_votings_overview() -> list[dict[str, Any]]:
 
     result: list[dict[str, Any]] = []
     for voting in votings:
+        if not include_non_public and not voting.is_public:
+            continue
         nominations = list(voting.nominations.all())
         result.append(
             {
@@ -306,12 +360,36 @@ def list_votings_overview() -> list[dict[str, Any]]:
     return result
 
 
+def list_votings_feed(limit: int = 20, include_non_public: bool = False) -> list[dict[str, Any]]:
+    """
+    Lightweight feed for the главная страница: только активные/публичные голосования
+    без списка номинаций, ограничено лимитом.
+    """
+    ensure_nominations_seeded()
+    qs = (
+        Voting.objects.filter(is_active=True)
+        .annotate(nomination_count=Count("nominations"))
+        .order_by(F("deadline_at").asc(nulls_last=True), "order", "title")
+    )
+    if not include_non_public:
+        qs = qs.filter(is_public=True)
+    qs = qs[: max(1, limit)]
+
+    feed: list[dict[str, Any]] = []
+    for voting in qs:
+        payload = _serialize_voting(voting)
+        payload["nomination_count"] = getattr(voting, "nomination_count", 0)
+        feed.append(payload)
+    return feed
+
+
 def _serialize_option(option: NominationOption) -> dict[str, Any]:
     return {
         "id": option.id,
         "title": option.title,
         "image_url": option.image_url or None,
         "game": _serialize_game(option.game) if option.game else None,
+        "payload": option.payload if isinstance(option.payload, dict) else {},
     }
 
 
@@ -326,11 +404,14 @@ def _build_nomination_payload(
     options = [_serialize_option(option) for option in nomination.options.all()]
     is_voting_open = voting.is_open and voting.is_active and nomination.is_active
     counts_payload = counts if voting.expose_vote_counts else None
+    config_payload = nomination.config if isinstance(nomination.config, dict) else {}
 
     return {
         "id": nomination.id,
         "title": nomination.title,
         "description": nomination.description or None,
+        "kind": nomination.kind,
+        "config": config_payload,
         "options": options,
         "counts": counts_payload,
         "user_vote": user_vote,
@@ -346,6 +427,7 @@ def list_nominations(user=None, voting_code: str | None = None) -> list[dict[str
     ensure_nominations_seeded()
     user_can_vote, requires_telegram_link = _resolve_vote_permissions(user)
     user_votes = get_user_votes_map(user) if user_can_vote else {}
+    include_non_public = bool(getattr(user, "is_superuser", False))
 
     nominations_qs = Nomination.objects.filter(is_active=True)
     if voting_code:
@@ -356,6 +438,11 @@ def list_nominations(user=None, voting_code: str | None = None) -> list[dict[str
         .prefetch_related(OPTIONS_PREFETCH)
         .order_by("voting__order", "order", "title")
     )
+
+    if not include_non_public:
+        nominations = [
+            nomination for nomination in nominations if nomination.voting.is_public
+        ]
 
     nomination_ids_with_counts = [
         nomination.id
@@ -384,6 +471,9 @@ def list_nominations(user=None, voting_code: str | None = None) -> list[dict[str
 def get_nomination_with_status(nomination_id: str, user=None) -> dict[str, Any] | None:
     nomination = get_nomination(nomination_id)
     if not nomination:
+        return None
+    include_non_public = bool(getattr(user, "is_superuser", False))
+    if not include_non_public and not nomination.voting.is_public:
         return None
 
     user_can_vote, requires_telegram_link = _resolve_vote_permissions(user)
@@ -422,6 +512,18 @@ def record_vote(
             },
         )
         raise NominationNotFoundError(nomination_id)
+
+    is_superuser = bool(getattr(user, "is_superuser", False))
+    if not is_superuser and not nomination.voting.is_public:
+        logger.warning(
+            "Vote rejected: voting not public",
+            extra={
+                "nomination_id": nomination_id,
+                "voting_id": getattr(nomination.voting, "code", None),
+                "user_id": getattr(user, "id", None),
+            },
+        )
+        raise PermissionError("Voting not published")
 
     option = next(
         (
@@ -488,3 +590,158 @@ def record_vote(
     counts = get_vote_counts(nomination_id) if voting.expose_vote_counts else None
 
     return counts, nomination
+
+
+def _serialize_admin_nomination(
+    nomination: Nomination, counts: VoteCounts | None
+) -> dict[str, Any]:
+    votes_total = sum(counts.values()) if counts else None
+    return {
+        "id": nomination.id,
+        "title": nomination.title,
+        "status": "active" if nomination.is_active else "archived",
+        "votes": votes_total,
+        "updated_at": nomination.updated_at,
+    }
+
+
+def get_admin_voting_detail(voting_code: str) -> dict[str, Any] | None:
+    ensure_nominations_seeded()
+    voting = (
+        Voting.objects.filter(code=voting_code)
+        .prefetch_related(NOMINATIONS_PREFETCH)
+        .first()
+    )
+    if not voting:
+        return None
+
+    nominations = list(voting.nominations.all())
+    counts_map = get_vote_counts_map([nom.id for nom in nominations])
+
+    return {
+        **_serialize_voting(voting),
+        "nomination_count": len(nominations),
+        "nominations": [
+            _serialize_admin_nomination(nomination, counts_map.get(nomination.id))
+            for nomination in nominations
+        ],
+    }
+
+
+def update_voting_from_admin_payload(
+    voting_code: str, data: dict[str, Any]
+) -> dict[str, Any]:
+    ensure_votings_seeded()
+    voting = Voting.objects.filter(code=voting_code).first()
+    if not voting:
+        logger.warning(
+            "Admin voting update failed: not found",
+            extra={"voting_code": voting_code},
+        )
+        raise LookupError(voting_code)
+
+    payload = dict(data)
+    close_now = bool(payload.pop("close_now", False))
+    if close_now:
+        payload["deadline_at"] = timezone.now()
+        payload.setdefault("is_active", False)
+
+    updated_fields: set[str] = set()
+
+    if "title" in payload and payload.get("title") is not None:
+        title = (
+            payload.get("title").strip()
+            if isinstance(payload.get("title"), str)
+            else payload.get("title")
+        )
+        if title and title != voting.title:
+            voting.title = title
+            updated_fields.add("title")
+
+    if "description" in payload:
+        description = payload.get("description") or ""
+        if voting.description != description:
+            voting.description = description
+            updated_fields.add("description")
+
+    if "deadline_at" in payload:
+        deadline_at = payload.get("deadline_at")
+        if voting.deadline_at != deadline_at:
+            voting.deadline_at = deadline_at
+            updated_fields.add("deadline_at")
+
+    if "is_active" in payload and payload.get("is_active") is not None:
+        is_active = bool(payload.get("is_active"))
+        if voting.is_active != is_active:
+            voting.is_active = is_active
+            updated_fields.add("is_active")
+
+    if "is_public" in payload and payload.get("is_public") is not None:
+        prev_public = voting.is_public
+        voting.set_public(bool(payload.get("is_public")))
+        if prev_public != voting.is_public or "rules" not in updated_fields:
+            updated_fields.add("rules")
+
+    if close_now:
+        updated_fields.update({"deadline_at", "is_active"})
+
+    if updated_fields:
+        voting.save(update_fields=list(updated_fields))
+        logger.info(
+            "Voting updated via admin API",
+            extra={
+                "voting_code": voting_code,
+                "fields": sorted(updated_fields),
+                "close_now": close_now,
+            },
+        )
+
+    return get_admin_voting_detail(voting_code) or _serialize_voting(voting)
+
+
+def get_admin_dashboard_metrics() -> dict[str, int]:
+    ensure_nominations_seeded()
+    votings = list(Voting.objects.all())
+    published = [voting for voting in votings if voting.is_public]
+    draft_votings = len(votings) - len(published)
+    active_votings = len([v for v in published if v.is_active])
+    archived_votings = len([v for v in published if not v.is_active])
+    open_for_voting = len([v for v in published if v.is_active and v.is_open])
+
+    open_nominations = sum(
+        1
+        for nomination in Nomination.objects.select_related("voting").filter(
+            is_active=True
+        )
+        if nomination.voting.is_public
+    )
+
+    total_votes = NominationVote.objects.count()
+    unique_voters = (
+        NominationVote.objects.values("user_id").distinct().count()
+        if total_votes
+        else 0
+    )
+
+    logger.info(
+        "Admin dashboard metrics calculated",
+        extra={
+            "votings": len(votings),
+            "published": len(published),
+            "drafts": draft_votings,
+            "active": active_votings,
+            "archived": archived_votings,
+            "votes": total_votes,
+            "unique_voters": unique_voters,
+        },
+    )
+
+    return {
+        "active_votings": active_votings,
+        "draft_votings": draft_votings,
+        "archived_votings": archived_votings,
+        "total_votes": total_votes,
+        "unique_voters": unique_voters,
+        "open_nominations": open_nominations,
+        "open_for_voting": open_for_voting,
+    }

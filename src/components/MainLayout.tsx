@@ -13,10 +13,9 @@ interface MainLayoutProps {
 }
 
 export const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
-  const { user } = useAuth();
+  const { user, setUser } = useAuth();
   const { openAuthModal, closeAuthModal, isAuthModalOpen, setAuthMode } = useAuthUI();
   const navigate = useNavigate();
-  const { setUser } = useAuth();
   const isSuperuser = Boolean(user?.isSuperuser);
 
   const userMenuItems = useMemo<DropdownMenuItem[]>(
@@ -65,15 +64,28 @@ export const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
             {user && (
               <DropdownMenu
                 items={userMenuItems}
-                renderSwitcher={(props) => (
-                  <div
-                    {...props}
-                    style={{ display: 'flex', alignItems: 'center', gap: 8, cursor: 'pointer' }}
-                  >
-                    <Avatar size="m" text={user.username} />
-                    <span>{user.username}</span>
-                  </div>
-                )}
+                renderSwitcher={(props) => {
+                  const displayName = user.displayName || user.username;
+                  return (
+                    <div
+                      {...props}
+                      style={{ display: 'flex', alignItems: 'center', gap: 10, cursor: 'pointer' }}
+                    >
+                      <Avatar
+                        size="m"
+                        imgUrl={user.avatarUrl || undefined}
+                        text={displayName}
+                        title={displayName}
+                      />
+                      <div style={{ display: 'flex', flexDirection: 'column', lineHeight: 1.2 }}>
+                        <span>{displayName}</span>
+                        {user.email && (
+                          <small style={{ opacity: 0.7 }}>{user.email}</small>
+                        )}
+                      </div>
+                    </div>
+                  );
+                }}
               />
             )}
           </nav>

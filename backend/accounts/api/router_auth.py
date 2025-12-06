@@ -47,7 +47,7 @@ def logout_current(request):
     operation_id="auth_me",
 )
 def me(request):
-    return AuthService.profile(request.auth)
+    return AuthService.profile(request.auth, request=request)
 
 
 @auth_router.post(

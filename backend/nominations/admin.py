@@ -85,6 +85,7 @@ class NominationOptionInline(admin.TabularInline):
         "title",
         "game",
         "image_url",
+        "payload",
         "order",
         "is_active",
         "created_at",
@@ -109,18 +110,31 @@ class NominationAdmin(admin.ModelAdmin):
         "title",
         "id",
         "voting",
+        "kind",
         "is_active",
         "order",
         "options_count",
         "updated_at",
     )
     search_fields = ("title", "id", "description")
-    list_filter = ("is_active", "voting")
+    list_filter = ("is_active", "voting", "kind")
     ordering = ("voting__order", "order", "title")
     readonly_fields = ("created_at", "updated_at")
     inlines = (NominationOptionInline,)
     prepopulated_fields = {"id": ("title",)}
     autocomplete_fields = ("voting",)
+    fields = (
+        "id",
+        "title",
+        "voting",
+        "kind",
+        "description",
+        "config",
+        "order",
+        "is_active",
+        "created_at",
+        "updated_at",
+    )
 
     def get_prepopulated_fields(self, request, obj=None):
         if obj and obj.pk:
@@ -160,6 +174,18 @@ class NominationOptionAdmin(admin.ModelAdmin):
     readonly_fields = ("created_at", "updated_at")
     prepopulated_fields = {"id": ("title",)}
     autocomplete_fields = ("nomination", "game")
+    fields = (
+        "id",
+        "title",
+        "nomination",
+        "game",
+        "image_url",
+        "payload",
+        "order",
+        "is_active",
+        "created_at",
+        "updated_at",
+    )
 
     def get_prepopulated_fields(self, request, obj=None):
         if obj and obj.pk:

@@ -1746,6 +1746,37 @@ body {
   margin-top: 0.5rem;
 }
 
+.admin-detail-controls {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 0.75rem;
+  margin: 0.75rem 0;
+}
+
+.admin-metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 0.75rem;
+}
+
+.admin-metric {
+  padding: 0.75rem;
+  border-radius: 12px;
+  background: var(--g-color-base-misc-light, #f5f7fb);
+  border: 1px solid var(--g-color-line-generic, #e2e8f5);
+}
+
+.admin-metric-value {
+  font-size: 1.25rem;
+  font-weight: 700;
+  line-height: 1.1;
+}
+
+.admin-metric-label {
+  font-size: 0.85rem;
+  color: var(--g-color-text-secondary);
+}
+
 .admin-loader-box {
   display: flex;
   flex-direction: column;

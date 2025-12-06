@@ -25,6 +25,14 @@ class OkOut(Schema):
     message: str | None = None
 
 
+class AvatarOut(Schema):
+    ok: bool
+    message: str | None = None
+    avatar_url: str | None = None
+    avatar_source: str | None = None
+    avatar_gravatar_enabled: bool | None = None
+
+
 # ---------- Profile / Email ----------
 class ProfileUpdateIn(Schema):
     first_name: str | None = None
@@ -108,6 +116,8 @@ class ProfileOut(Schema):
     first_name: str | None = None
     last_name: str | None = None
     avatar_url: str | None = None
+    avatar_source: str | None = None
+    avatar_gravatar_enabled: bool | None = None
     email_verified: bool = False
 
 

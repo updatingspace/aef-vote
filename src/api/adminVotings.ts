@@ -1,79 +1,166 @@
-import { ApiError } from './client';
-import { fetchNominations } from './nominations';
-import { fetchVotingCatalog } from './votings';
+import { request } from './client';
+
+export type AdminVotingStatus = 'draft' | 'active' | 'archived';
 
 export type AdminNomination = {
   id: string;
   title: string;
-  status: 'draft' | 'active' | 'archived';
+  status: AdminVotingStatus;
   votes?: number | null;
   updatedAt?: string | null;
+  kind?: string;
 };
 
 export type AdminVotingListItem = {
   id: string;
   title: string;
   description?: string | null;
-  status: 'draft' | 'active' | 'archived';
+  status: AdminVotingStatus;
   deadlineAt?: string | null;
   nominationCount: number;
+  isPublished: boolean;
+  isActive: boolean;
+  isOpen: boolean;
+  showVoteCounts?: boolean;
+  rules?: Record<string, unknown> | null;
 };
 
 export type AdminVoting = AdminVotingListItem & {
   nominations: AdminNomination[];
-  isPublished?: boolean;
 };
 
-export async function fetchAdminVotings(search?: string): Promise<AdminVotingListItem[]> {
-  const catalog = await fetchVotingCatalog();
-  const searchValue = search?.toLowerCase() ?? '';
+export type AdminStats = {
+  activeVotings: number;
+  draftVotings: number;
+  archivedVotings: number;
+  totalVotes: number;
+  uniqueVoters: number;
+  openNominations: number;
+  openForVoting: number;
+};
 
-  return catalog
-    .filter((item) => item.title.toLowerCase().includes(searchValue))
-    .map((item) => ({
-      id: item.id,
-      title: item.title,
-      description: item.description ?? null,
-      status: item.isActive ? 'active' : 'archived',
-      deadlineAt: item.deadlineAt ?? null,
-      nominationCount: item.nominationCount,
-    }));
+type ApiAdminNomination = {
+  id: string;
+  title: string;
+  status: string;
+  votes?: number | null;
+  updatedAt?: string | null;
+  updated_at?: string | null;
+  kind?: string | null;
+};
+
+type ApiAdminVoting = {
+  id: string;
+  title: string;
+  description?: string | null;
+  isActive?: boolean;
+  is_active?: boolean;
+  isOpen?: boolean;
+  is_open?: boolean;
+  isPublic?: boolean;
+  is_public?: boolean;
+  deadlineAt?: string | null;
+  deadline_at?: string | null;
+  nominationCount?: number;
+  nomination_count?: number;
+  nominations?: ApiAdminNomination[];
+  showVoteCounts?: boolean;
+  show_vote_counts?: boolean;
+  rules?: Record<string, unknown> | null;
+};
+
+const deriveStatus = (item: ApiAdminVoting): AdminVotingStatus => {
+  const isPublished = item.isPublic ?? item.is_public ?? true;
+  const isActive = item.isActive ?? item.is_active ?? true;
+  const isOpen = item.isOpen ?? item.is_open ?? true;
+  if (!isPublished) return 'draft';
+  if (!isActive || isOpen === false) return 'archived';
+  return 'active';
+};
+
+const mapAdminNomination = (item: ApiAdminNomination): AdminNomination => ({
+  id: item.id,
+  title: item.title,
+  status: (item.status as AdminVotingStatus) ?? 'archived',
+  votes: item.votes ?? null,
+  updatedAt: item.updatedAt ?? item.updated_at ?? null,
+  kind: item.kind ?? undefined,
+});
+
+const mapAdminVotingSummary = (item: ApiAdminVoting): AdminVotingListItem => {
+  const status = deriveStatus(item);
+  const isPublished = item.isPublic ?? item.is_public ?? status !== 'draft';
+  const deadlineAt = item.deadlineAt ?? item.deadline_at ?? null;
+  const nominationCount =
+    item.nominationCount ?? item.nomination_count ?? item.nominations?.length ?? 0;
+  const showVoteCounts = item.showVoteCounts ?? item.show_vote_counts ?? false;
+
+  return {
+    id: item.id,
+    title: item.title,
+    description: item.description ?? null,
+    status,
+    deadlineAt,
+    nominationCount,
+    isPublished,
+    isActive: item.isActive ?? item.is_active ?? true,
+    isOpen: item.isOpen ?? item.is_open ?? true,
+    showVoteCounts,
+    rules: item.rules ?? null,
+  };
+};
+
+const mapAdminVotingDetail = (item: ApiAdminVoting): AdminVoting => ({
+  ...mapAdminVotingSummary(item),
+  nominations: (item.nominations ?? []).map(mapAdminNomination),
+});
+
+export async function fetchAdminVotings(search?: string): Promise<AdminVotingListItem[]> {
+  const data = await request<ApiAdminVoting[]>('/admin/votings');
+  const mapped = data.map(mapAdminVotingSummary);
+  const searchValue = search?.trim().toLowerCase() ?? '';
+  if (!searchValue) {
+    return mapped;
+  }
+  return mapped.filter((item) => item.title.toLowerCase().includes(searchValue));
 }
 
 export async function fetchAdminVoting(id: string): Promise<AdminVoting> {
-  const catalog = await fetchVotingCatalog();
-  const meta = catalog.find((item) => item.id === id);
-
-  const nominations = await fetchNominations(id);
-
-  if (!meta) {
-    throw new ApiError('Голосование не найдено', { kind: 'not_found' });
-  }
-
-  return {
-    id: meta.id,
-    title: meta.title,
-    description: meta.description ?? null,
-    status: meta.isActive ? 'active' : 'archived',
-    deadlineAt: meta.deadlineAt ?? null,
-    nominationCount: meta.nominationCount,
-    nominations: nominations.map((nom) => ({
-      id: nom.id,
-      title: nom.title,
-      status: nom.isVotingOpen === false ? 'archived' : 'active',
-      votes: nom.counts ? Object.values(nom.counts).reduce((sum, value) => sum + value, 0) : null,
-      updatedAt: null,
-    })),
-    isPublished: meta.isActive,
-  };
+  const detail = await request<ApiAdminVoting>(`/admin/votings/${id}`);
+  return mapAdminVotingDetail(detail);
 }
 
 export async function updateAdminVotingMeta(
-  _id: string,
-  _payload: { title?: string; description?: string | null },
+  id: string,
+  payload: {
+    title?: string;
+    description?: string | null;
+    deadlineAt?: string | null;
+    isPublished?: boolean;
+    isActive?: boolean;
+    closeNow?: boolean;
+    showVoteCounts?: boolean;
+    rules?: Record<string, unknown> | null;
+  },
 ): Promise<AdminVoting> {
-  // Keep signature for future API support; mark params as used to satisfy linting.
-  void _id;
-  void _payload;
-  throw new ApiError('Редактирование голосований пока не поддержано API', { kind: 'forbidden' });
+  const body: Record<string, unknown> = {};
+  if (payload.title !== undefined) body.title = payload.title;
+  if (payload.description !== undefined) body.description = payload.description;
+  if (payload.deadlineAt !== undefined) body.deadlineAt = payload.deadlineAt;
+  if (payload.isPublished !== undefined) body.isPublic = payload.isPublished;
+  if (payload.isActive !== undefined) body.isActive = payload.isActive;
+  if (payload.showVoteCounts !== undefined) body.showVoteCounts = payload.showVoteCounts;
+  if (payload.rules !== undefined) body.rules = payload.rules;
+  if (payload.closeNow) body.closeNow = true;
+
+  const updated = await request<ApiAdminVoting>(`/admin/votings/${id}`, {
+    method: 'PATCH',
+    body,
+  });
+
+  return mapAdminVotingDetail(updated);
+}
+
+export async function fetchAdminStats(): Promise<AdminStats> {
+  return request<AdminStats>('/admin/stats');
 }

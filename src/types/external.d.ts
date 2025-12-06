@@ -6,12 +6,6 @@ declare module 'prop-types' {
 }
 
 type AccountComponent = ComponentType<Record<string, unknown>>;
-
-declare module '../components/account/AccountHero' {
-  const Component: AccountComponent;
-  export default Component;
-}
-
 declare module '../components/account/ProfileCard' {
   const Component: AccountComponent;
   export default Component;

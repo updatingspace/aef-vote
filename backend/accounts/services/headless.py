@@ -16,6 +16,8 @@ from django.contrib.auth import login as dj_login
 from django.utils.module_loading import import_string
 from ninja.errors import HttpError
 
+from accounts.services.profile import ProfileService
+
 logger = logging.getLogger(__name__)
 
 
@@ -143,6 +145,14 @@ class HeadlessService:
         user = form.save(request)
         record_authentication(request, method="password", username=username.strip())
         perform_login(request, user)
+        try:
+            ProfileService.maybe_refresh_gravatar(user, force=True)
+        except Exception:
+            logger.warning(
+                "Gravatar prefetch failed after signup",
+                extra={"user_id": getattr(user, "id", None), "email": email},
+                exc_info=True,
+            )
         logger.info(
             "Headless signup succeeded",
             extra={

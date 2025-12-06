@@ -10,7 +10,7 @@ services:
       DJANGO_SECRET_KEY_FILE: /run/secrets/django_secret_key
       POSTGRES_DB: ${POSTGRES_DB:-aef}
       POSTGRES_USER: ${POSTGRES_USER:-aef}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-aefpassword}
+      POSTGRES_PASSWORD_FILE: /run/secrets/postgres_password
       POSTGRES_HOST: ${POSTGRES_HOST:-db}
       POSTGRES_PORT: ${POSTGRES_PORT:-5432}
       ENABLE_DEBUG_TOOLBAR: ${ENABLE_DEBUG_TOOLBAR:-False}
@@ -20,9 +20,12 @@ services:
       TELEGRAM_ADMIN_IDS: ${TELEGRAM_ADMIN_IDS:-}
       MFA_WEBAUTHN_RP_ID: ${MFA_WEBAUTHN_RP_ID:-aef-vote.updspace.com}
       MFA_WEBAUTHN_RP_NAME: ${MFA_WEBAUTHN_RP_NAME:-AEF Vote}
+      DJANGO_LOG_LEVEL: ${DJANGO_LOG_LEVEL:-INFO}
+      DJANGO_SITE_ID: ${DJANGO_SITE_ID:-1}
     secrets:
       - django_secret_key
       - telegram_bot_token
+      - postgres_password
     networks:
       - aef-vote-internal
       - proxy
@@ -64,11 +67,13 @@ services:
     environment:
       POSTGRES_DB: ${POSTGRES_DB:-aef}
       POSTGRES_USER: ${POSTGRES_USER:-aef}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-aefpassword}
+      POSTGRES_PASSWORD_FILE: /run/secrets/postgres_password
     volumes:
       - pgdata:/var/lib/postgresql/data
     networks:
       - aef-vote-internal
+    secrets:
+      - postgres_password
     deploy:
       replicas: 1
       restart_policy:
@@ -78,6 +83,8 @@ secrets:
   django_secret_key:
     external: true
   telegram_bot_token:
+    external: true
+  postgres_password:
     external: true
 
 networks:

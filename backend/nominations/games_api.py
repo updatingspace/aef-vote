@@ -5,6 +5,7 @@ import logging
 from ninja import Router
 from ninja.errors import HttpError
 
+from .models import Game
 from .schemas import GameCreateSchema, GameSchema, GameUpdateSchema
 from .services import (
     create_game_from_payload,
@@ -71,3 +72,12 @@ def games_update(request, game_id: str, payload: GameUpdateSchema):
         raise HttpError(400, str(exc)) from exc
     except LookupError as exc:
         raise HttpError(404, "Игра не найдена") from exc
+
+
+@router.delete("/{game_id}")
+def games_delete(request, game_id: str):
+    _require_superuser(request)
+    deleted, _ = Game.objects.filter(id=game_id).delete()
+    if not deleted:
+        raise HttpError(404, "Игра не найдена")
+    return {"ok": True}

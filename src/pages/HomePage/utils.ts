@@ -16,13 +16,15 @@ export const formatDeadline = (deadline: Date | null) => {
 
 export const formatTimeLeft = (deadline: Date | null, status: VoteStatus, nowTs: number) => {
   if (!deadline) {
-    return status === 'expired' ? 'Завершенно принудительно' : 'Дедлайн уточняется';
+    return status === 'finished' || status === 'archived'
+      ? 'Завершено'
+      : 'Дедлайн уточняется';
   }
 
   const diffMs = deadline.getTime() - nowTs;
 
-  if (status === 'expired' || diffMs <= 0) {
-    return `Завершено: ${deadline.toLocaleDateString('ru-RU', { dateStyle: 'medium' })}`;
+  if (status === 'finished' || status === 'archived' || diffMs <= 0) {
+    return `Финиш: ${deadline.toLocaleDateString('ru-RU', { dateStyle: 'medium' })}`;
   }
 
   const minutesTotal = Math.floor(diffMs / (1000 * 60));
