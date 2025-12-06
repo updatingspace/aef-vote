@@ -1,3 +1,5 @@
+# Backend
+
 ## Что внутри
 
 - Django 5 + Django-Ninja (Pydantic v2) для REST.
@@ -15,6 +17,14 @@ uv run python manage.py runserver 8000
 # API будет на http://127.0.0.1:8000/api/
 ```
 
+## Окружение
+
+- Цель — свежий стек: `pydantic 2.12.5`, `django-ninja-jwt 5.4.2`, `django-ninja 1.5.1`.
+- Рекомендуемая версия Python — 3.12/3.13. С Python 3.14 используйте обновленные зависимости и обязательно пересоберите окружение, чтобы не подхватывался системный Pydantic v1.
+- Быстрая установка зависимостей:
+  - `python3.12 -m venv .venv && source .venv/bin/activate && pip install -r requirements/dev.txt`
+  - или через uv: `uv venv && source .venv/bin/activate && uv pip install -r requirements/dev.txt`
+
 ## Роуты
 
 - `GET /api/health` — проверка живости.
@@ -29,6 +39,7 @@ uv run python manage.py runserver 8000
 - `DELETE /api/auth/me` — удалить аккаунт, привязку Telegram и все голоса пользователя (остальные данные остаются нетронутыми).
 
 Все поля в ответах в `snake_case`:
+
 ```json
 {
   "id": "1",

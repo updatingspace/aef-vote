@@ -1,4 +1,5 @@
 import os
+import sys
 from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -33,7 +34,7 @@ def read_secret(name: str, default: str | None = None) -> str:
             if value:
                 return value
         except OSError:
-            # Fall back to environment/default when the secret file is missing in dev
+            # Fall back to env/default when the secret file is missing in dev
             pass
 
     env_value = os.getenv(name)
@@ -111,16 +112,17 @@ WSGI_APPLICATION = "aef_backend.wsgi.application"
 
 AUTH_PASSWORD_VALIDATORS = [
     {
-        "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator",
+        "NAME": "django.contrib.auth.password_validation."
+        "UserAttributeSimilarityValidator",
     },
     {
-        "NAME": "django.contrib.auth.password_validation.MinimumLengthValidator",
+        "NAME": "django.contrib.auth.password_validation." "MinimumLengthValidator",
     },
     {
-        "NAME": "django.contrib.auth.password_validation.CommonPasswordValidator",
+        "NAME": "django.contrib.auth.password_validation." "CommonPasswordValidator",
     },
     {
-        "NAME": "django.contrib.auth.password_validation.NumericPasswordValidator",
+        "NAME": "django.contrib.auth.password_validation." "NumericPasswordValidator",
     },
 ]
 
@@ -133,10 +135,13 @@ USE_I18N = True
 USE_TZ = True
 
 STATIC_URL = "static/"
+MEDIA_URL = read_env("DJANGO_MEDIA_URL", "/media/")
+MEDIA_ROOT = Path(read_env("DJANGO_MEDIA_ROOT", str(BASE_DIR / "media"))).resolve()
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 SITE_ID = int(os.getenv("DJANGO_SITE_ID", "1"))
+GRAVATAR_AUTOLOAD_ENABLED = read_env_flag("GRAVATAR_AUTOLOAD_ENABLED", True)
 
 AUTHENTICATION_BACKENDS = [
     "django.contrib.auth.backends.ModelBackend",
@@ -213,7 +218,10 @@ NINJA_JWT = {
     "TOKEN_BLACKLIST_ENABLED": True,
 }
 
+RUNNING_TESTS = "test" in sys.argv
 APP_LOG_LEVEL = os.getenv("DJANGO_LOG_LEVEL", "INFO").upper()
+if RUNNING_TESTS:
+    APP_LOG_LEVEL = os.getenv("DJANGO_TEST_LOG_LEVEL", "WARNING").upper()
 
 LOGGING = {
     "version": 1,
@@ -237,12 +245,12 @@ LOGGING = {
     "loggers": {
         "django.request": {
             "handlers": ["console"],
-            "level": "WARNING",
+            "level": "ERROR" if RUNNING_TESTS else "WARNING",
             "propagate": False,
         },
         "django.security": {
             "handlers": ["console"],
-            "level": "WARNING",
+            "level": "ERROR" if RUNNING_TESTS else "WARNING",
             "propagate": False,
         },
     },

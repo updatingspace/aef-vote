@@ -12,11 +12,19 @@ DEBUG = read_env_flag("DJANGO_DEBUG", True)
 ALLOWED_HOSTS = read_env_list("DJANGO_ALLOWED_HOSTS", ["*"])
 CSRF_TRUSTED_ORIGINS = read_env_list(
     "DJANGO_CSRF_TRUSTED_ORIGINS",
-    ["http://localhost:5173", "http://frontend:5173"],
+    [
+        "http://localhost:5173",
+        "http://127.0.0.1:5173",
+        "http://frontend:5173",
+    ],
 )
 CORS_ALLOWED_ORIGINS = read_env_list(
     "CORS_ALLOWED_ORIGINS",
-    ["http://localhost:5173", "http://frontend:5173"],
+    [
+        "http://localhost:5173",
+        "http://127.0.0.1:5173",
+        "http://frontend:5173",
+    ],
 )
 
 # Allow passkey on localhost in dev

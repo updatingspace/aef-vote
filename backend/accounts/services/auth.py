@@ -11,6 +11,7 @@ from django.contrib.auth import logout as dj_logout
 from ninja.errors import HttpError
 from ninja_jwt.tokens import RefreshToken
 
+from accounts.services.profile import ProfileService
 from accounts.transport.schemas import (
     ProfileOut,
     TokenPairOut,
@@ -71,9 +72,11 @@ class AuthService:
         )
 
     @staticmethod
-    def profile(user: User) -> ProfileOut:
+    def profile(user: User, request=None) -> ProfileOut:
         if not user or not getattr(user, "is_authenticated", False):
             raise HttpError(401, "Not authenticated")
+        ProfileService.maybe_refresh_gravatar(user)
+        avatar = ProfileService.avatar_state(user, request=request)
         has_2fa = get_mfa_adapter().is_mfa_enabled(user)
         providers = list(
             SocialAccount.objects.filter(user=user).values_list("provider", flat=True)
@@ -88,7 +91,9 @@ class AuthService:
             is_superuser=bool(getattr(user, "is_superuser", False)),
             first_name=getattr(user, "first_name", None) or None,
             last_name=getattr(user, "last_name", None) or None,
-            avatar_url=None,
+            avatar_url=avatar.url,
+            avatar_source=avatar.source,
+            avatar_gravatar_enabled=avatar.gravatar_enabled,
             email_verified=bool(primary and primary.verified),
         )
 

@@ -61,3 +61,7 @@ export async function createGame(payload: Partial<Game>): Promise<Game> {
 
   return mapGame(data);
 }
+
+export async function deleteGame(id: string): Promise<void> {
+  await request(`/games/${id}`, { method: 'DELETE' });
+}

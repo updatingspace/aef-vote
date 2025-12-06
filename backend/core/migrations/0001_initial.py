@@ -1,10 +1,8 @@
 from django.conf import settings
 from django.db import migrations, models
-import django.db.models.deletion
 
 
 class Migration(migrations.Migration):
-
     initial = True
 
     dependencies = [
@@ -32,10 +30,7 @@ class Migration(migrations.Migration):
                     ),
                 ),
                 ("user_agent", models.CharField(blank=True, max_length=512)),
-                (
-                    "ip",
-                    models.GenericIPAddressField(blank=True, null=True),
-                ),
+                ("ip", models.GenericIPAddressField(blank=True, null=True)),
                 ("first_seen", models.DateTimeField(auto_now_add=True)),
                 ("last_seen", models.DateTimeField(blank=True, null=True)),
                 ("revoked_at", models.DateTimeField(blank=True, null=True)),
@@ -43,7 +38,7 @@ class Migration(migrations.Migration):
                 (
                     "user",
                     models.ForeignKey(
-                        on_delete=django.db.models.deletion.CASCADE,
+                        on_delete=models.deletion.CASCADE,
                         related_name="session_meta",
                         to=settings.AUTH_USER_MODEL,
                     ),
@@ -74,7 +69,7 @@ class Migration(migrations.Migration):
                 (
                     "user",
                     models.ForeignKey(
-                        on_delete=django.db.models.deletion.CASCADE,
+                        on_delete=models.deletion.CASCADE,
                         related_name="session_tokens",
                         to=settings.AUTH_USER_MODEL,
                     ),

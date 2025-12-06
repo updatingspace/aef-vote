@@ -12,6 +12,7 @@ from accounts.services.profile import ProfileService
 from accounts.services.sessions import SessionService
 from accounts.transport.schemas import (
     AuthenticatorsOut,
+    AvatarOut,
     ChangeEmailIn,
     EmailStatusOut,
     ErrorOut,
@@ -63,7 +64,7 @@ def account_update_profile(request, payload: ProfileUpdateIn = REQUIRED_BODY):
 
 @account_router.post(
     "/avatar",
-    response={200: OkOut, 401: ErrorOut},
+    response={200: AvatarOut, 400: ErrorOut, 401: ErrorOut},
     summary="Upload/replace user avatar",
     operation_id="account_upload_avatar",
 )
@@ -71,10 +72,36 @@ def upload_avatar(request, avatar: UploadedFile = REQUIRED_FILE):
     user = _require_authenticated_user(request)
     SessionService.assert_session_allowed(request)
     SessionService.touch(request, user)
-    updated = ProfileService.save_avatar(user, avatar)
-    if updated:
-        return OkOut(ok=True, message="Аватар обновлён")
-    return OkOut(ok=True, message="Поле avatar отсутствует в модели пользователя")
+    ProfileService.save_avatar(user, avatar)
+    state = ProfileService.avatar_state(user, request)
+    return AvatarOut(
+        ok=True,
+        message="Аватар обновлён",
+        avatar_url=state.url,
+        avatar_source=state.source,
+        avatar_gravatar_enabled=state.gravatar_enabled,
+    )
+
+
+@account_router.delete(
+    "/avatar",
+    response={200: AvatarOut, 401: ErrorOut},
+    summary="Delete avatar and fallback to initials",
+    operation_id="account_delete_avatar",
+)
+def delete_avatar(request):
+    user = _require_authenticated_user(request)
+    SessionService.assert_session_allowed(request)
+    SessionService.touch(request, user)
+    ProfileService.remove_avatar(user)
+    state = ProfileService.avatar_state(user, request)
+    return AvatarOut(
+        ok=True,
+        message="Аватар удалён, будет показана заглушка",
+        avatar_url=state.url,
+        avatar_source=state.source,
+        avatar_gravatar_enabled=state.gravatar_enabled,
+    )
 
 
 @account_router.get(

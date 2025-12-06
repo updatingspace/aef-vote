@@ -81,17 +81,14 @@ class SessionService:
 
         key_for_meta = dj_key or token
         with transaction.atomic():
-            meta, created = (
-                UserSessionMeta.objects.select_for_update()
-                .get_or_create(
-                    user=user,
-                    session_key=key_for_meta,
-                    defaults={
-                        "session_token": token or None,
-                        "ip": SessionService._client_ip(request) or "",
-                        "user_agent": SessionService._ua(request) or "",
-                    },
-                )
+            meta, created = UserSessionMeta.objects.select_for_update().get_or_create(
+                user=user,
+                session_key=key_for_meta,
+                defaults={
+                    "session_token": token or None,
+                    "ip": SessionService._client_ip(request) or "",
+                    "user_agent": SessionService._ua(request) or "",
+                },
             )
         if created:
             logger.info(

@@ -15,7 +15,7 @@ ATTENTION: это полностью навайбкодженое веб-при�
 - Фронт: `VITE_API_BASE_URL` — базовый путь API (берётся в dev-сервере и при прод-сборке), `VITE_LOG_LEVEL` — порог логирования в консоли (`debug`/`info`/`warn`/`error`/`critical`), `VITE_TELEGRAM_BOT_NAME` — имя бота для кнопки Telegram (проксируется в prod-сборке).
 - Бэк: `DJANGO_SETTINGS_MODULE` (`aef_backend.settings.dev` по умолчанию), `DJANGO_DEBUG`, `DJANGO_LOG_LEVEL` (уровень логирования), `DJANGO_ALLOWED_HOSTS` / `DJANGO_CSRF_TRUSTED_ORIGINS` / `CORS_ALLOWED_ORIGINS`, `DJANGO_SITE_ID`.
 - MFA/Passkeys: `ALLAUTH_MFA_WEBAUTHN_ALLOW_INSECURE_ORIGIN`, `MFA_WEBAUTHN_ALLOW_INSECURE_ORIGIN`, `MFA_WEBAUTHN_RP_ID`, `MFA_WEBAUTHN_RP_NAME`.
-- Секреты: `DJANGO_SECRET_KEY` задаётся через файл `secrets/django_secret_key` (`DJANGO_SECRET_KEY_FILE=/run/secrets/django_secret_key` в compose/stack). Для `POSTGRES_PASSWORD` и `TELEGRAM_BOT_TOKEN` тоже поддерживаются `_FILE` варианты (см. stack.yml).
+- Секреты: в Compose `DJANGO_SECRET_KEY` берётся из файла `secrets/django_secret_key` (`DJANGO_SECRET_KEY_FILE=/run/secrets/django_secret_key`), в Swarm/stack используются docker secrets `django_secret_key`, `postgres_password`, `telegram_bot_token` (`*_FILE` варианты прописаны в `stack.yml`).
 - Порты: `FRONTEND_PORT` и `BACKEND_PORT`.
 - База: `POSTGRES_DB` / `POSTGRES_USER` / `POSTGRES_PASSWORD` / `POSTGRES_HOST` / `POSTGRES_PORT` — параметры подключения бэка к Postgres (по умолчанию сервис `db` внутри compose).
 - Дев/сборка: `ENABLE_DEBUG_TOOLBAR` включает Debug Toolbar в dev-сборке (нужны dev-зависимости), `INSTALL_DEV` — build-аргумент для их установки.
@@ -39,11 +39,16 @@ ATTENTION: это полностью навайбкодженое веб-при�
 
 ## Docker Swarm stack
 
-- Подготовьте переменные точно так же (`cp .env.example .env`) и не забудьте создать секретный ключ Django:
-  `mkdir -p secrets && openssl rand -hex 32 > secrets/django_secret_key`.
+- Подготовьте `.env` как для Compose (`cp .env.example .env`), а секреты создайте в менеджере Swarm (анонимные secrets вместо ENV):
+  ```bash
+  openssl rand -hex 32 | docker secret create django_secret_key -
+  printf '%s' "${POSTGRES_PASSWORD:-aefpassword}" | docker secret create postgres_password -
+  [ -n "${TELEGRAM_BOT_TOKEN:-}" ] && printf '%s' "$TELEGRAM_BOT_TOKEN" | docker secret create telegram_bot_token -
+  ```
+  Если секрет уже существует, команду создания можно пропустить. Пароль БД для стека читается только из `postgres_password` (значение `POSTGRES_PASSWORD` в `.env` нужно для локального Compose).
 - Стек предполагает доступ к внешней оверлейной сети `net_public` (см. `stack.yml`, при необходимости поменяйте имя). Если сети нет, создайте:
   `docker network create --driver overlay net_public`.
-- Разверните стек командой `docker stack deploy -c stack.yml --env-file .env aef-vote`. Файл `stack.yml` уже монтирует секрет `django_secret_key`, прокидывает переменные окружения, подключает сервисы к `net_public` и автоматически объединяет ваше приложение с Traefik.
+- Разверните стек командой `docker stack deploy -c stack.yml --env-file .env aef-vote`. Файл `stack.yml` монтирует секреты `django_secret_key`, `postgres_password`, `telegram_bot_token`, прокидывает переменные окружения (включая `DJANGO_LOG_LEVEL`/`DJANGO_SITE_ID`) и подключает сервисы к `net_public`, автоматически объединяя приложение с Traefik.
 - Фронт в прод-образе теперь собирается внутри Dockerfile и обслуживается через nginx (порт 80). При необходимости сменить API-адрес на этапе сборки используйте `--build-arg VITE_API_BASE_URL=https://example.com/api`.
 - Бэк в прод-образе запускает `entrypoint.sh`, который делает `migrate` + `collectstatic` и стартует Gunicorn (`aef_backend.wsgi` на `0.0.0.0:8000`), так что в стеке можно не переопределять команду. Для сборки прод-образа достаточно `docker build -f backend/Dockerfile backend -t ghcr.io/updatingspace/aef-vote-backend:latest`.
 - Сервис watchtower развёрнут отдельно в инфра-стеке, поэтому в этом файле его нет — достаточно, что фронт/бэк помечены `com.centurylinklabs.watchtower.enable=true`, и инфра-watchtower с `latest`-тегами подхватит обновление образов.

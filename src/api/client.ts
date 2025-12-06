@@ -53,15 +53,56 @@ const statusToKind = (status: number): ApiErrorKind => {
   return 'unknown';
 };
 
-const parseErrorMessage = async (response: Response) => {
+type ErrorPayload = {
+  detail?: unknown;
+  message?: unknown;
+  errors?: Record<string, unknown>;
+  fields?: Record<string, unknown>;
+};
+
+export const extractApiErrorMessage = (payload: unknown): string | null => {
+  if (!payload || typeof payload !== 'object') return null;
+  const data = payload as ErrorPayload;
+
+  if (data.fields && typeof data.fields === 'object') {
+    for (const value of Object.values(data.fields)) {
+      if (typeof value === 'string' && value.trim()) return value.trim();
+    }
+  }
+
+  if (data.errors && typeof data.errors === 'object') {
+    for (const entry of Object.values(data.errors)) {
+      if (!Array.isArray(entry)) continue;
+      for (const item of entry) {
+        if (typeof item === 'string' && item.trim()) return item.trim();
+        if (
+          item &&
+          typeof item === 'object' &&
+          'message' in item &&
+          typeof (item as { message?: unknown }).message === 'string'
+        ) {
+          const msg = (item as { message?: string }).message;
+          if (msg?.trim()) return msg.trim();
+        }
+      }
+    }
+  }
+
+  if (typeof data.detail === 'string' && data.detail.trim()) return data.detail.trim();
+  if (typeof data.message === 'string' && data.message.trim()) return data.message.trim();
+  return null;
+};
+
+const parseErrorMessage = async (
+  response: Response,
+): Promise<{ message: string | null; details: ErrorPayload | null }> => {
   try {
     const data = await response.clone().json();
-    if (typeof data?.detail === 'string') return data.detail;
-    if (typeof data?.message === 'string') return data.message;
+    return { message: extractApiErrorMessage(data), details: data as ErrorPayload };
   } catch {
     /* ignore */
   }
-  return null;
+  return { message: null, details: null };
 };
 
 type RequestOptions = Omit<RequestInit, 'body'> & {
@@ -102,7 +143,7 @@ export async function request<T>(path: string, options: RequestOptions = {}): Pr
 
   if (!response.ok) {
     const durationMs = Math.round(nowMs() - startedAt);
-    const messageFromBody = await parseErrorMessage(response);
+    const { message: messageFromBody, details } = await parseErrorMessage(response);
     const message = messageFromBody ?? `Запрос завершился с ошибкой (${response.status})`;
     const level =
       response.status >= 500
@@ -125,6 +166,7 @@ export async function request<T>(path: string, options: RequestOptions = {}): Pr
     throw new ApiError(message, {
       status: response.status,
       kind: statusToKind(response.status),
+      details,
     });
   }
 

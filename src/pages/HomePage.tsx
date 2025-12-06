@@ -9,15 +9,14 @@ import {
   getApiErrorMeta,
   notifyApiError,
 } from '../utils/apiErrorHandling';
-import { audienceNeeds, accentPalettes, updatesFeed, voteModeHints, voteStages } from './HomePage/constants';
-import { AudienceSection } from './HomePage/components/AudienceSection';
+import { accentPalettes, voteStages } from './HomePage/constants';
 import { HomeHero } from './HomePage/components/HomeHero';
-import { ModesSection } from './HomePage/components/ModesSection';
 import { StagesSection } from './HomePage/components/StagesSection';
-import { UpdatesSection } from './HomePage/components/UpdatesSection';
 import { VotingCard } from './HomePage/components/VotingCard';
 import { formatDeadline, parseDeadline } from './HomePage/utils';
 import type { DecoratedVoting, VoteStatus } from './HomePage/types';
+
+const MAX_ACTIVE_ITEMS = 20;
 
 export const HomePage: React.FC = () => {
   const navigate = useNavigate();
@@ -57,21 +56,18 @@ export const HomePage: React.FC = () => {
   );
 
   const decoratedVotings = useMemo<DecoratedVoting[]>(() => {
-    const now = nowTs;
     return votingCatalog.map((voting, index) => {
       const deadline = parseDeadline(voting.deadlineAt ?? null);
       const deadlineValue = deadline?.getTime() ?? Number.POSITIVE_INFINITY;
-      const isExpired = deadline ? deadlineValue < now : false;
-      const status: VoteStatus = isExpired
-        ? 'expired'
-        : voting.isOpen && voting.isActive
-          ? 'active'
-          : 'paused';
+      const isActive = Boolean(voting.isActive);
+      const isOpen = Boolean(voting.isOpen);
+      const status: VoteStatus = isActive ? (isOpen ? 'active' : 'finished') : 'archived';
 
       return {
         id: voting.id,
         title: voting.title,
         description: voting.description ?? undefined,
+        imageUrl: voting.imageUrl ?? undefined,
         status,
         deadline,
         deadlineValue,
@@ -81,19 +77,20 @@ export const HomePage: React.FC = () => {
         isActive: voting.isActive,
       };
     });
-  }, [votingCatalog, nowTs]);
+  }, [votingCatalog]);
 
-  const activeItems = useMemo(
-    () => decoratedVotings
-      .filter((item) => item.status !== 'expired')
-      .sort((a, b) => a.deadlineValue - b.deadlineValue),
-    [decoratedVotings],
-  );
+  const activeItems = useMemo(() => {
+    const sorted = decoratedVotings
+      .filter((item) => item.status === 'active')
+      .sort((a, b) => a.deadlineValue - b.deadlineValue);
+    return sorted.slice(0, MAX_ACTIVE_ITEMS);
+  }, [decoratedVotings]);
 
   const archivedItems = useMemo(
-    () => decoratedVotings
-      .filter((item) => item.status === 'expired')
-      .sort((a, b) => a.deadlineValue - b.deadlineValue),
+    () =>
+      decoratedVotings
+        .filter((item) => item.status !== 'active')
+        .sort((a, b) => a.deadlineValue - b.deadlineValue),
     [decoratedVotings],
   );
 
@@ -117,10 +114,7 @@ export const HomePage: React.FC = () => {
           nextDeadlineLabel={nextDeadlineLabel}
         />
 
-        <AudienceSection items={audienceNeeds} />
         <StagesSection stages={voteStages} />
-        <ModesSection hints={voteModeHints} />
-        <UpdatesSection items={updatesFeed} />
 
         <section className="home-section" aria-label="Актуальные голосования">
           <div className="home-section-head">

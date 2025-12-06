@@ -6,8 +6,8 @@ import type { DecoratedVoting } from '../types';
 
 const statusLabel: Record<DecoratedVoting['status'], string> = {
   active: 'Активно',
-  paused: 'На паузе',
-  expired: 'Завершено',
+  finished: 'Завершено',
+  archived: 'Архив',
 };
 
 type VotingCardProps = {
@@ -22,6 +22,11 @@ export const VotingCard: React.FC<VotingCardProps> = ({ item, nowTs, onOpen }) =
   const shortDeadline = item.deadline
     ? item.deadline.toLocaleDateString('ru-RU', { month: 'short', day: 'numeric' })
     : 'без даты';
+  const truncatedDescription = item.description
+    ? item.description.length > 140
+      ? `${item.description.slice(0, 140)}…`
+      : item.description
+    : 'Кратко о голосовании, правила и обсуждение откроются позже.';
 
   const handleCardKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
     if (event.key === 'Enter' || event.key === ' ') {
@@ -33,7 +38,7 @@ export const VotingCard: React.FC<VotingCardProps> = ({ item, nowTs, onOpen }) =
   return (
     <div
       key={item.id}
-      className={`vote-card${item.status === 'expired' ? ' vote-card-expired' : ''}`}
+      className={`vote-card${item.status !== 'active' ? ' vote-card-expired' : ''}`}
       role="button"
       tabIndex={0}
       onClick={() => onOpen(item.id)}
@@ -42,24 +47,25 @@ export const VotingCard: React.FC<VotingCardProps> = ({ item, nowTs, onOpen }) =
       <div
         className="vote-card-cover"
         style={{
-          background: `linear-gradient(135deg, ${item.palette[0]} 0%, ${item.palette[1]} 100%)`,
+          background: item.imageUrl
+            ? `linear-gradient(180deg, rgba(0,0,0,0.45) 0%, rgba(0,0,0,0.55) 100%), url(${item.imageUrl}) center/cover no-repeat`
+            : `linear-gradient(135deg, ${item.palette[0]} 0%, ${item.palette[1]} 100%)`,
         }}
       >
-        <div className="vote-card-cover-top">
-          <span className={`vote-status vote-status-${item.status}`}>
-            {statusLabel[item.status]}
-          </span>
-          <span className="vote-card-deadline-tag">
-            {item.status === 'expired' ? 'финиш' : 'дедлайн'} · {shortDeadline}
-          </span>
-        </div>
+      <div className="vote-card-cover-top">
+        <span className={`vote-status vote-status-${item.status}`}>
+          {statusLabel[item.status]}
+        </span>
+        <span className="vote-card-deadline-tag">
+          {item.status !== 'active' ? 'финиш' : 'дедлайн'} · {shortDeadline}
+        </span>
+      </div>
         <div className="vote-card-cover-title">{item.title}</div>
       </div>
 
       <div className="vote-card-body">
-        <div className="vote-card-title">{item.title}</div>
         <p className="vote-card-desc">
-          {item.description ?? 'Кратко о голосовании, правила и обсуждение откроются позже.'}
+          {truncatedDescription}
         </p>
         <div className="vote-card-meta">
           <span className="text-muted small">{item.nominationCount} номинаций</span>
@@ -71,7 +77,7 @@ export const VotingCard: React.FC<VotingCardProps> = ({ item, nowTs, onOpen }) =
           </div>
           <Button
             size="s"
-            view={item.status === 'expired' ? 'flat-secondary' : 'outlined'}
+            view={item.status !== 'active' ? 'flat-secondary' : 'outlined'}
             onClick={(event) => {
               event.stopPropagation();
               onOpen(item.id);

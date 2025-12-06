@@ -83,7 +83,7 @@ class PasskeyService:
                     extra={
                         "user_id": getattr(request.user, "id", None),
                         "authenticator_id": str(getattr(auth, "id", "")),
-                        "name": name,
+                        "auth_name": name,
                     },
                 )
                 return auth, rc

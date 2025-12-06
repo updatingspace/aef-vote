@@ -101,6 +101,25 @@ class Voting(models.Model):
             rule_flag = False
         return bool(self.show_vote_counts or rule_flag)
 
+    @property
+    def is_public(self) -> bool:
+        """
+        Draft/public flag stored inside flexible rules JSON to avoid schema churn.
+        """
+        try:
+            rules = self.rules or {}
+            if isinstance(rules, dict):
+                return bool(rules.get("is_public", True))
+        except Exception:
+            return True
+        return True
+
+    def set_public(self, value: bool) -> None:
+        rules = self.rules if isinstance(self.rules, dict) else {}
+        normalized = dict(rules) if isinstance(rules, dict) else {}
+        normalized["is_public"] = bool(value)
+        self.rules = normalized
+
     def save(self, *args, **kwargs):
         if not self.code:
             self.code = self._generate_code()
@@ -154,6 +173,12 @@ class VotingSettings(models.Model):
 
 
 class Nomination(models.Model):
+    class NominationKind(models.TextChoices):
+        GAME = "game", "Игра/игровой объект"
+        REVIEW = "review", "Обзор/материал"
+        PERSON = "person", "Персона/обзорщик"
+        CUSTOM = "custom", "Произвольная сущность"
+
     id = models.SlugField(
         max_length=64,
         primary_key=True,
@@ -168,6 +193,20 @@ class Nomination(models.Model):
     )
     title = models.CharField(max_length=255)
     description = models.TextField(blank=True)
+    kind = models.CharField(
+        max_length=32,
+        choices=NominationKind.choices,
+        default=NominationKind.GAME,
+        help_text="Тип модуля для номинации (игры, обзорщики, обзоры, произвольное).",
+    )
+    config = models.JSONField(
+        default=dict,
+        blank=True,
+        help_text=(
+            "Доп. настройки модуля номинации (подсказки по payload опций, "
+            "поведению фронта и т.д.)."
+        ),
+    )
     order = models.PositiveIntegerField(default=0, db_index=True)
     is_active = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -203,6 +242,11 @@ class NominationOption(models.Model):
     )
     title = models.CharField(max_length=255)
     image_url = models.URLField(blank=True, null=True)
+    payload = models.JSONField(
+        default=dict,
+        blank=True,
+        help_text="Структурированные данные карточки (обзорщик, ссылка на обзор, роль и др.).",
+    )
     order = models.PositiveIntegerField(default=0, db_index=True)
     is_active = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)

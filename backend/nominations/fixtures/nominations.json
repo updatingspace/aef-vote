@@ -1,1498 +1,1280 @@
 [
   {
-    "id": "1",
-    "title": "Игра года",
-    "description": "Самая цельная и обсуждаемая новинка — за неё хочется спорить и перепроходить.",
+    "id": "лучшая-поддержка",
+    "title": "Лучшая Поддержка",
+    "description": "",
+    "voting": "main",
+    "kind": "game",
+    "config": {
+      "module": "game_award",
+      "subject": "game",
+      "option_payload_fields": []
+    },
     "options": [
       {
-        "id": "nom-1-opt-1",
-        "title": "Baldur's Gate 3",
-        "image_url": null,
-        "game": {
-          "title": "Baldur's Gate 3",
-          "genre": "RPG",
-          "studio": "Larian Studios",
-          "release_year": 2023,
-          "image_url": null,
-          "description": "РПГ, где каждое решение меняет мир."
-        }
-      },
-      {
-        "id": "nom-1-opt-2",
+        "id": "лучшая-поддержка-alan-wake-2",
         "title": "Alan Wake 2",
         "image_url": null,
         "game": {
-          "title": "Alan Wake 2",
-          "genre": "Thriller",
-          "studio": "Remedy Entertainment",
-          "release_year": 2023,
-          "image_url": null,
-          "description": "Психологический триллер с кинематографичным сюжетом."
-        }
+          "title": "Alan Wake 2"
+        },
+        "payload": {}
       },
       {
-        "id": "nom-1-opt-3",
-        "title": "The Legend of Zelda: Tears of the Kingdom",
+        "id": "лучшая-поддержка-hitman-world-of-assassination",
+        "title": "HITMAN: World of Assassination",
         "image_url": null,
         "game": {
-          "title": "The Legend of Zelda: Tears of the Kingdom",
-          "genre": "Adventure",
-          "studio": "Nintendo",
-          "release_year": 2023,
-          "image_url": null,
-          "description": "Открытый мир и новые механики полета."
-        }
+          "title": "HITMAN: World of Assassination"
+        },
+        "payload": {}
       },
       {
-        "id": "nom-1-opt-4",
-        "title": "Marvel's Spider-Man 2",
+        "id": "лучшая-поддержка-cyberpunk-2077",
+        "title": "Cyberpunk 2077",
         "image_url": null,
         "game": {
-          "title": "Marvel's Spider-Man 2",
-          "genre": "Action",
-          "studio": "Insomniac Games",
-          "release_year": 2023,
-          "image_url": null,
-          "description": "Мстители против нового зла в Нью-Йорке."
-        }
+          "title": "Cyberpunk 2077"
+        },
+        "payload": {}
       },
       {
-        "id": "nom-1-opt-5",
-        "title": "Final Fantasy VII Rebirth",
+        "id": "лучшая-поддержка-atomic-heart",
+        "title": "Atomic Heart",
         "image_url": null,
         "game": {
-          "title": "Final Fantasy VII Rebirth",
-          "genre": "JRPG",
-          "studio": "Square Enix",
-          "release_year": 2024,
-          "image_url": null,
-          "description": "Продолжение культового JRPG с новой историей."
-        }
+          "title": "Atomic Heart"
+        },
+        "payload": {}
       },
       {
-        "id": "nom-1-opt-6",
-        "title": "Starfield",
+        "id": "лучшая-поддержка-call-to-arms-gates-of-hell-ostfront",
+        "title": "Call to Arms - Gates of Hell: Ostfront",
         "image_url": null,
         "game": {
-          "title": "Starfield",
-          "genre": "Space RPG",
-          "studio": "Bethesda",
-          "release_year": 2023,
-          "image_url": null,
-          "description": "Космическая одиссея с упором на исследование."
-        }
+          "title": "Call to Arms - Gates of Hell: Ostfront"
+        },
+        "payload": {}
+      },
+      {
+        "id": "лучшая-поддержка-kingdom-come-deliverance-2",
+        "title": "Kingdom Come Deliverance 2",
+        "image_url": null,
+        "game": {
+          "title": "Kingdom Come Deliverance 2"
+        },
+        "payload": {}
       }
     ]
   },
   {
-    "id": "2",
-    "title": "Лучший арт-дизайн",
-    "description": "Самая выразительная визуальная стилистика — от интерфейса до окружения.",
+    "id": "лучший-арт-дирекшн",
+    "title": "Лучший Арт-Дирекшн",
+    "description": "",
+    "voting": "main",
+    "kind": "game",
+    "config": {
+      "module": "game_award",
+      "subject": "game",
+      "option_payload_fields": []
+    },
     "options": [
       {
-        "id": "nom-2-opt-1",
-        "title": "Pentiment",
-        "image_url": null,
-        "game": {
-          "title": "Pentiment",
-          "genre": "Narrative Adventure",
-          "studio": "Obsidian Entertainment",
-          "release_year": 2022,
-          "image_url": null,
-          "description": "Нарративный квест с историческим антуражем."
-        }
-      },
-      {
-        "id": "nom-2-opt-2",
-        "title": "Sea of Stars",
-        "image_url": null,
-        "game": {
-          "title": "Sea of Stars",
-          "genre": "JRPG",
-          "studio": "Sabotage Studio",
-          "release_year": 2023,
-          "image_url": null,
-          "description": "Ретро JRPG с тактическими боями и светлой атмосферой."
-        }
-      },
-      {
-        "id": "nom-2-opt-3",
-        "title": "Ori and the Will of the Wisps",
-        "image_url": null,
-        "game": {
-          "title": "Ori and the Will of the Wisps",
-          "genre": "Platformer",
-          "studio": "Moon Studios",
-          "release_year": 2020,
-          "image_url": null,
-          "description": "Платформер с душевной аурой и отличной музыкой."
-        }
-      },
-      {
-        "id": "nom-2-opt-4",
-        "title": "Prince of Persia: The Lost Crown",
-        "image_url": null,
-        "game": {
-          "title": "Prince of Persia: The Lost Crown",
-          "genre": "Action Platformer",
-          "studio": "Ubisoft Montpellier",
-          "release_year": 2023,
-          "image_url": null,
-          "description": "Возвращение классических платформенных боев."
-        }
-      },
-      {
-        "id": "nom-2-opt-5",
-        "title": "Hollow Knight: Silksong",
-        "image_url": null,
-        "game": {
-          "title": "Hollow Knight: Silksong",
-          "genre": "Metroidvania",
-          "studio": "Team Cherry",
-          "release_year": 2025,
-          "image_url": null,
-          "description": "Метроидвания с живописным миром и сложным геймплеем."
-        }
-      }
-    ]
-  },
-  {
-    "id": "3",
-    "title": "Инди-прорыв",
-    "description": "Независимая игра, о которой говорили громче всего.",
-    "options": [
-      {
-        "id": "nom-3-opt-1",
-        "title": "Dave the Diver",
-        "image_url": null,
-        "game": {
-          "title": "Dave the Diver",
-          "genre": "Action",
-          "studio": "Indie Studio",
-          "release_year": 2024,
-          "image_url": null,
-          "description": "Хитовая игра с яркой подаче."
-        }
-      },
-      {
-        "id": "nom-3-opt-2",
-        "title": "Dredge",
-        "image_url": null,
-        "game": {
-          "title": "Dredge",
-          "genre": "Action",
-          "studio": "Indie Studio",
-          "release_year": 2024,
-          "image_url": null,
-          "description": "Хитовая игра с яркой подаче."
-        }
-      },
-      {
-        "id": "nom-3-opt-3",
-        "title": "Chants of Sennaar",
-        "image_url": null,
-        "game": {
-          "title": "Chants of Sennaar",
-          "genre": "Action",
-          "studio": "Indie Studio",
-          "release_year": 2024,
-          "image_url": null,
-          "description": "Хитовая игра с яркой подаче."
-        }
-      },
-      {
-        "id": "nom-3-opt-4",
-        "title": "Pizza Tower",
-        "image_url": null,
-        "game": {
-          "title": "Pizza Tower",
-          "genre": "Action",
-          "studio": "Indie Studio",
-          "release_year": 2024,
-          "image_url": null,
-          "description": "Хитовая игра с яркой подаче."
-        }
-      },
-      {
-        "id": "nom-3-opt-5",
-        "title": "COCOON",
-        "image_url": null,
-        "game": {
-          "title": "COCOON",
-          "genre": "Action",
-          "studio": "Indie Studio",
-          "release_year": 2024,
-          "image_url": null,
-          "description": "Хитовая игра с яркой подаче."
-        }
-      },
-      {
-        "id": "nom-3-opt-6",
-        "title": "Slay the Princess",
-        "image_url": null,
-        "game": {
-          "title": "Slay the Princess",
-          "genre": "Action",
-          "studio": "Indie Studio",
-          "release_year": 2024,
-          "image_url": null,
-          "description": "Хитовая игра с яркой подаче."
-        }
-      }
-    ]
-  },
-  {
-    "id": "4",
-    "title": "Сюжет и нарратив",
-    "description": "История, которую сложно забыть.",
-    "options": [
-      {
-        "id": "nom-4-opt-1",
-        "title": "Disco Elysium: The Final Cut",
-        "image_url": null,
-        "game": {
-          "title": "Disco Elysium: The Final Cut",
-          "genre": "Action",
-          "studio": "Indie Studio",
-          "release_year": 2024,
-          "image_url": null,
-          "description": "Хитовая игра с яркой подаче."
-        }
-      },
-      {
-        "id": "nom-4-opt-2",
+        "id": "лучший-арт-дирекшн-alan-wake-2",
         "title": "Alan Wake 2",
         "image_url": null,
         "game": {
-          "title": "Alan Wake 2",
-          "genre": "Thriller",
-          "studio": "Remedy Entertainment",
-          "release_year": 2023,
-          "image_url": null,
-          "description": "Психологический триллер с кинематографичным сюжетом."
-        }
+          "title": "Alan Wake 2"
+        },
+        "payload": {}
       },
       {
-        "id": "nom-4-opt-3",
-        "title": "Baldur's Gate 3",
+        "id": "лучший-арт-дирекшн-atomic-heart",
+        "title": "Atomic Heart",
         "image_url": null,
         "game": {
-          "title": "Baldur's Gate 3",
-          "genre": "RPG",
-          "studio": "Larian Studios",
-          "release_year": 2023,
-          "image_url": null,
-          "description": "РПГ, где каждое решение меняет мир."
-        }
+          "title": "Atomic Heart"
+        },
+        "payload": {}
       },
       {
-        "id": "nom-4-opt-4",
-        "title": "God of War Ragnarök",
+        "id": "лучший-арт-дирекшн-death-stranding-2",
+        "title": "Death Stranding 2",
         "image_url": null,
         "game": {
-          "title": "God of War Ragnarök",
-          "genre": "Action",
-          "studio": "Indie Studio",
-          "release_year": 2024,
-          "image_url": null,
-          "description": "Хитовая игра с яркой подаче."
-        }
+          "title": "Death Stranding 2"
+        },
+        "payload": {}
       },
       {
-        "id": "nom-4-opt-5",
-        "title": "Citizen Sleeper",
+        "id": "лучший-арт-дирекшн-cyberpunk-2077",
+        "title": "Cyberpunk 2077",
         "image_url": null,
         "game": {
-          "title": "Citizen Sleeper",
-          "genre": "Action",
-          "studio": "Indie Studio",
-          "release_year": 2024,
-          "image_url": null,
-          "description": "Хитовая игра с яркой подаче."
-        }
+          "title": "Cyberpunk 2077"
+        },
+        "payload": {}
+      },
+      {
+        "id": "лучший-арт-дирекшн-mafia-the-old-country",
+        "title": "Mafia: The Old Country",
+        "image_url": null,
+        "game": {
+          "title": "Mafia: The Old Country"
+        },
+        "payload": {}
+      },
+      {
+        "id": "лучший-арт-дирекшн-s-t-a-l-k-e-r-2-shadow-of-chornobyl",
+        "title": "S.T.A.L.K.E.R. 2: Shadow of Chornobyl",
+        "image_url": null,
+        "game": {
+          "title": "S.T.A.L.K.E.R. 2: Shadow of Chornobyl"
+        },
+        "payload": {}
       }
     ]
   },
   {
-    "id": "5",
-    "title": "Саундтрек",
-    "description": "Музыка, которая ведёт игру вперёд.",
+    "id": "лучший-саундтрек",
+    "title": "Лучший Саундтрек",
+    "description": "",
+    "voting": "main",
+    "kind": "game",
+    "config": {
+      "module": "game_award",
+      "subject": "game",
+      "option_payload_fields": []
+    },
     "options": [
       {
-        "id": "nom-5-opt-1",
-        "title": "Final Fantasy VII Rebirth",
+        "id": "лучший-саундтрек-alan-wake-2",
+        "title": "Alan Wake 2",
         "image_url": null,
         "game": {
-          "title": "Final Fantasy VII Rebirth",
-          "genre": "JRPG",
-          "studio": "Square Enix",
-          "release_year": 2024,
-          "image_url": null,
-          "description": "Продолжение культового JRPG с новой историей."
-        }
+          "title": "Alan Wake 2"
+        },
+        "payload": {}
       },
       {
-        "id": "nom-5-opt-2",
-        "title": "Hi-Fi Rush",
+        "id": "лучший-саундтрек-disco-elysium-director-s-cut",
+        "title": "Disco Elysium: Director`s Cut",
         "image_url": null,
         "game": {
-          "title": "Hi-Fi Rush",
-          "genre": "Action",
-          "studio": "Indie Studio",
-          "release_year": 2024,
-          "image_url": null,
-          "description": "Хитовая игра с яркой подаче."
-        }
+          "title": "Disco Elysium: Director`s Cut"
+        },
+        "payload": {}
       },
       {
-        "id": "nom-5-opt-3",
-        "title": "Sea of Stars",
+        "id": "лучший-саундтрек-metal-gear-solid-delta-snake-eater",
+        "title": "Metal Gear Solid Delta: Snake Eater",
         "image_url": null,
         "game": {
-          "title": "Sea of Stars",
-          "genre": "JRPG",
-          "studio": "Sabotage Studio",
-          "release_year": 2023,
-          "image_url": null,
-          "description": "Ретро JRPG с тактическими боями и светлой атмосферой."
-        }
+          "title": "Metal Gear Solid Delta: Snake Eater"
+        },
+        "payload": {}
       },
       {
-        "id": "nom-5-opt-4",
-        "title": "Hollow Knight: Silksong",
+        "id": "лучший-саундтрек-not-for-broadcast",
+        "title": "Not For Broadcast",
         "image_url": null,
         "game": {
-          "title": "Hollow Knight: Silksong",
-          "genre": "Metroidvania",
-          "studio": "Team Cherry",
-          "release_year": 2025,
-          "image_url": null,
-          "description": "Метроидвания с живописным миром и сложным геймплеем."
-        }
+          "title": "Not For Broadcast"
+        },
+        "payload": {}
       },
       {
-        "id": "nom-5-opt-5",
-        "title": "The Legend of Zelda: Tears of the Kingdom",
+        "id": "лучший-саундтрек-silent-hill-2",
+        "title": "Silent Hill 2",
         "image_url": null,
         "game": {
-          "title": "The Legend of Zelda: Tears of the Kingdom",
-          "genre": "Adventure",
-          "studio": "Nintendo",
-          "release_year": 2023,
-          "image_url": null,
-          "description": "Открытый мир и новые механики полета."
-        }
+          "title": "Silent Hill 2"
+        },
+        "payload": {}
       },
       {
-        "id": "nom-5-opt-6",
-        "title": "Nier: Automata",
+        "id": "лучший-саундтрек-s-t-a-l-k-e-r-2-shadow-of-chornobyl",
+        "title": "S.T.A.L.K.E.R. 2: Shadow of Chornobyl",
         "image_url": null,
         "game": {
-          "title": "Nier: Automata",
-          "genre": "Action",
-          "studio": "Indie Studio",
-          "release_year": 2024,
-          "image_url": null,
-          "description": "Хитовая игра с яркой подаче."
-        }
+          "title": "S.T.A.L.K.E.R. 2: Shadow of Chornobyl"
+        },
+        "payload": {}
       }
     ]
   },
   {
-    "id": "6",
-    "title": "Кооперативный опыт",
-    "description": "Лучшие впечатления плечом к плечу.",
+    "id": "лучший-аудио-дизайн",
+    "title": "Лучший Аудио-Дизайн",
+    "description": "",
+    "voting": "main",
+    "kind": "game",
+    "config": {
+      "module": "game_award",
+      "subject": "game",
+      "option_payload_fields": []
+    },
     "options": [
       {
-        "id": "nom-6-opt-1",
-        "title": "It Takes Two",
+        "id": "лучший-аудио-дизайн-alan-wake-2",
+        "title": "Alan Wake 2",
         "image_url": null,
         "game": {
-          "title": "It Takes Two",
-          "genre": "Action",
-          "studio": "Indie Studio",
-          "release_year": 2024,
-          "image_url": null,
-          "description": "Хитовая игра с яркой подаче."
-        }
+          "title": "Alan Wake 2"
+        },
+        "payload": {}
       },
       {
-        "id": "nom-6-opt-2",
-        "title": "Helldivers 2",
+        "id": "лучший-аудио-дизайн-atomic-heart",
+        "title": "Atomic Heart",
         "image_url": null,
         "game": {
-          "title": "Helldivers 2",
-          "genre": "Action",
-          "studio": "Indie Studio",
-          "release_year": 2024,
-          "image_url": null,
-          "description": "Хитовая игра с яркой подаче."
-        }
+          "title": "Atomic Heart"
+        },
+        "payload": {}
       },
       {
-        "id": "nom-6-opt-3",
-        "title": "Baldur's Gate 3",
+        "id": "лучший-аудио-дизайн-uboat",
+        "title": "UBOAT",
         "image_url": null,
         "game": {
-          "title": "Baldur's Gate 3",
-          "genre": "RPG",
-          "studio": "Larian Studios",
-          "release_year": 2023,
-          "image_url": null,
-          "description": "РПГ, где каждое решение меняет мир."
-        }
+          "title": "UBOAT"
+        },
+        "payload": {}
       },
       {
-        "id": "nom-6-opt-4",
-        "title": "Deep Rock Galactic",
+        "id": "лучший-аудио-дизайн-workers-resources-soviet-republic",
+        "title": "Workers & Resources: Soviet Republic",
         "image_url": null,
         "game": {
-          "title": "Deep Rock Galactic",
-          "genre": "Action",
-          "studio": "Indie Studio",
-          "release_year": 2024,
-          "image_url": null,
-          "description": "Хитовая игра с яркой подаче."
-        }
+          "title": "Workers & Resources: Soviet Republic"
+        },
+        "payload": {}
       },
       {
-        "id": "nom-6-opt-5",
-        "title": "Diablo IV",
+        "id": "лучший-аудио-дизайн-hitman-world-of-assassination",
+        "title": "HITMAN: World of Assassination",
         "image_url": null,
         "game": {
-          "title": "Diablo IV",
-          "genre": "Action",
-          "studio": "Indie Studio",
-          "release_year": 2024,
-          "image_url": null,
-          "description": "Хитовая игра с яркой подаче."
-        }
+          "title": "HITMAN: World of Assassination"
+        },
+        "payload": {}
+      },
+      {
+        "id": "лучший-аудио-дизайн-s-t-a-l-k-e-r-2-shadow-of-chornobyl",
+        "title": "S.T.A.L.K.E.R. 2: Shadow of Chornobyl",
+        "image_url": null,
+        "game": {
+          "title": "S.T.A.L.K.E.R. 2: Shadow of Chornobyl"
+        },
+        "payload": {}
       }
     ]
   },
   {
-    "id": "7",
-    "title": "Сетевой мультиплеер",
-    "description": "Соревновательные или командные режимы, куда хочется возвращаться.",
+    "id": "лучшее-повествование",
+    "title": "Лучшее повествование",
+    "description": "",
+    "voting": "main",
+    "kind": "game",
+    "config": {
+      "module": "game_award",
+      "subject": "game",
+      "option_payload_fields": []
+    },
     "options": [
       {
-        "id": "nom-7-opt-1",
-        "title": "Apex Legends",
+        "id": "лучшее-повествование-alan-wake-2",
+        "title": "Alan Wake 2",
         "image_url": null,
         "game": {
-          "title": "Apex Legends",
-          "genre": "Action",
-          "studio": "Indie Studio",
-          "release_year": 2024,
-          "image_url": null,
-          "description": "Хитовая игра с яркой подаче."
-        }
+          "title": "Alan Wake 2"
+        },
+        "payload": {}
       },
       {
-        "id": "nom-7-opt-2",
-        "title": "Valorant",
+        "id": "лучшее-повествование-alan-wake-remastered",
+        "title": "Alan Wake Remastered",
         "image_url": null,
         "game": {
-          "title": "Valorant",
-          "genre": "Action",
-          "studio": "Indie Studio",
-          "release_year": 2024,
-          "image_url": null,
-          "description": "Хитовая игра с яркой подаче."
-        }
+          "title": "Alan Wake Remastered"
+        },
+        "payload": {}
       },
       {
-        "id": "nom-7-opt-3",
-        "title": "Counter-Strike 2",
+        "id": "лучшее-повествование-atomic-heart",
+        "title": "Atomic Heart",
         "image_url": null,
         "game": {
-          "title": "Counter-Strike 2",
-          "genre": "Action",
-          "studio": "Indie Studio",
-          "release_year": 2024,
-          "image_url": null,
-          "description": "Хитовая игра с яркой подаче."
-        }
+          "title": "Atomic Heart"
+        },
+        "payload": {}
       },
       {
-        "id": "nom-7-opt-4",
-        "title": "Fortnite",
+        "id": "лучшее-повествование-silent-hill-2",
+        "title": "Silent Hill 2",
         "image_url": null,
         "game": {
-          "title": "Fortnite",
-          "genre": "Action",
-          "studio": "Indie Studio",
-          "release_year": 2024,
-          "image_url": null,
-          "description": "Хитовая игра с яркой подаче."
-        }
+          "title": "Silent Hill 2"
+        },
+        "payload": {}
       },
       {
-        "id": "nom-7-opt-5",
-        "title": "Destiny 2",
+        "id": "лучшее-повествование-kingdom-come-deliverance-2",
+        "title": "Kingdom Come Deliverance 2",
         "image_url": null,
         "game": {
-          "title": "Destiny 2",
-          "genre": "Action",
-          "studio": "Indie Studio",
-          "release_year": 2024,
-          "image_url": null,
-          "description": "Хитовая игра с яркой подаче."
-        }
+          "title": "Kingdom Come Deliverance 2"
+        },
+        "payload": {}
       },
       {
-        "id": "nom-7-opt-6",
-        "title": "Call of Duty: Modern Warfare III",
+        "id": "лучшее-повествование-metal-gear-solid-delta-snake-eater",
+        "title": "Metal Gear Solid Delta: Snake Eater",
         "image_url": null,
         "game": {
-          "title": "Call of Duty: Modern Warfare III",
-          "genre": "Action",
-          "studio": "Indie Studio",
-          "release_year": 2024,
-          "image_url": null,
-          "description": "Хитовая игра с яркой подаче."
-        }
+          "title": "Metal Gear Solid Delta: Snake Eater"
+        },
+        "payload": {}
       }
     ]
   },
   {
-    "id": "8",
-    "title": "Мобильная игра",
-    "description": "Лучшее, что можно запустить на телефоне.",
+    "id": "лучший-мультиплеер",
+    "title": "Лучший мультиплеер",
+    "description": "",
+    "voting": "main",
+    "kind": "game",
+    "config": {
+      "module": "game_award",
+      "subject": "game",
+      "option_payload_fields": []
+    },
     "options": [
       {
-        "id": "nom-8-opt-1",
-        "title": "Honkai: Star Rail",
+        "id": "лучший-мультиплеер-split-fiction",
+        "title": "Split Fiction",
         "image_url": null,
         "game": {
-          "title": "Honkai: Star Rail",
-          "genre": "Action",
-          "studio": "Indie Studio",
-          "release_year": 2024,
-          "image_url": null,
-          "description": "Хитовая игра с яркой подаче."
-        }
+          "title": "Split Fiction"
+        },
+        "payload": {}
       },
       {
-        "id": "nom-8-opt-2",
-        "title": "Genshin Impact",
+        "id": "лучший-мультиплеер-call-to-arms-gates-of-hell-ostfront",
+        "title": "Call to Arms - Gates of Hell: Ostfront",
         "image_url": null,
         "game": {
-          "title": "Genshin Impact",
-          "genre": "Action",
-          "studio": "Indie Studio",
-          "release_year": 2024,
-          "image_url": null,
-          "description": "Хитовая игра с яркой подаче."
-        }
+          "title": "Call to Arms - Gates of Hell: Ostfront"
+        },
+        "payload": {}
       },
       {
-        "id": "nom-8-opt-3",
-        "title": "Vampire Survivors",
+        "id": "лучший-мультиплеер-sniper-elite-5",
+        "title": "Sniper Elite 5",
         "image_url": null,
         "game": {
-          "title": "Vampire Survivors",
-          "genre": "Action",
-          "studio": "Indie Studio",
-          "release_year": 2024,
-          "image_url": null,
-          "description": "Хитовая игра с яркой подаче."
-        }
+          "title": "Sniper Elite 5"
+        },
+        "payload": {}
       },
       {
-        "id": "nom-8-opt-4",
-        "title": "Marvel Snap",
+        "id": "лучший-мультиплеер-7-days-to-die",
+        "title": "7 Days to Die",
         "image_url": null,
         "game": {
-          "title": "Marvel Snap",
-          "genre": "Action",
-          "studio": "Indie Studio",
-          "release_year": 2024,
-          "image_url": null,
-          "description": "Хитовая игра с яркой подаче."
-        }
+          "title": "7 Days to Die"
+        },
+        "payload": {}
       },
       {
-        "id": "nom-8-opt-5",
-        "title": "Brawl Stars",
+        "id": "лучший-мультиплеер-stronghold-crusader-definitive-edition",
+        "title": "Stronghold Crusader: Definitive Edition",
         "image_url": null,
         "game": {
-          "title": "Brawl Stars",
-          "genre": "Action",
-          "studio": "Indie Studio",
-          "release_year": 2024,
-          "image_url": null,
-          "description": "Хитовая игра с яркой подаче."
-        }
+          "title": "Stronghold Crusader: Definitive Edition"
+        },
+        "payload": {}
+      },
+      {
+        "id": "лучший-мультиплеер-buckshot-roulette",
+        "title": "Buckshot Roulette",
+        "image_url": null,
+        "game": {
+          "title": "Buckshot Roulette"
+        },
+        "payload": {}
       }
     ]
   },
   {
-    "id": "9",
-    "title": "Дебют студии",
-    "description": "Первый релиз команды, задавший высокую планку.",
+    "id": "лучший-хоррор",
+    "title": "Лучший хоррор",
+    "description": "",
+    "voting": "main",
+    "kind": "game",
+    "config": {
+      "module": "game_award",
+      "subject": "game",
+      "option_payload_fields": []
+    },
     "options": [
       {
-        "id": "nom-9-opt-1",
+        "id": "лучший-хоррор-alan-wake-2",
+        "title": "Alan Wake 2",
+        "image_url": null,
+        "game": {
+          "title": "Alan Wake 2"
+        },
+        "payload": {}
+      },
+      {
+        "id": "лучший-хоррор-signalis",
+        "title": "SIGNALIS",
+        "image_url": null,
+        "game": {
+          "title": "SIGNALIS"
+        },
+        "payload": {}
+      },
+      {
+        "id": "лучший-хоррор-resident-evil-4-remake",
+        "title": "Resident Evil 4 Remake",
+        "image_url": null,
+        "game": {
+          "title": "Resident Evil 4 Remake"
+        },
+        "payload": {}
+      },
+      {
+        "id": "лучший-хоррор-still-wakes-the-deep",
+        "title": "Still Wakes The Deep",
+        "image_url": null,
+        "game": {
+          "title": "Still Wakes The Deep"
+        },
+        "payload": {}
+      },
+      {
+        "id": "лучший-хоррор-silent-hill-2",
+        "title": "Silent Hill 2",
+        "image_url": null,
+        "game": {
+          "title": "Silent Hill 2"
+        },
+        "payload": {}
+      },
+      {
+        "id": "лучший-хоррор-silent-hill-f",
+        "title": "Silent Hill f",
+        "image_url": null,
+        "game": {
+          "title": "Silent Hill f"
+        },
+        "payload": {}
+      }
+    ]
+  },
+  {
+    "id": "лучшее-инди",
+    "title": "Лучшее инди",
+    "description": "",
+    "voting": "main",
+    "kind": "game",
+    "config": {
+      "module": "game_award",
+      "subject": "game",
+      "option_payload_fields": []
+    },
+    "options": [
+      {
+        "id": "лучшее-инди-signalis",
+        "title": "SIGNALIS",
+        "image_url": null,
+        "game": {
+          "title": "SIGNALIS"
+        },
+        "payload": {}
+      },
+      {
+        "id": "лучшее-инди-stray",
         "title": "Stray",
         "image_url": null,
         "game": {
-          "title": "Stray",
-          "genre": "Action",
-          "studio": "Indie Studio",
-          "release_year": 2024,
-          "image_url": null,
-          "description": "Хитовая игра с яркой подаче."
+          "title": "Stray"
+        },
+        "payload": {}
+      },
+      {
+        "id": "лучшее-инди-indika",
+        "title": "INDIKA",
+        "image_url": null,
+        "game": {
+          "title": "INDIKA"
+        },
+        "payload": {}
+      },
+      {
+        "id": "лучшее-инди-stanley-parable-ultra-deluxe",
+        "title": "Stanley Parable: Ultra Deluxe",
+        "image_url": null,
+        "game": {
+          "title": "Stanley Parable: Ultra Deluxe"
+        },
+        "payload": {}
+      },
+      {
+        "id": "лучшее-инди-7-days-to-die",
+        "title": "7 Days to Die",
+        "image_url": null,
+        "game": {
+          "title": "7 Days to Die"
+        },
+        "payload": {}
+      },
+      {
+        "id": "лучшее-инди-not-for-broadcast",
+        "title": "Not For Broadcast",
+        "image_url": null,
+        "game": {
+          "title": "Not For Broadcast"
+        },
+        "payload": {}
+      }
+    ]
+  },
+  {
+    "id": "лучший-дебютный-проект",
+    "title": "Лучший дебютный проект",
+    "description": "",
+    "voting": "main",
+    "kind": "game",
+    "config": {
+      "module": "game_award",
+      "subject": "game",
+      "option_payload_fields": []
+    },
+    "options": [
+      {
+        "id": "лучший-дебютный-проект-atomic-heart",
+        "title": "Atomic Heart",
+        "image_url": null,
+        "game": {
+          "title": "Atomic Heart"
+        },
+        "payload": {}
+      },
+      {
+        "id": "лучший-дебютный-проект-indika",
+        "title": "INDIKA",
+        "image_url": null,
+        "game": {
+          "title": "INDIKA"
+        },
+        "payload": {}
+      },
+      {
+        "id": "лучший-дебютный-проект-disco-elysium-director-s-cut",
+        "title": "Disco Elysium: Director`s Cut",
+        "image_url": null,
+        "game": {
+          "title": "Disco Elysium: Director`s Cut"
+        },
+        "payload": {}
+      },
+      {
+        "id": "лучший-дебютный-проект-signalis",
+        "title": "SIGNALIS",
+        "image_url": null,
+        "game": {
+          "title": "SIGNALIS"
+        },
+        "payload": {}
+      },
+      {
+        "id": "лучший-дебютный-проект-stellar-blade",
+        "title": "Stellar Blade",
+        "image_url": null,
+        "game": {
+          "title": "Stellar Blade"
+        },
+        "payload": {}
+      },
+      {
+        "id": "лучший-дебютный-проект-stray",
+        "title": "Stray",
+        "image_url": null,
+        "game": {
+          "title": "Stray"
+        },
+        "payload": {}
+      }
+    ]
+  },
+  {
+    "id": "лучшая-приключенческая-игра",
+    "title": "Лучшая приключенческая игра",
+    "description": "",
+    "voting": "main",
+    "kind": "game",
+    "config": {
+      "module": "game_award",
+      "subject": "game",
+      "option_payload_fields": []
+    },
+    "options": [
+      {
+        "id": "лучшая-приключенческая-игра-a-plague-tale-requiem",
+        "title": "A Plague Tale: Requiem",
+        "image_url": null,
+        "game": {
+          "title": "A Plague Tale: Requiem"
+        },
+        "payload": {}
+      },
+      {
+        "id": "лучшая-приключенческая-игра-indiana-jones-and-the-great-circle",
+        "title": "Indiana Jones and The Great Circle",
+        "image_url": null,
+        "game": {
+          "title": "Indiana Jones and The Great Circle"
+        },
+        "payload": {}
+      },
+      {
+        "id": "лучшая-приключенческая-игра-the-legend-of-zelda-tears-of-the-kin",
+        "title": "The Legend of Zelda: Tears of the Kingdom",
+        "image_url": null,
+        "game": {
+          "title": "The Legend of Zelda: Tears of the Kingdom"
+        },
+        "payload": {}
+      },
+      {
+        "id": "лучшая-приключенческая-игра-jagged-alliance-3",
+        "title": "Jagged Alliance 3",
+        "image_url": null,
+        "game": {
+          "title": "Jagged Alliance 3"
+        },
+        "payload": {}
+      },
+      {
+        "id": "лучшая-приключенческая-игра-stanley-parable-ultra-deluxe",
+        "title": "Stanley Parable: Ultra Deluxe",
+        "image_url": null,
+        "game": {
+          "title": "Stanley Parable: Ultra Deluxe"
+        },
+        "payload": {}
+      }
+    ]
+  },
+  {
+    "id": "лучшая-ролевая-игра",
+    "title": "Лучшая ролевая игра",
+    "description": "",
+    "voting": "main",
+    "kind": "game",
+    "config": {
+      "module": "game_award",
+      "subject": "game",
+      "option_payload_fields": []
+    },
+    "options": [
+      {
+        "id": "лучшая-ролевая-игра-kingdom-come-deliverance-2",
+        "title": "Kingdom Come Deliverance 2",
+        "image_url": null,
+        "game": {
+          "title": "Kingdom Come Deliverance 2"
+        },
+        "payload": {}
+      },
+      {
+        "id": "лучшая-ролевая-игра-disco-elysium-director-s-cut",
+        "title": "Disco Elysium: Director`s Cut",
+        "image_url": null,
+        "game": {
+          "title": "Disco Elysium: Director`s Cut"
+        },
+        "payload": {}
+      },
+      {
+        "id": "лучшая-ролевая-игра-cyberpunk-2077",
+        "title": "Cyberpunk 2077",
+        "image_url": null,
+        "game": {
+          "title": "Cyberpunk 2077"
+        },
+        "payload": {}
+      },
+      {
+        "id": "лучшая-ролевая-игра-like-a-dragon-infinite-wealth",
+        "title": "Like a Dragon: Infinite Wealth",
+        "image_url": null,
+        "game": {
+          "title": "Like a Dragon: Infinite Wealth"
+        },
+        "payload": {}
+      },
+      {
+        "id": "лучшая-ролевая-игра-jagged-alliance-3",
+        "title": "Jagged Alliance 3",
+        "image_url": null,
+        "game": {
+          "title": "Jagged Alliance 3"
+        },
+        "payload": {}
+      }
+    ]
+  },
+  {
+    "id": "лучший-стелс-экшен",
+    "title": "Лучший стелс-экшен",
+    "description": "",
+    "voting": "main",
+    "kind": "game",
+    "config": {
+      "module": "game_award",
+      "subject": "game",
+      "option_payload_fields": []
+    },
+    "options": [
+      {
+        "id": "лучший-стелс-экшен-hitman-world-of-assassination",
+        "title": "HITMAN: World of Assassination",
+        "image_url": null,
+        "game": {
+          "title": "HITMAN: World of Assassination"
+        },
+        "payload": {}
+      },
+      {
+        "id": "лучший-стелс-экшен-metal-gear-solid-delta-snake-eater",
+        "title": "Metal Gear Solid Delta: Snake Eater",
+        "image_url": null,
+        "game": {
+          "title": "Metal Gear Solid Delta: Snake Eater"
+        },
+        "payload": {}
+      },
+      {
+        "id": "лучший-стелс-экшен-jagged-alliance-3",
+        "title": "Jagged Alliance 3",
+        "image_url": null,
+        "game": {
+          "title": "Jagged Alliance 3"
+        },
+        "payload": {}
+      },
+      {
+        "id": "лучший-стелс-экшен-intravenous-2",
+        "title": "Intravenous 2",
+        "image_url": null,
+        "game": {
+          "title": "Intravenous 2"
+        },
+        "payload": {}
+      },
+      {
+        "id": "лучший-стелс-экшен-sniper-elite-5",
+        "title": "Sniper Elite 5",
+        "image_url": null,
+        "game": {
+          "title": "Sniper Elite 5"
+        },
+        "payload": {}
+      }
+    ]
+  },
+  {
+    "id": "лучшая-аркада",
+    "title": "Лучшая аркада",
+    "description": "",
+    "voting": "main",
+    "kind": "game",
+    "config": {
+      "module": "game_award",
+      "subject": "game",
+      "option_payload_fields": []
+    },
+    "options": [
+      {
+        "id": "лучшая-аркада-buckshot-roulette",
+        "title": "Buckshot Roulette",
+        "image_url": null,
+        "game": {
+          "title": "Buckshot Roulette"
+        },
+        "payload": {}
+      },
+      {
+        "id": "лучшая-аркада-balatro",
+        "title": "Balatro",
+        "image_url": null,
+        "game": {
+          "title": "Balatro"
+        },
+        "payload": {}
+      },
+      {
+        "id": "лучшая-аркада-poly-bridge-3",
+        "title": "Poly Bridge 3",
+        "image_url": null,
+        "game": {
+          "title": "Poly Bridge 3"
+        },
+        "payload": {}
+      },
+      {
+        "id": "лучшая-аркада-potion-craft",
+        "title": "Potion Craft",
+        "image_url": null,
+        "game": {
+          "title": "Potion Craft"
+        },
+        "payload": {}
+      },
+      {
+        "id": "лучшая-аркада-totally-accurate-battle-simulator",
+        "title": "Totally Accurate Battle Simulator",
+        "image_url": null,
+        "game": {
+          "title": "Totally Accurate Battle Simulator"
+        },
+        "payload": {}
+      }
+    ]
+  },
+  {
+    "id": "лучший-экшен",
+    "title": "Лучший экшен",
+    "description": "",
+    "voting": "main",
+    "kind": "game",
+    "config": {
+      "module": "game_award",
+      "subject": "game",
+      "option_payload_fields": []
+    },
+    "options": [
+      {
+        "id": "лучший-экшен-cyberpunk-2077",
+        "title": "Cyberpunk 2077",
+        "image_url": null,
+        "game": {
+          "title": "Cyberpunk 2077"
+        },
+        "payload": {}
+      },
+      {
+        "id": "лучший-экшен-atomic-heart",
+        "title": "Atomic Heart",
+        "image_url": null,
+        "game": {
+          "title": "Atomic Heart"
+        },
+        "payload": {}
+      },
+      {
+        "id": "лучший-экшен-dying-light-2",
+        "title": "Dying Light 2",
+        "image_url": null,
+        "game": {
+          "title": "Dying Light 2"
+        },
+        "payload": {}
+      },
+      {
+        "id": "лучший-экшен-resident-evil-4-remake",
+        "title": "Resident Evil 4 Remake",
+        "image_url": null,
+        "game": {
+          "title": "Resident Evil 4 Remake"
+        },
+        "payload": {}
+      },
+      {
+        "id": "лучший-экшен-sifu",
+        "title": "Sifu",
+        "image_url": null,
+        "game": {
+          "title": "Sifu"
+        },
+        "payload": {}
+      }
+    ]
+  },
+  {
+    "id": "лучшая-тактика-стратегия",
+    "title": "Лучшая тактика/стратегия",
+    "description": "",
+    "voting": "main",
+    "kind": "game",
+    "config": {
+      "module": "game_award",
+      "subject": "game",
+      "option_payload_fields": []
+    },
+    "options": [
+      {
+        "id": "лучшая-тактика-стратегия-frostpunk-2",
+        "title": "Frostpunk 2",
+        "image_url": null,
+        "game": {
+          "title": "Frostpunk 2"
+        },
+        "payload": {}
+      },
+      {
+        "id": "лучшая-тактика-стратегия-call-to-arms-gates-of-hell-ostfront",
+        "title": "Call to Arms - Gates of Hell: Ostfront",
+        "image_url": null,
+        "game": {
+          "title": "Call to Arms - Gates of Hell: Ostfront"
+        },
+        "payload": {}
+      },
+      {
+        "id": "лучшая-тактика-стратегия-stronghold-crusader-definitive-edition",
+        "title": "Stronghold Crusader: Definitive Edition",
+        "image_url": null,
+        "game": {
+          "title": "Stronghold Crusader: Definitive Edition"
+        },
+        "payload": {}
+      },
+      {
+        "id": "лучшая-тактика-стратегия-jagged-alliance-3",
+        "title": "Jagged Alliance 3",
+        "image_url": null,
+        "game": {
+          "title": "Jagged Alliance 3"
+        },
+        "payload": {}
+      },
+      {
+        "id": "лучшая-тактика-стратегия-aliens-dark-descent",
+        "title": "Aliens: Dark Descent",
+        "image_url": null,
+        "game": {
+          "title": "Aliens: Dark Descent"
+        },
+        "payload": {}
+      }
+    ]
+  },
+  {
+    "id": "лучший-гейм-дирекшн",
+    "title": "Лучший гейм-дирекшн",
+    "description": "",
+    "voting": "main",
+    "kind": "game",
+    "config": {
+      "module": "game_award",
+      "subject": "game",
+      "option_payload_fields": []
+    },
+    "options": [
+      {
+        "id": "лучший-гейм-дирекшн-alan-wake-2",
+        "title": "Alan Wake 2",
+        "image_url": null,
+        "game": {
+          "title": "Alan Wake 2"
+        },
+        "payload": {}
+      },
+      {
+        "id": "лучший-гейм-дирекшн-hitman-world-of-assassination",
+        "title": "HITMAN: World of Assassination",
+        "image_url": null,
+        "game": {
+          "title": "HITMAN: World of Assassination"
+        },
+        "payload": {}
+      },
+      {
+        "id": "лучший-гейм-дирекшн-death-stranding-2",
+        "title": "Death Stranding 2",
+        "image_url": null,
+        "game": {
+          "title": "Death Stranding 2"
+        },
+        "payload": {}
+      },
+      {
+        "id": "лучший-гейм-дирекшн-s-t-a-l-k-e-r-2-shadow-of-chornobyl",
+        "title": "S.T.A.L.K.E.R. 2: Shadow of Chornobyl",
+        "image_url": null,
+        "game": {
+          "title": "S.T.A.L.K.E.R. 2: Shadow of Chornobyl"
+        },
+        "payload": {}
+      },
+      {
+        "id": "лучший-гейм-дирекшн-sifu",
+        "title": "Sifu",
+        "image_url": null,
+        "game": {
+          "title": "Sifu"
+        },
+        "payload": {}
+      },
+      {
+        "id": "лучший-гейм-дирекшн-atomic-heart",
+        "title": "Atomic Heart",
+        "image_url": null,
+        "game": {
+          "title": "Atomic Heart"
+        },
+        "payload": {}
+      }
+    ]
+  },
+  {
+    "id": "лучшая-игра",
+    "title": "Лучшая игра",
+    "description": "",
+    "voting": "main",
+    "kind": "game",
+    "config": {
+      "module": "game_award",
+      "subject": "game",
+      "option_payload_fields": []
+    },
+    "options": [
+      {
+        "id": "лучшая-игра-hitman-world-of-assassination",
+        "title": "HITMAN: World of Assassination",
+        "image_url": null,
+        "game": {
+          "title": "HITMAN: World of Assassination"
+        },
+        "payload": {}
+      },
+      {
+        "id": "лучшая-игра-s-t-a-l-k-e-r-2-shadow-of-chornobyl",
+        "title": "S.T.A.L.K.E.R. 2: Shadow of Chornobyl",
+        "image_url": null,
+        "game": {
+          "title": "S.T.A.L.K.E.R. 2: Shadow of Chornobyl"
+        },
+        "payload": {}
+      },
+      {
+        "id": "лучшая-игра-the-legend-of-zelda-tears-of-the-kingdom",
+        "title": "The Legend of Zelda: Tears of the Kingdom",
+        "image_url": null,
+        "game": {
+          "title": "The Legend of Zelda: Tears of the Kingdom"
+        },
+        "payload": {}
+      },
+      {
+        "id": "лучшая-игра-resident-evil-4-remake",
+        "title": "Resident Evil 4 Remake",
+        "image_url": null,
+        "game": {
+          "title": "Resident Evil 4 Remake"
+        },
+        "payload": {}
+      },
+      {
+        "id": "лучшая-игра-kingdom-come-deliverance-2",
+        "title": "Kingdom Come Deliverance 2",
+        "image_url": null,
+        "game": {
+          "title": "Kingdom Come Deliverance 2"
+        },
+        "payload": {}
+      },
+      {
+        "id": "лучшая-игра-alan-wake-2",
+        "title": "Alan Wake 2",
+        "image_url": null,
+        "game": {
+          "title": "Alan Wake 2"
+        },
+        "payload": {}
+      }
+    ]
+  },
+  {
+    "id": "лучший-обзорщик",
+    "title": "Лучший обзорщик",
+    "description": "Выбираем любимых авторов обзоров и контента об играх.",
+    "voting": "main",
+    "kind": "person",
+    "config": {
+      "module": "reviewer_award",
+      "subject": "person",
+      "option_payload_fields": [
+        "reviewer",
+        "links"
+      ]
+    },
+    "options": [
+      {
+        "id": "лучший-обзорщик-algumer",
+        "title": "AlGumer",
+        "image_url": null,
+        "game": null,
+        "payload": {
+          "reviewer": "AlGumer",
+          "role": "reviewer"
         }
       },
       {
-        "id": "nom-9-opt-2",
-        "title": "Kena: Bridge of Spirits",
+        "id": "лучший-обзорщик-unclehayter",
+        "title": "UncleHayter",
         "image_url": null,
-        "game": {
-          "title": "Kena: Bridge of Spirits",
-          "genre": "Action",
-          "studio": "Indie Studio",
-          "release_year": 2024,
-          "image_url": null,
-          "description": "Хитовая игра с яркой подаче."
+        "game": null,
+        "payload": {
+          "reviewer": "UncleHayter",
+          "role": "reviewer"
         }
       },
       {
-        "id": "nom-9-opt-3",
-        "title": "Planet of Lana",
+        "id": "лучший-обзорщик-bulcer",
+        "title": "Bulcer",
         "image_url": null,
-        "game": {
-          "title": "Planet of Lana",
-          "genre": "Action",
-          "studio": "Indie Studio",
-          "release_year": 2024,
-          "image_url": null,
-          "description": "Хитовая игра с яркой подаче."
+        "game": null,
+        "payload": {
+          "reviewer": "Bulcer",
+          "role": "reviewer"
         }
       },
       {
-        "id": "nom-9-opt-4",
-        "title": "The Pale Beyond",
+        "id": "лучший-обзорщик-михаил-туров",
+        "title": "Михаил Туров",
         "image_url": null,
-        "game": {
-          "title": "The Pale Beyond",
-          "genre": "Action",
-          "studio": "Indie Studio",
-          "release_year": 2024,
-          "image_url": null,
-          "description": "Хитовая игра с яркой подаче."
+        "game": null,
+        "payload": {
+          "reviewer": "Михаил Туров",
+          "role": "reviewer"
         }
       },
       {
-        "id": "nom-9-opt-5",
-        "title": "NORCO",
+        "id": "лучший-обзорщик-saloma",
+        "title": "Saloma",
         "image_url": null,
-        "game": {
-          "title": "NORCO",
-          "genre": "Action",
-          "studio": "Indie Studio",
-          "release_year": 2024,
-          "image_url": null,
-          "description": "Хитовая игра с яркой подаче."
+        "game": null,
+        "payload": {
+          "reviewer": "Saloma",
+          "role": "reviewer"
         }
       },
       {
-        "id": "nom-9-opt-6",
-        "title": "Viewfinder",
+        "id": "лучший-обзорщик-музей-игрового-искусства",
+        "title": "Музей Игрового Искусства",
         "image_url": null,
-        "game": {
-          "title": "Viewfinder",
-          "genre": "Action",
-          "studio": "Indie Studio",
-          "release_year": 2024,
-          "image_url": null,
-          "description": "Хитовая игра с яркой подаче."
+        "game": null,
+        "payload": {
+          "reviewer": "Музей Игрового Искусства",
+          "role": "reviewer"
         }
       }
     ]
   },
   {
-    "id": "10",
-    "title": "Ремейк / Ремастер",
-    "description": "Переосмысление классики.",
+    "id": "лучший-обзор",
+    "title": "Лучший обзор",
+    "description": "Отмечаем самые цепляющие обзоры и материалы.",
+    "voting": "main",
+    "kind": "review",
+    "config": {
+      "module": "review_award",
+      "subject": "review",
+      "option_payload_fields": [
+        "reviewers",
+        "games",
+        "link",
+        "summary"
+      ]
+    },
     "options": [
       {
-        "id": "nom-10-opt-1",
-        "title": "Resident Evil 4 (2023)",
+        "id": "лучший-обзор-dying-light-2-от-bulcer",
+        "title": "Dying Light 2 от Bulcer",
         "image_url": null,
         "game": {
-          "title": "Resident Evil 4 (2023)",
-          "genre": "Action",
-          "studio": "Indie Studio",
-          "release_year": 2024,
-          "image_url": null,
-          "description": "Хитовая игра с яркой подаче."
+          "title": "Dying Light 2"
+        },
+        "payload": {
+          "reviewers": [
+            "Bulcer"
+          ],
+          "games": [
+            "Dying Light 2"
+          ]
         }
       },
       {
-        "id": "nom-10-opt-2",
-        "title": "Dead Space (2023)",
+        "id": "лучший-обзор-alone-in-the-dark-x-silent-hill-2-от-algumer-x-uncl",
+        "title": "Alone in The Dark x Silent Hill 2 от AlGumer x UncleHayter",
         "image_url": null,
         "game": {
-          "title": "Dead Space (2023)",
-          "genre": "Action",
-          "studio": "Indie Studio",
-          "release_year": 2024,
-          "image_url": null,
-          "description": "Хитовая игра с яркой подаче."
+          "title": "Alone in The Dark"
+        },
+        "payload": {
+          "reviewers": [
+            "AlGumer",
+            "UncleHayter"
+          ],
+          "games": [
+            "Alone in The Dark",
+            "Silent Hill 2"
+          ]
         }
       },
       {
-        "id": "nom-10-opt-3",
-        "title": "Metroid Prime Remastered",
+        "id": "лучший-обзор-indika-от-музей-игрового-искусства",
+        "title": "INDIKA от МУЗЕЙ ИГРОВОГО ИСКУССТВА",
         "image_url": null,
         "game": {
-          "title": "Metroid Prime Remastered",
-          "genre": "Action",
-          "studio": "Indie Studio",
-          "release_year": 2024,
-          "image_url": null,
-          "description": "Хитовая игра с яркой подаче."
+          "title": "INDIKA"
+        },
+        "payload": {
+          "reviewers": [
+            "Музей Игрового Искусства"
+          ],
+          "games": [
+            "INDIKA"
+          ]
         }
       },
       {
-        "id": "nom-10-opt-4",
-        "title": "System Shock (2023)",
+        "id": "лучший-обзор-star-wars-jedi-survivor-от-maxim777gmail",
+        "title": "Star Wars Jedi Survivor от Maxim777gmail",
         "image_url": null,
         "game": {
-          "title": "System Shock (2023)",
-          "genre": "Action",
-          "studio": "Indie Studio",
-          "release_year": 2024,
-          "image_url": null,
-          "description": "Хитовая игра с яркой подаче."
+          "title": "Star Wars Jedi Survivor"
+        },
+        "payload": {
+          "reviewers": [
+            "Maxim777gmail"
+          ],
+          "games": [
+            "Star Wars Jedi Survivor"
+          ]
         }
       },
       {
-        "id": "nom-10-opt-5",
-        "title": "The Last of Us Part I",
+        "id": "лучший-обзор-s-t-a-l-k-e-r-2-shadow-of-chornobyl-от-салома",
+        "title": "S.T.A.L.K.E.R. 2: Shadow of Chornobyl от Салома",
         "image_url": null,
         "game": {
-          "title": "The Last of Us Part I",
-          "genre": "Action",
-          "studio": "Indie Studio",
-          "release_year": 2024,
-          "image_url": null,
-          "description": "Хитовая игра с яркой подаче."
-        }
-      }
-    ]
-  },
-  {
-    "id": "11",
-    "title": "VR / AR проект",
-    "description": "Опыт, делающий шлем оправданным.",
-    "options": [
-      {
-        "id": "nom-11-opt-1",
-        "title": "Half-Life: Alyx",
-        "image_url": null,
-        "game": {
-          "title": "Half-Life: Alyx",
-          "genre": "Action",
-          "studio": "Indie Studio",
-          "release_year": 2024,
-          "image_url": null,
-          "description": "Хитовая игра с яркой подаче."
-        }
-      },
-      {
-        "id": "nom-11-opt-2",
-        "title": "Beat Saber",
-        "image_url": null,
-        "game": {
-          "title": "Beat Saber",
-          "genre": "Action",
-          "studio": "Indie Studio",
-          "release_year": 2024,
-          "image_url": null,
-          "description": "Хитовая игра с яркой подаче."
-        }
-      },
-      {
-        "id": "nom-11-opt-3",
-        "title": "Asgard's Wrath 2",
-        "image_url": null,
-        "game": {
-          "title": "Asgard's Wrath 2",
-          "genre": "Action",
-          "studio": "Indie Studio",
-          "release_year": 2024,
-          "image_url": null,
-          "description": "Хитовая игра с яркой подаче."
-        }
-      },
-      {
-        "id": "nom-11-opt-4",
-        "title": "Resident Evil Village VR",
-        "image_url": null,
-        "game": {
-          "title": "Resident Evil Village VR",
-          "genre": "Action",
-          "studio": "Indie Studio",
-          "release_year": 2024,
-          "image_url": null,
-          "description": "Хитовая игра с яркой подаче."
-        }
-      },
-      {
-        "id": "nom-11-opt-5",
-        "title": "Gran Turismo 7 VR",
-        "image_url": null,
-        "game": {
-          "title": "Gran Turismo 7 VR",
-          "genre": "Action",
-          "studio": "Indie Studio",
-          "release_year": 2024,
-          "image_url": null,
-          "description": "Хитовая игра с яркой подаче."
-        }
-      },
-      {
-        "id": "nom-11-opt-6",
-        "title": "Pistol Whip",
-        "image_url": null,
-        "game": {
-          "title": "Pistol Whip",
-          "genre": "Action",
-          "studio": "Indie Studio",
-          "release_year": 2024,
-          "image_url": null,
-          "description": "Хитовая игра с яркой подаче."
-        }
-      }
-    ]
-  },
-  {
-    "id": "12",
-    "title": "Игровой сервис",
-    "description": "Проект, который живёт за счёт обновлений и событий.",
-    "options": [
-      {
-        "id": "nom-12-opt-1",
-        "title": "Fortnite",
-        "image_url": null,
-        "game": {
-          "title": "Fortnite",
-          "genre": "Action",
-          "studio": "Indie Studio",
-          "release_year": 2024,
-          "image_url": null,
-          "description": "Хитовая игра с яркой подаче."
-        }
-      },
-      {
-        "id": "nom-12-opt-2",
-        "title": "Destiny 2",
-        "image_url": null,
-        "game": {
-          "title": "Destiny 2",
-          "genre": "Action",
-          "studio": "Indie Studio",
-          "release_year": 2024,
-          "image_url": null,
-          "description": "Хитовая игра с яркой подаче."
-        }
-      },
-      {
-        "id": "nom-12-opt-3",
-        "title": "Final Fantasy XIV",
-        "image_url": null,
-        "game": {
-          "title": "Final Fantasy XIV",
-          "genre": "Action",
-          "studio": "Indie Studio",
-          "release_year": 2024,
-          "image_url": null,
-          "description": "Хитовая игра с яркой подаче."
-        }
-      },
-      {
-        "id": "nom-12-opt-4",
-        "title": "Warframe",
-        "image_url": null,
-        "game": {
-          "title": "Warframe",
-          "genre": "Action",
-          "studio": "Indie Studio",
-          "release_year": 2024,
-          "image_url": null,
-          "description": "Хитовая игра с яркой подаче."
-        }
-      },
-      {
-        "id": "nom-12-opt-5",
-        "title": "Sea of Thieves",
-        "image_url": null,
-        "game": {
-          "title": "Sea of Thieves",
-          "genre": "Action",
-          "studio": "Indie Studio",
-          "release_year": 2024,
-          "image_url": null,
-          "description": "Хитовая игра с яркой подаче."
-        }
-      }
-    ]
-  },
-  {
-    "id": "13",
-    "title": "Инновация в геймплее",
-    "description": "Механики, которых раньше не хватало.",
-    "options": [
-      {
-        "id": "nom-13-opt-1",
-        "title": "Death Stranding",
-        "image_url": null,
-        "game": {
-          "title": "Death Stranding",
-          "genre": "Action",
-          "studio": "Indie Studio",
-          "release_year": 2024,
-          "image_url": null,
-          "description": "Хитовая игра с яркой подаче."
-        }
-      },
-      {
-        "id": "nom-13-opt-2",
-        "title": "Immortality",
-        "image_url": null,
-        "game": {
-          "title": "Immortality",
-          "genre": "Action",
-          "studio": "Indie Studio",
-          "release_year": 2024,
-          "image_url": null,
-          "description": "Хитовая игра с яркой подаче."
-        }
-      },
-      {
-        "id": "nom-13-opt-3",
-        "title": "Return of the Obra Dinn",
-        "image_url": null,
-        "game": {
-          "title": "Return of the Obra Dinn",
-          "genre": "Action",
-          "studio": "Indie Studio",
-          "release_year": 2024,
-          "image_url": null,
-          "description": "Хитовая игра с яркой подаче."
-        }
-      },
-      {
-        "id": "nom-13-opt-4",
-        "title": "The Case of the Golden Idol",
-        "image_url": null,
-        "game": {
-          "title": "The Case of the Golden Idol",
-          "genre": "Action",
-          "studio": "Indie Studio",
-          "release_year": 2024,
-          "image_url": null,
-          "description": "Хитовая игра с яркой подаче."
-        }
-      },
-      {
-        "id": "nom-13-opt-5",
-        "title": "Baba Is You",
-        "image_url": null,
-        "game": {
-          "title": "Baba Is You",
-          "genre": "Action",
-          "studio": "Indie Studio",
-          "release_year": 2024,
-          "image_url": null,
-          "description": "Хитовая игра с яркой подаче."
-        }
-      },
-      {
-        "id": "nom-13-opt-6",
-        "title": "Tunic",
-        "image_url": null,
-        "game": {
-          "title": "Tunic",
-          "genre": "Action",
-          "studio": "Indie Studio",
-          "release_year": 2024,
-          "image_url": null,
-          "description": "Хитовая игра с яркой подаче."
-        }
-      }
-    ]
-  },
-  {
-    "id": "14",
-    "title": "Локализация и перевод",
-    "description": "Команда, которая сделала игру понятной и живой на русском.",
-    "options": [
-      {
-        "id": "nom-14-opt-1",
-        "title": "Baldur's Gate 3",
-        "image_url": null,
-        "game": {
-          "title": "Baldur's Gate 3",
-          "genre": "RPG",
-          "studio": "Larian Studios",
-          "release_year": 2023,
-          "image_url": null,
-          "description": "РПГ, где каждое решение меняет мир."
-        }
-      },
-      {
-        "id": "nom-14-opt-2",
-        "title": "Disco Elysium: The Final Cut",
-        "image_url": null,
-        "game": {
-          "title": "Disco Elysium: The Final Cut",
-          "genre": "Action",
-          "studio": "Indie Studio",
-          "release_year": 2024,
-          "image_url": null,
-          "description": "Хитовая игра с яркой подаче."
-        }
-      },
-      {
-        "id": "nom-14-opt-3",
-        "title": "Cyberpunk 2077: Phantom Liberty",
-        "image_url": null,
-        "game": {
-          "title": "Cyberpunk 2077: Phantom Liberty",
-          "genre": "Action",
-          "studio": "Indie Studio",
-          "release_year": 2024,
-          "image_url": null,
-          "description": "Хитовая игра с яркой подаче."
-        }
-      },
-      {
-        "id": "nom-14-opt-4",
-        "title": "The Witcher 3: Wild Hunt",
-        "image_url": null,
-        "game": {
-          "title": "The Witcher 3: Wild Hunt",
-          "genre": "Action",
-          "studio": "Indie Studio",
-          "release_year": 2024,
-          "image_url": null,
-          "description": "Хитовая игра с яркой подаче."
-        }
-      },
-      {
-        "id": "nom-14-opt-5",
-        "title": "God of War Ragnarök",
-        "image_url": null,
-        "game": {
-          "title": "God of War Ragnarök",
-          "genre": "Action",
-          "studio": "Indie Studio",
-          "release_year": 2024,
-          "image_url": null,
-          "description": "Хитовая игра с яркой подаче."
-        }
-      }
-    ]
-  },
-  {
-    "id": "15",
-    "title": "Актёрская игра / перформанс",
-    "description": "Запомнившиеся актёрские работы и озвучка.",
-    "options": [
-      {
-        "id": "nom-15-opt-1",
-        "title": "Neil Newbon — Astarion (Baldur's Gate 3)",
-        "image_url": null,
-        "game": {
-          "title": "Neil Newbon — Astarion (Baldur's Gate 3)",
-          "genre": "Action",
-          "studio": "Indie Studio",
-          "release_year": 2024,
-          "image_url": null,
-          "description": "Хитовая игра с яркой подаче."
-        }
-      },
-      {
-        "id": "nom-15-opt-2",
-        "title": "Melanie Liburd — Saga Anderson (Alan Wake 2)",
-        "image_url": null,
-        "game": {
-          "title": "Melanie Liburd — Saga Anderson (Alan Wake 2)",
-          "genre": "Action",
-          "studio": "Indie Studio",
-          "release_year": 2024,
-          "image_url": null,
-          "description": "Хитовая игра с яркой подаче."
-        }
-      },
-      {
-        "id": "nom-15-opt-3",
-        "title": "Cameron Monaghan — Cal Kestis (Star Wars Jedi: Survivor)",
-        "image_url": null,
-        "game": {
-          "title": "Cameron Monaghan — Cal Kestis (Star Wars Jedi: Survivor)",
-          "genre": "Action",
-          "studio": "Indie Studio",
-          "release_year": 2024,
-          "image_url": null,
-          "description": "Хитовая игра с яркой подаче."
-        }
-      },
-      {
-        "id": "nom-15-opt-4",
-        "title": "Christopher Judge — Kratos (God of War Ragnarök)",
-        "image_url": null,
-        "game": {
-          "title": "Christopher Judge — Kratos (God of War Ragnarök)",
-          "genre": "Action",
-          "studio": "Indie Studio",
-          "release_year": 2024,
-          "image_url": null,
-          "description": "Хитовая игра с яркой подаче."
-        }
-      },
-      {
-        "id": "nom-15-opt-5",
-        "title": "Yuri Lowenthal — Peter Parker (Marvel's Spider-Man 2)",
-        "image_url": null,
-        "game": {
-          "title": "Yuri Lowenthal — Peter Parker (Marvel's Spider-Man 2)",
-          "genre": "Action",
-          "studio": "Indie Studio",
-          "release_year": 2024,
-          "image_url": null,
-          "description": "Хитовая игра с яркой подаче."
-        }
-      },
-      {
-        "id": "nom-15-opt-6",
-        "title": "Maggie Robertson — Lady Dimitrescu (Resident Evil Village)",
-        "image_url": null,
-        "game": {
-          "title": "Maggie Robertson — Lady Dimitrescu (Resident Evil Village)",
-          "genre": "Action",
-          "studio": "Indie Studio",
-          "release_year": 2024,
-          "image_url": null,
-          "description": "Хитовая игра с яркой подаче."
-        }
-      }
-    ]
-  },
-  {
-    "id": "16",
-    "title": "Поддержка сообщества",
-    "description": "Лучший пострелизный сервис, патчи и общение с игроками.",
-    "options": [
-      {
-        "id": "nom-16-opt-1",
-        "title": "No Man's Sky",
-        "image_url": null,
-        "game": {
-          "title": "No Man's Sky",
-          "genre": "Action",
-          "studio": "Indie Studio",
-          "release_year": 2024,
-          "image_url": null,
-          "description": "Хитовая игра с яркой подаче."
-        }
-      },
-      {
-        "id": "nom-16-opt-2",
-        "title": "Deep Rock Galactic",
-        "image_url": null,
-        "game": {
-          "title": "Deep Rock Galactic",
-          "genre": "Action",
-          "studio": "Indie Studio",
-          "release_year": 2024,
-          "image_url": null,
-          "description": "Хитовая игра с яркой подаче."
-        }
-      },
-      {
-        "id": "nom-16-opt-3",
-        "title": "Final Fantasy XIV",
-        "image_url": null,
-        "game": {
-          "title": "Final Fantasy XIV",
-          "genre": "Action",
-          "studio": "Indie Studio",
-          "release_year": 2024,
-          "image_url": null,
-          "description": "Хитовая игра с яркой подаче."
-        }
-      },
-      {
-        "id": "nom-16-opt-4",
-        "title": "Path of Exile",
-        "image_url": null,
-        "game": {
-          "title": "Path of Exile",
-          "genre": "Action",
-          "studio": "Indie Studio",
-          "release_year": 2024,
-          "image_url": null,
-          "description": "Хитовая игра с яркой подаче."
-        }
-      },
-      {
-        "id": "nom-16-opt-5",
-        "title": "Warframe",
-        "image_url": null,
-        "game": {
-          "title": "Warframe",
-          "genre": "Action",
-          "studio": "Indie Studio",
-          "release_year": 2024,
-          "image_url": null,
-          "description": "Хитовая игра с яркой подаче."
-        }
-      }
-    ]
-  },
-  {
-    "id": "17",
-    "title": "Пиксель-арт чарм",
-    "description": "Любовь к пикселям и анимации.",
-    "options": [
-      {
-        "id": "nom-17-opt-1",
-        "title": "Stardew Valley",
-        "image_url": null,
-        "game": {
-          "title": "Stardew Valley",
-          "genre": "Action",
-          "studio": "Indie Studio",
-          "release_year": 2024,
-          "image_url": null,
-          "description": "Хитовая игра с яркой подаче."
-        }
-      },
-      {
-        "id": "nom-17-opt-2",
-        "title": "Octopath Traveler II",
-        "image_url": null,
-        "game": {
-          "title": "Octopath Traveler II",
-          "genre": "Action",
-          "studio": "Indie Studio",
-          "release_year": 2024,
-          "image_url": null,
-          "description": "Хитовая игра с яркой подаче."
-        }
-      },
-      {
-        "id": "nom-17-opt-3",
-        "title": "Chained Echoes",
-        "image_url": null,
-        "game": {
-          "title": "Chained Echoes",
-          "genre": "Action",
-          "studio": "Indie Studio",
-          "release_year": 2024,
-          "image_url": null,
-          "description": "Хитовая игра с яркой подаче."
-        }
-      },
-      {
-        "id": "nom-17-opt-4",
-        "title": "Blasphemous 2",
-        "image_url": null,
-        "game": {
-          "title": "Blasphemous 2",
-          "genre": "Action",
-          "studio": "Indie Studio",
-          "release_year": 2024,
-          "image_url": null,
-          "description": "Хитовая игра с яркой подаче."
-        }
-      },
-      {
-        "id": "nom-17-opt-5",
-        "title": "Hyper Light Drifter",
-        "image_url": null,
-        "game": {
-          "title": "Hyper Light Drifter",
-          "genre": "Action",
-          "studio": "Indie Studio",
-          "release_year": 2024,
-          "image_url": null,
-          "description": "Хитовая игра с яркой подаче."
-        }
-      },
-      {
-        "id": "nom-17-opt-6",
-        "title": "Dead Cells",
-        "image_url": null,
-        "game": {
-          "title": "Dead Cells",
-          "genre": "Action",
-          "studio": "Indie Studio",
-          "release_year": 2024,
-          "image_url": null,
-          "description": "Хитовая игра с яркой подаче."
-        }
-      }
-    ]
-  },
-  {
-    "id": "18",
-    "title": "Самая уютная",
-    "description": "Игра, в которую уходишь за комфортом.",
-    "options": [
-      {
-        "id": "nom-18-opt-1",
-        "title": "Unpacking",
-        "image_url": null,
-        "game": {
-          "title": "Unpacking",
-          "genre": "Action",
-          "studio": "Indie Studio",
-          "release_year": 2024,
-          "image_url": null,
-          "description": "Хитовая игра с яркой подаче."
-        }
-      },
-      {
-        "id": "nom-18-opt-2",
-        "title": "A Short Hike",
-        "image_url": null,
-        "game": {
-          "title": "A Short Hike",
-          "genre": "Action",
-          "studio": "Indie Studio",
-          "release_year": 2024,
-          "image_url": null,
-          "description": "Хитовая игра с яркой подаче."
-        }
-      },
-      {
-        "id": "nom-18-opt-3",
-        "title": "Cozy Grove",
-        "image_url": null,
-        "game": {
-          "title": "Cozy Grove",
-          "genre": "Action",
-          "studio": "Indie Studio",
-          "release_year": 2024,
-          "image_url": null,
-          "description": "Хитовая игра с яркой подаче."
-        }
-      },
-      {
-        "id": "nom-18-opt-4",
-        "title": "Spiritfarer",
-        "image_url": null,
-        "game": {
-          "title": "Spiritfarer",
-          "genre": "Action",
-          "studio": "Indie Studio",
-          "release_year": 2024,
-          "image_url": null,
-          "description": "Хитовая игра с яркой подаче."
-        }
-      },
-      {
-        "id": "nom-18-opt-5",
-        "title": "Dorfromantik",
-        "image_url": null,
-        "game": {
-          "title": "Dorfromantik",
-          "genre": "Action",
-          "studio": "Indie Studio",
-          "release_year": 2024,
-          "image_url": null,
-          "description": "Хитовая игра с яркой подаче."
-        }
-      }
-    ]
-  },
-  {
-    "id": "19",
-    "title": "Самая ожидаемая",
-    "description": "Релизы, которые ждём всем чатом.",
-    "options": [
-      {
-        "id": "nom-19-opt-1",
-        "title": "Hades II",
-        "image_url": null,
-        "game": {
-          "title": "Hades II",
-          "genre": "Action",
-          "studio": "Indie Studio",
-          "release_year": 2024,
-          "image_url": null,
-          "description": "Хитовая игра с яркой подаче."
-        }
-      },
-      {
-        "id": "nom-19-opt-2",
-        "title": "Hollow Knight: Silksong",
-        "image_url": null,
-        "game": {
-          "title": "Hollow Knight: Silksong",
-          "genre": "Metroidvania",
-          "studio": "Team Cherry",
-          "release_year": 2025,
-          "image_url": null,
-          "description": "Метроидвания с живописным миром и сложным геймплеем."
-        }
-      },
-      {
-        "id": "nom-19-opt-3",
-        "title": "S.T.A.L.K.E.R. 2: Heart of Chornobyl",
-        "image_url": null,
-        "game": {
-          "title": "S.T.A.L.K.E.R. 2: Heart of Chornobyl",
-          "genre": "Action",
-          "studio": "Indie Studio",
-          "release_year": 2024,
-          "image_url": null,
-          "description": "Хитовая игра с яркой подаче."
-        }
-      },
-      {
-        "id": "nom-19-opt-4",
-        "title": "Elder Scrolls VI",
-        "image_url": null,
-        "game": {
-          "title": "Elder Scrolls VI",
-          "genre": "Action",
-          "studio": "Indie Studio",
-          "release_year": 2024,
-          "image_url": null,
-          "description": "Хитовая игра с яркой подаче."
-        }
-      },
-      {
-        "id": "nom-19-opt-5",
-        "title": "Star Wars Outlaws",
-        "image_url": null,
-        "game": {
-          "title": "Star Wars Outlaws",
-          "genre": "Action",
-          "studio": "Indie Studio",
-          "release_year": 2024,
-          "image_url": null,
-          "description": "Хитовая игра с яркой подаче."
-        }
-      },
-      {
-        "id": "nom-19-opt-6",
-        "title": "Black Myth: Wukong",
-        "image_url": null,
-        "game": {
-          "title": "Black Myth: Wukong",
-          "genre": "Action",
-          "studio": "Indie Studio",
-          "release_year": 2024,
-          "image_url": null,
-          "description": "Хитовая игра с яркой подаче."
+          "title": "S.T.A.L.K.E.R. 2: Shadow of Chornobyl"
+        },
+        "payload": {
+          "reviewers": [
+            "Салома"
+          ],
+          "games": [
+            "S.T.A.L.K.E.R. 2: Shadow of Chornobyl"
+          ]
         }
       }
     ]

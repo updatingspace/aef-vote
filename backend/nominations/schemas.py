@@ -49,6 +49,7 @@ class NominationOptionSchema(CamelSchema):
     title: str
     image_url: str | None = None
     game: GameSchema | None = None
+    payload: dict[str, Any] | None = None
 
 
 class VotingSchema(CamelSchema):
@@ -57,6 +58,7 @@ class VotingSchema(CamelSchema):
     description: str | None = None
     is_active: bool = True
     is_open: bool = True
+    is_public: bool = True
     deadline_at: datetime | None = None
     show_vote_counts: bool = False
     rules: dict[str, Any] | None = None
@@ -66,6 +68,8 @@ class NominationSchema(CamelSchema):
     id: str
     title: str
     description: str | None = None
+    kind: str
+    config: dict[str, Any] | None = None
     options: list[NominationOptionSchema]
     counts: dict[str, int] | None = None
     user_vote: str | None = None
@@ -99,6 +103,7 @@ class VotingNominationSummarySchema(CamelSchema):
     id: str
     title: str
     description: str | None = None
+    kind: str
     is_active: bool
     order: int
 
@@ -106,3 +111,39 @@ class VotingNominationSummarySchema(CamelSchema):
 class VotingSummarySchema(VotingSchema):
     nominations: list[VotingNominationSummarySchema]
     nomination_count: int
+
+
+class VotingFeedSchema(VotingSchema):
+    nomination_count: int
+
+
+class NominationAdminSummarySchema(CamelSchema):
+    id: str
+    title: str
+    status: str
+    votes: int | None = None
+    updated_at: datetime | None = None
+
+
+class VotingAdminDetailSchema(VotingSchema):
+    nomination_count: int
+    nominations: list[NominationAdminSummarySchema]
+
+
+class VotingAdminUpdateSchema(CamelSchema):
+    title: str | None = None
+    description: str | None = None
+    deadline_at: datetime | None = None
+    is_active: bool | None = None
+    is_public: bool | None = None
+    close_now: bool | None = None
+
+
+class AdminDashboardStatsSchema(CamelSchema):
+    active_votings: int
+    draft_votings: int
+    archived_votings: int
+    total_votes: int
+    unique_voters: int
+    open_nominations: int
+    open_for_voting: int
