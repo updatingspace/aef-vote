@@ -34,7 +34,10 @@ class UserProfile(models.Model):
     )
     gravatar_enabled = models.BooleanField(
         default=True,
-        help_text="Разрешать авто-подгрузку аватара из Gravatar, пока пользователь сам не загружает/не удаляет фото.",
+        help_text=(
+            "Разрешать авто-подгрузку аватара из Gravatar, пока пользователь сам "
+            "не загружает/не удаляет фото."
+        ),
     )
     gravatar_checked_at = models.DateTimeField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)

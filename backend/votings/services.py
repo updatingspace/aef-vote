@@ -267,11 +267,7 @@ def export_voting_payload(
     code: str, *, using: str | None = None
 ) -> dict[str, Any] | None:
     db_alias = using or "default"
-    voting = (
-        Voting.objects.using(db_alias)
-        .filter(code=code)
-        .first()
-    )
+    voting = Voting.objects.using(db_alias).filter(code=code).first()
     if not voting:
         return None
     nominations = list(
@@ -280,9 +276,9 @@ def export_voting_payload(
         .prefetch_related(
             Prefetch(
                 "options",
-                queryset=NominationOption.objects.order_by("order", "title").select_related(
-                    "game"
-                ),
+                queryset=NominationOption.objects.order_by(
+                    "order", "title"
+                ).select_related("game"),
             )
         )
         .order_by("order", "title")
@@ -412,9 +408,9 @@ def import_voting_payload(
         .prefetch_related(
             Prefetch(
                 "options",
-                queryset=NominationOption.objects.order_by("order", "title").select_related(
-                    "game"
-                ),
+                queryset=NominationOption.objects.order_by(
+                    "order", "title"
+                ).select_related("game"),
             )
         )
         .order_by("order", "title")

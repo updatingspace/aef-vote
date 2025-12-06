@@ -202,7 +202,10 @@ class Nomination(models.Model):
     config = models.JSONField(
         default=dict,
         blank=True,
-        help_text="Доп. настройки модуля номинации (подсказки по payload опций, поведению фронта и т.д.).",
+        help_text=(
+            "Доп. настройки модуля номинации (подсказки по payload опций, "
+            "поведению фронта и т.д.)."
+        ),
     )
     order = models.PositiveIntegerField(default=0, db_index=True)
     is_active = models.BooleanField(default=True)

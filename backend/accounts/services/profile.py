@@ -106,7 +106,7 @@ class ProfileService:
             raise
         except Exception as exc:
             logger.info("Avatar processing failed", exc_info=exc)
-            raise HttpError(400, "Не удалось прочитать изображение")
+            raise HttpError(400, "Не удалось прочитать изображение") from exc
 
     @classmethod
     def _avatar_filename(cls, user: User, prefix: str = "avatar") -> str:

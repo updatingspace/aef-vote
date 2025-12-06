@@ -4,8 +4,8 @@ from ninja import Router
 from ninja.errors import HttpError
 
 from nominations.data import DEFAULT_VOTING_CODE
-from nominations.schemas import VotingSummarySchema, VotingFeedSchema
-from nominations.services import list_votings_overview, list_votings_feed
+from nominations.schemas import VotingFeedSchema, VotingSummarySchema
+from nominations.services import list_votings_feed, list_votings_overview
 from votings.schemas import (
     VotingImportPreviewSchema,
     VotingImportResultSchema,

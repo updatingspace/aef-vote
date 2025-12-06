@@ -9,7 +9,7 @@ from typing import Any
 
 from django.conf import settings
 from django.db import IntegrityError, OperationalError
-from django.db.models import Count, Prefetch, Q, F
+from django.db.models import Count, F, Prefetch, Q
 from django.utils import timezone
 
 from accounts.services import user_has_telegram_link
@@ -360,7 +360,9 @@ def list_votings_overview(include_non_public: bool = False) -> list[dict[str, An
     return result
 
 
-def list_votings_feed(limit: int = 20, include_non_public: bool = False) -> list[dict[str, Any]]:
+def list_votings_feed(
+    limit: int = 20, include_non_public: bool = False
+) -> list[dict[str, Any]]:
     """
     Lightweight feed for the главная страница: только активные/публичные голосования
     без списка номинаций, ограничено лимитом.
