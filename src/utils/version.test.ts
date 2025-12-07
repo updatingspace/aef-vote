@@ -9,11 +9,14 @@ describe('version utils', () => {
       expect(buildId.length).toBeGreaterThan(0);
     });
 
-    it('should return "dev" when BUILD_ID is not set in environment', () => {
+    it('should return a valid build ID', () => {
       // In test environment, VITE_BUILD_ID is not set by default
       const buildId = getBuildId();
-      // It should return either the env value or 'dev'
-      expect(['dev', buildId].includes(buildId)).toBe(true);
+      // It should return 'dev' when not set, or a valid BUILD_ID if set
+      expect(buildId).toBeTruthy();
+      // Build ID should be either 'dev' or match the pattern YYYY.MM.DD-RUN-SHA
+      const isDevOrValidPattern = buildId === 'dev' || /^\d{4}\.\d{2}\.\d{2}-\d+-[a-f0-9]{7}$/.test(buildId);
+      expect(isDevOrValidPattern).toBe(true);
     });
   });
 
