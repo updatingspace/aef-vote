@@ -23,9 +23,9 @@ describe('version utils', () => {
   describe('getVersionInfo', () => {
     it('should return version info with required properties', () => {
       const versionInfo = getVersionInfo();
-      expect(versionInfo).toHaveProperty('build_id');
+      expect(versionInfo).toHaveProperty('buildId');
       expect(versionInfo).toHaveProperty('environment');
-      expect(typeof versionInfo.build_id).toBe('string');
+      expect(typeof versionInfo.buildId).toBe('string');
       expect(typeof versionInfo.environment).toBe('string');
     });
 
