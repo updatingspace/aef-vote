@@ -8,11 +8,11 @@ export function getBuildId(): string {
 
 /**
  * Get version information for the application
- * @returns Object with build_id and other version info
+ * @returns Object with buildId and other version info
  */
 export function getVersionInfo() {
   return {
-    build_id: getBuildId(),
+    buildId: getBuildId(),
     environment: import.meta.env.MODE,
   };
 }
