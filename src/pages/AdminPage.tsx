@@ -10,6 +10,7 @@ import Pencil from '@gravity-ui/icons/Pencil';
 import Magnifier from '@gravity-ui/icons/Magnifier';
 import Cubes3 from '@gravity-ui/icons/Cubes3';
 import ListCheck from '@gravity-ui/icons/ListCheck';
+import Gear from '@gravity-ui/icons/Gear';
 
 import {
   fetchAdminVotings,
@@ -29,6 +30,14 @@ import {
   type VotingImportPayload,
   type VotingImportPreview,
 } from '../api/votings';
+import {
+  fetchAdminHomePageModals,
+  createHomePageModal,
+  updateHomePageModal,
+  deleteHomePageModal,
+  type HomePageModal,
+  type HomePageModalInput,
+} from '../api/personalization';
 import { fetchGames } from '../api/games';
 import { useAuth } from '../contexts/AuthContext';
 import { NotFoundPage } from './NotFoundPage';
@@ -56,6 +65,8 @@ import { ReviewersSection } from './admin/components/ReviewersSection';
 import { ReviewsSection } from './admin/components/ReviewsSection';
 import { VotingsSection } from './admin/components/VotingsSection';
 import { VotingCreatorDialog } from './admin/components/VotingCreatorDialog';
+import { PersonalizationSection } from './admin/components/PersonalizationSection';
+import { HomePageModalEditor } from './admin/components/HomePageModalEditor';
 import {
   createEmptyGameDraft,
   type GameDraft,
@@ -71,7 +82,7 @@ import {
   type MetaDraftState,
 } from './admin/types';
 
-type AdminSection = 'dashboard' | 'games' | 'votings' | 'reviewers' | 'reviews';
+type AdminSection = 'dashboard' | 'games' | 'votings' | 'reviewers' | 'reviews' | 'personalization';
 
 const adminColumns: TableColumnConfig<AdminRow>[] = [
   { id: 'title', name: 'Название' },
@@ -179,6 +190,10 @@ const sectionMeta: Record<AdminSection, { title: string; subtitle: string }> = {
   reviews: {
     title: 'Обзоры и материалы',
     subtitle: 'Список обзоров с привязкой к играм и авторам для гибких номинаций.',
+  },
+  personalization: {
+    title: 'Персонализация',
+    subtitle: 'Управление модальными окнами и контентом для главной страницы.',
   },
 };
 
@@ -481,6 +496,16 @@ export const AdminPage: React.FC = () => {
   const [nominationSourceVoting, setNominationSourceVoting] = useState<string | null>(null);
   const [isSavingNomination, setIsSavingNomination] = useState(false);
 
+  // Personalization state
+  const [homePageModals, setHomePageModals] = useState<HomePageModal[]>([]);
+  const [isModalsLoading, setIsModalsLoading] = useState(false);
+  const [modalsError, setModalsError] = useState<string | null>(null);
+  const [selectedModalId, setSelectedModalId] = useState<number | null>(null);
+  const [isModalEditorOpen, setIsModalEditorOpen] = useState(false);
+  const [modalEditorMode, setModalEditorMode] = useState<'create' | 'edit'>('create');
+  const [modalDraft, setModalDraft] = useState<Partial<HomePageModalInput>>({});
+  const [isSavingModal, setIsSavingModal] = useState(false);
+
   const parseImportJson = useCallback((): VotingImportPayload | null => {
     if (!importJson.trim()) {
       setImportError('Вставьте JSON с голосованием.');
@@ -564,12 +589,21 @@ export const AdminPage: React.FC = () => {
       icon: Pencil,
       iconSize: 18,
     },
+    {
+      id: 'personalization',
+      title: 'Персонализация',
+      current: activeSection === 'personalization',
+      onItemClick: handleMenuItemClick,
+      tooltipText: 'Модальные окна — Главная',
+      icon: Gear,
+      iconSize: 18,
+    },
   ], [activeSection, handleMenuItemClick]);
 
   useEffect(() => {
     const params = new URLSearchParams(location.search);
     const sectionParam = params.get('section');
-    const allowedSections: AdminSection[] = ['games', 'votings', 'dashboard', 'reviewers', 'reviews'];
+    const allowedSections: AdminSection[] = ['games', 'votings', 'dashboard', 'reviewers', 'reviews', 'personalization'];
     if (sectionParam && allowedSections.includes(sectionParam as AdminSection)) {
       setActiveSection(sectionParam as AdminSection);
     }
@@ -1581,6 +1615,130 @@ export const AdminPage: React.FC = () => {
     }
   };
 
+  // Personalization handlers
+  const loadHomePageModals = useCallback(async () => {
+    setIsModalsLoading(true);
+    setModalsError(null);
+    try {
+      const data = await fetchAdminHomePageModals();
+      setHomePageModals(data);
+    } catch (error) {
+      notifyApiError(error, 'Не удалось загрузить модалки');
+      setModalsError('Не удалось загрузить модалки');
+    } finally {
+      setIsModalsLoading(false);
+    }
+  }, []);
+
+  const handleCreateModal = () => {
+    setModalEditorMode('create');
+    setModalDraft({
+      title: '',
+      content: '',
+      button_text: 'OK',
+      button_url: '',
+      modal_type: 'info',
+      is_active: true,
+      display_once: false,
+      order: 0,
+    });
+    setIsModalEditorOpen(true);
+  };
+
+  const handleEditModal = (modal: HomePageModal) => {
+    setModalEditorMode('edit');
+    setSelectedModalId(modal.id);
+    setModalDraft({
+      title: modal.title,
+      content: modal.content,
+      button_text: modal.button_text,
+      button_url: modal.button_url,
+      modal_type: modal.modal_type,
+      display_once: modal.display_once,
+      start_date: modal.start_date,
+      end_date: modal.end_date,
+      order: modal.order,
+    });
+    setIsModalEditorOpen(true);
+  };
+
+  const handleSaveModal = async () => {
+    if (!modalDraft.title || !modalDraft.content) {
+      toaster.add({
+        name: `modal-validation-${Date.now()}`,
+        title: 'Заполните обязательные поля',
+        content: 'Заголовок и содержание обязательны',
+        theme: 'warning',
+        autoHiding: 3000,
+      });
+      return;
+    }
+
+    setIsSavingModal(true);
+    try {
+      const payload: HomePageModalInput = {
+        title: modalDraft.title,
+        content: modalDraft.content,
+        button_text: modalDraft.button_text ?? 'OK',
+        button_url: modalDraft.button_url ?? '',
+        modal_type: modalDraft.modal_type ?? 'info',
+        is_active: modalDraft.is_active ?? true,
+        display_once: modalDraft.display_once ?? false,
+        start_date: modalDraft.start_date ?? null,
+        end_date: modalDraft.end_date ?? null,
+        order: modalDraft.order ?? 0,
+      };
+
+      if (modalEditorMode === 'create') {
+        await createHomePageModal(payload);
+        toaster.add({
+          name: `modal-created-${Date.now()}`,
+          title: 'Модалка создана',
+          theme: 'success',
+          autoHiding: 3000,
+        });
+      } else if (selectedModalId) {
+        await updateHomePageModal(selectedModalId, payload);
+        toaster.add({
+          name: `modal-updated-${Date.now()}`,
+          title: 'Модалка обновлена',
+          theme: 'success',
+          autoHiding: 3000,
+        });
+      }
+
+      setIsModalEditorOpen(false);
+      await loadHomePageModals();
+    } catch (error) {
+      notifyApiError(error, 'Не удалось сохранить модалку');
+    } finally {
+      setIsSavingModal(false);
+    }
+  };
+
+  const handleDeleteModal = async (id: number) => {
+    if (!window.confirm('Удалить эту модалку?')) return;
+
+    try {
+      await deleteHomePageModal(id);
+      toaster.add({
+        name: `modal-deleted-${Date.now()}`,
+        title: 'Модалка удалена',
+        theme: 'info',
+        autoHiding: 2500,
+      });
+      await loadHomePageModals();
+    } catch (error) {
+      notifyApiError(error, 'Не удалось удалить модалку');
+    }
+  };
+
+  useEffect(() => {
+    if (activeSection === 'personalization' && user?.isSuperuser) {
+      loadHomePageModals();
+    }
+  }, [activeSection, loadHomePageModals, user?.isSuperuser]);
+
   const selectedGame = useMemo(
     () => games.find((game) => game.id === selectedGameId) ?? null,
     [games, selectedGameId],
@@ -1917,6 +2075,17 @@ export const AdminPage: React.FC = () => {
                   onEditReview={handleEditReview}
                   onDeleteReview={handleDeleteReview}
                 />
+              ) : activeSection === 'personalization' ? (
+                <PersonalizationSection
+                  modals={homePageModals}
+                  isLoading={isModalsLoading}
+                  error={modalsError}
+                  selectedModalId={selectedModalId}
+                  onSelectModal={setSelectedModalId}
+                  onCreateModal={handleCreateModal}
+                  onEditModal={handleEditModal}
+                  onDeleteModal={handleDeleteModal}
+                />
               ) : (
                 <GameGrid
                   filteredGames={filteredGames}
@@ -2021,6 +2190,16 @@ export const AdminPage: React.FC = () => {
               onUpdateOption={handleUpdateOptionDraft}
               onRemoveOption={handleRemoveOptionDraft}
               onSave={handleSaveNomination}
+            />
+
+            <HomePageModalEditor
+              open={isModalEditorOpen}
+              mode={modalEditorMode}
+              draft={modalDraft}
+              isSaving={isSavingModal}
+              onClose={() => setIsModalEditorOpen(false)}
+              onSave={handleSaveModal}
+              onChangeDraft={(patch) => setModalDraft((prev) => ({ ...prev, ...patch }))}
             />
           </div>
         )}
