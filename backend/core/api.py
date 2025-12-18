@@ -3,6 +3,7 @@ from datetime import datetime
 from django.http import HttpRequest
 from django.shortcuts import get_object_or_404
 from ninja import Router
+from ninja.errors import HttpError
 
 from .models import HomePageModal
 from .schemas import HomePageModalIn, HomePageModalOut
@@ -33,7 +34,7 @@ def list_homepage_modals(request: HttpRequest):
 def admin_list_homepage_modals(request: HttpRequest):
     """Get all homepage modals for admin (requires superuser)"""
     if not request.user.is_authenticated or not request.user.is_superuser:
-        return {"error": "Unauthorized"}, 403
+        raise HttpError(403, "Unauthorized")
 
     return list(HomePageModal.objects.all())
 
@@ -42,7 +43,7 @@ def admin_list_homepage_modals(request: HttpRequest):
 def admin_create_homepage_modal(request: HttpRequest, payload: HomePageModalIn):
     """Create a new homepage modal (requires superuser)"""
     if not request.user.is_authenticated or not request.user.is_superuser:
-        return {"error": "Unauthorized"}, 403
+        raise HttpError(403, "Unauthorized")
 
     modal = HomePageModal.objects.create(**payload.dict())
     return modal
@@ -54,7 +55,7 @@ def admin_update_homepage_modal(
 ):
     """Update a homepage modal (requires superuser)"""
     if not request.user.is_authenticated or not request.user.is_superuser:
-        return {"error": "Unauthorized"}, 403
+        raise HttpError(403, "Unauthorized")
 
     modal = get_object_or_404(HomePageModal, id=modal_id)
     for attr, value in payload.dict().items():
@@ -67,7 +68,7 @@ def admin_update_homepage_modal(
 def admin_delete_homepage_modal(request: HttpRequest, modal_id: int):
     """Delete a homepage modal (requires superuser)"""
     if not request.user.is_authenticated or not request.user.is_superuser:
-        return {"error": "Unauthorized"}, 403
+        raise HttpError(403, "Unauthorized")
 
     modal = get_object_or_404(HomePageModal, id=modal_id)
     modal.delete()

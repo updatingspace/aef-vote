@@ -98,10 +98,9 @@ export const HomePageModalDisplay: React.FC = () => {
     <Modal open={isOpen} onClose={handleClose}>
       <div className="homepage-modal-content" style={{ padding: '24px', minWidth: '400px', maxWidth: '600px' }}>
         <h2 style={{ marginTop: 0, marginBottom: '16px' }}>{currentModal.title}</h2>
-        <div
-          style={{ marginBottom: '24px', whiteSpace: 'pre-wrap' }}
-          dangerouslySetInnerHTML={{ __html: currentModal.content }}
-        />
+        <div style={{ marginBottom: '24px', whiteSpace: 'pre-wrap' }}>
+          {currentModal.content}
+        </div>
         <div style={{ display: 'flex', gap: '12px', justifyContent: 'flex-end' }}>
           {currentModal.button_url ? (
             <>

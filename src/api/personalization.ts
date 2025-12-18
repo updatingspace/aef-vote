@@ -7,6 +7,7 @@ export interface HomePageModal {
   button_text: string;
   button_url: string;
   modal_type: 'info' | 'warning' | 'success' | 'promo';
+  is_active: boolean;
   display_once: boolean;
   start_date: string | null;
   end_date: string | null;
