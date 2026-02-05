@@ -1,7 +1,11 @@
 FROM node:22.12-alpine AS dev
 WORKDIR /app
 
-RUN corepack enable && corepack prepare pnpm@10.28.2 --activate
+RUN npm i -g corepack@0.34.6 \
+  && corepack --version \
+  && corepack enable \
+  && corepack prepare pnpm@10.28.2 --activate \
+  && pnpm --version
 
 COPY package.json pnpm-lock.yaml ./
 

@@ -93,35 +93,35 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - image: aef-vote-access
+          - image: updatingspace-portal-access
             context: services/access
             dockerfile: services/access/Dockerfile
             build_args: ''
-          - image: aef-vote-activity
+          - image: updatingspace-portal-activity
             context: services/activity
             dockerfile: services/activity/Dockerfile
             build_args: ''
-          - image: aef-vote-bff
+          - image: updatingspace-portal-bff
             context: services/bff
             dockerfile: services/bff/Dockerfile
             build_args: ''
-          - image: aef-vote-events
+          - image: updatingspace-portal-events
             context: services/events
             dockerfile: services/events/Dockerfile
             build_args: ''
-          - image: aef-vote-gamification
+          - image: updatingspace-portal-gamification
             context: services/gamification
             dockerfile: services/gamification/Dockerfile
             build_args: ''
-          - image: aef-vote-portal
+          - image: updatingspace-portal-portal
             context: services/portal
             dockerfile: services/portal/Dockerfile
             build_args: ''
-          - image: aef-vote-voting
+          - image: updatingspace-portal-voting
             context: services/voting
             dockerfile: services/voting/Dockerfile
             build_args: ''
-          - image: aef-vote-portal-frontend
+          - image: updatingspace-portal-frontend
             context: web/portal-frontend
             dockerfile: web/portal-frontend/Dockerfile
             build_args: |
@@ -150,35 +150,35 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - image: aef-vote-access
+          - image: updatingspace-portal-access
             context: services/access
             dockerfile: services/access/Dockerfile
             build_args: ''
-          - image: aef-vote-activity
+          - image: updatingspace-portal-activity
             context: services/activity
             dockerfile: services/activity/Dockerfile
             build_args: ''
-          - image: aef-vote-bff
+          - image: updatingspace-portal-bff
             context: services/bff
             dockerfile: services/bff/Dockerfile
             build_args: ''
-          - image: aef-vote-events
+          - image: updatingspace-portal-events
             context: services/events
             dockerfile: services/events/Dockerfile
             build_args: ''
-          - image: aef-vote-gamification
+          - image: updatingspace-portal-gamification
             context: services/gamification
             dockerfile: services/gamification/Dockerfile
             build_args: ''
-          - image: aef-vote-portal
+          - image: updatingspace-portal-portal
             context: services/portal
             dockerfile: services/portal/Dockerfile
             build_args: ''
-          - image: aef-vote-voting
+          - image: updatingspace-portal-voting
             context: services/voting
             dockerfile: services/voting/Dockerfile
             build_args: ''
-          - image: aef-vote-portal-frontend
+          - image: updatingspace-portal-frontend
             context: web/portal-frontend
             dockerfile: web/portal-frontend/Dockerfile
             build_args: |
