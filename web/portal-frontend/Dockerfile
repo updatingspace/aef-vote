@@ -1,7 +1,7 @@
-FROM node:22-alpine AS dev
+FROM node:22.12-alpine AS dev
 WORKDIR /app
 
-RUN corepack enable && corepack prepare pnpm@10.3.0 --activate
+RUN corepack enable && corepack prepare pnpm@10.28.2 --activate
 
 COPY package.json pnpm-lock.yaml ./
 
@@ -24,7 +24,7 @@ ENV VITE_TELEGRAM_BOT_NAME=${VITE_TELEGRAM_BOT_NAME}
 ENV VITE_ID_LOGIN_URL=${VITE_ID_LOGIN_URL}
 ENV VITE_BUILD_ID=${VITE_BUILD_ID}
 
-RUN pnpm build
+RUN pnpm run build:docker
 
 FROM nginx:1.27-alpine AS runner
 
