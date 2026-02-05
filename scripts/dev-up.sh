@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 #
 # Dev environment startup script
-# Usage: ./scripts/dev-up.sh [--skip-setup] [--services service1,service2,...]
+# Usage: ./scripts/dev-up.sh [--id-mode local|remote] [--skip-setup] [--services service1,service2,...]
 #
 # Examples:
 #   ./scripts/dev-up.sh                          # Start all services
@@ -13,7 +13,8 @@ set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$(dirname "$SCRIPT_DIR")"
-COMPOSE_FILE="$PROJECT_ROOT/infra/docker-compose/docker-compose.dev.yml"
+COMPOSE_FILE_LOCAL="$PROJECT_ROOT/infra/docker-compose/docker-compose.dev.yml"
+COMPOSE_FILE_REMOTE="$PROJECT_ROOT/infra/docker-compose/docker-compose.remote.yml"
 
 # Colors for output
 RED='\033[0;31m'
@@ -25,13 +26,19 @@ NC='\033[0m' # No Color
 # Default options
 SKIP_SETUP=false
 SERVICES=""
+ID_MODE="local"
 
-# Keep script in sync with BFF OIDC secret default
-BFF_OIDC_CLIENT_SECRET="${BFF_OIDC_CLIENT_SECRET:-portal-dev-secret}"
+# OIDC client variables are environment-driven in both modes.
+BFF_OIDC_CLIENT_SECRET="${BFF_OIDC_CLIENT_SECRET:-}"
+BFF_OIDC_CLIENT_ID="${BFF_OIDC_CLIENT_ID:-}"
 
 # Parse arguments
 while [[ $# -gt 0 ]]; do
     case $1 in
+        --id-mode)
+            ID_MODE="$2"
+            shift 2
+            ;;
         --skip-setup)
             SKIP_SETUP=true
             shift
@@ -41,18 +48,21 @@ while [[ $# -gt 0 ]]; do
             shift 2
             ;;
         -h|--help)
-            echo "Usage: $0 [--skip-setup] [--services service1,service2,...]"
+            echo "Usage: $0 [--id-mode local|remote] [--skip-setup] [--services service1,service2,...]"
             echo ""
             echo "Options:"
+            echo "  --id-mode          ID integration mode:"
+            echo "                     local  → run ID services from GHCR images on id.localhost"
+            echo "                     remote → use deployed ID service (e.g. id.updspace.com)"
             echo "  --skip-setup       Skip database setup (faster for restarts)"
             echo "  --services         Comma-separated list of services to start"
             echo "                     Available: traefik,redis,db_id,db_bff,db_access,"
             echo "                     db_portal,db_voting,db_events,db_gamification,db_activity,"
             echo "                     updspaceid,bff,access,portal,voting,events,gamification,"
-            echo "                     activity,portal-frontend,id-frontend"
+            echo "                     activity,frontend,id-frontend(local mode)"
             echo ""
             echo "Service dependencies:"
-            echo "  bff       → redis, db_bff, updspaceid (for auth)"
+            echo "  bff       → redis, db_bff, updspaceid (local mode) / remote ID URL (remote mode)"
             echo "  portal    → db_portal"
             echo "  voting    → db_voting, access"
             echo "  events    → db_events, access"
@@ -104,8 +114,13 @@ check_prerequisites() {
         exit 1
     fi
     
-    if [[ ! -f "$COMPOSE_FILE" ]]; then
-        log_error "Docker Compose file not found: $COMPOSE_FILE"
+    local compose_file="$COMPOSE_FILE_LOCAL"
+    if [[ "$ID_MODE" == "remote" ]]; then
+        compose_file="$COMPOSE_FILE_REMOTE"
+    fi
+
+    if [[ ! -f "$compose_file" ]]; then
+        log_error "Docker Compose file not found: $compose_file"
         exit 1
     fi
     
@@ -140,8 +155,13 @@ wait_for_service() {
 # Start Docker Compose services
 start_services() {
     log_info "Starting Docker Compose services..."
-    
-    local compose_args="-f $COMPOSE_FILE up -d --build"
+
+    local compose_file="$COMPOSE_FILE_LOCAL"
+    if [[ "$ID_MODE" == "remote" ]]; then
+        compose_file="$COMPOSE_FILE_REMOTE"
+    fi
+
+    local compose_args="-f $compose_file up -d --build"
     
     if [[ -n "$SERVICES" ]]; then
         # Convert comma-separated to space-separated
@@ -150,6 +170,7 @@ start_services() {
         log_info "Starting selected services: $service_list"
     fi
     
+    # shellcheck disable=SC2086
     docker compose $compose_args
     
     log_success "Docker Compose started"
@@ -167,25 +188,32 @@ setup_databases() {
     # Wait for ID service to be ready
     sleep 3
     
-    # Setup ID service database
-    log_info "Setting up ID service database..."
-    if docker compose -f "$COMPOSE_FILE" exec -T updspaceid python src/manage.py setup_db 2>/dev/null; then
-        log_success "ID database setup complete"
-    else
-        log_warn "ID database setup skipped or already done"
+    local compose_file="$COMPOSE_FILE_LOCAL"
+    if [[ "$ID_MODE" == "remote" ]]; then
+        compose_file="$COMPOSE_FILE_REMOTE"
+    fi
+
+    # Setup ID service database (local mode only)
+    if [[ "$ID_MODE" == "local" ]]; then
+        log_info "Setting up ID service database..."
+        if docker compose -f "$compose_file" exec -T updspaceid python src/manage.py setup_db 2>/dev/null; then
+            log_success "ID database setup complete"
+        else
+            log_warn "ID database setup skipped or already done"
+        fi
     fi
     
     # Run migrations for other services
     local services=("bff" "access" "portal" "voting" "events" "gamification" "activity")
     
     for service in "${services[@]}"; do
-        if docker compose -f "$COMPOSE_FILE" ps --format '{{.Service}}' | grep -q "^${service}$"; then
+        if docker compose -f "$compose_file" ps --format '{{.Service}}' | grep -q "^${service}$"; then
             log_info "Running migrations for $service..."
             log_info "Generating all pending migrations for $service..."
-            docker compose -f "$COMPOSE_FILE" exec -T "$service" python src/manage.py makemigrations --noinput
+            docker compose -f "$compose_file" exec -T "$service" python src/manage.py makemigrations --noinput
 
             log_info "Applying migrations for $service..."
-            docker compose -f "$COMPOSE_FILE" exec -T "$service" python src/manage.py migrate --noinput
+            docker compose -f "$compose_file" exec -T "$service" python src/manage.py migrate --noinput
 
             log_success "$service migrations complete"
         fi
@@ -197,11 +225,18 @@ setup_oidc_client() {
     if [[ "$SKIP_SETUP" == "true" ]]; then
         return 0
     fi
-    
-    log_info "Setting up Portal OIDC client..."
-    
-    if docker compose -f "$COMPOSE_FILE" exec -T updspaceid python src/manage.py setup_portal_client --secret "$BFF_OIDC_CLIENT_SECRET" 2>/dev/null; then
-        log_success "Portal OIDC client ready"
+
+    local compose_file="$COMPOSE_FILE_LOCAL"
+    if [[ "$ID_MODE" == "remote" ]]; then
+        log_info "Remote ID mode: skipping local OIDC client bootstrap."
+        log_info "Ensure BFF_OIDC_CLIENT_ID/BFF_OIDC_CLIENT_SECRET are provisioned in id.updspace.com."
+        return 0
+    fi
+
+    log_info "Setting up Portal OIDC client in local ID..."
+
+    if docker compose -f "$compose_file" exec -T updspaceid python src/manage.py setup_portal_client --secret "$BFF_OIDC_CLIENT_SECRET" 2>/dev/null; then
+        log_success "Portal OIDC client ready (client_id=$BFF_OIDC_CLIENT_ID)"
     else
         log_warn "Portal OIDC client setup skipped (may already exist)"
     fi
@@ -214,7 +249,6 @@ health_check_services() {
     
     local services=(
         "Traefik:http://localhost:8081/ping"
-        "ID Service:http://id.localhost/health"
         "BFF:http://localhost:8080/health"
         "Access:http://localhost:8002/health"
         "Portal:http://localhost:8003/health"
@@ -222,8 +256,11 @@ health_check_services() {
         "Events:http://localhost:8005/health"
         "Activity:http://localhost:8006/health"
         "Portal Frontend:http://localhost:5173"
-        "ID Frontend:http://localhost:5175"
     )
+
+    if [[ "$ID_MODE" == "local" ]]; then
+        services=("Traefik:http://localhost:8081/ping" "ID Service:http://id.localhost/health" "BFF:http://localhost:8080/health" "Access:http://localhost:8002/health" "Portal:http://localhost:8003/health" "Voting:http://localhost:8004/health" "Events:http://localhost:8005/health" "Activity:http://localhost:8006/health" "Portal Frontend:http://localhost:5173" "ID Frontend:http://localhost:5175")
+    fi
     
     local all_healthy=true
     
@@ -250,6 +287,11 @@ health_check_services() {
 
 # Print access URLs
 print_urls() {
+    local compose_file="$COMPOSE_FILE_LOCAL"
+    if [[ "$ID_MODE" == "remote" ]]; then
+        compose_file="$COMPOSE_FILE_REMOTE"
+    fi
+
     echo ""
     echo -e "${BLUE}═══════════════════════════════════════════════════════════${NC}"
     echo -e "${GREEN}Development environment is ready!${NC}"
@@ -257,18 +299,29 @@ print_urls() {
     echo ""
     echo "Access URLs:"
     echo -e "  ${YELLOW}Portal Frontend${NC}  → http://aef.localhost"
-    echo -e "  ${YELLOW}ID Frontend${NC}      → http://id.localhost"
+    if [[ "$ID_MODE" == "local" ]]; then
+        echo -e "  ${YELLOW}ID Frontend${NC}      → http://id.localhost"
+    else
+        echo -e "  ${YELLOW}ID Frontend${NC}      → ${ID_PUBLIC_BASE_URL:-https://id.updspace.com}"
+    fi
     echo -e "  ${YELLOW}BFF API${NC}          → http://aef.localhost/api/v1/"
     echo -e "  ${YELLOW}Traefik Dashboard${NC}→ http://localhost:8081"
     echo ""
     echo "Quick commands:"
-    echo "  docker compose -f $COMPOSE_FILE logs -f <service>  # View logs"
-    echo "  docker compose -f $COMPOSE_FILE restart <service>  # Restart service"
-    echo "  docker compose -f $COMPOSE_FILE down               # Stop all"
+    echo "  docker compose -f $compose_file logs -f <service>  # View logs"
+    echo "  docker compose -f $compose_file restart <service>  # Restart service"
+    echo "  docker compose -f $compose_file down               # Stop all"
     echo ""
-    echo "Dev admin bootstrap (optional):"
-    echo "  docker compose -f $COMPOSE_FILE exec updspaceid \\"
-    echo "    python src/manage.py issue_admin_magic_link --email dev@aef.local"
+    if [[ "$ID_MODE" == "local" ]]; then
+        echo "Dev admin bootstrap (optional):"
+        echo "  docker compose -f $compose_file exec updspaceid \\"
+        echo "    python src/manage.py issue_admin_magic_link --email dev@aef.local"
+    else
+        echo "Remote ID mode:"
+        echo "  configure BFF_OIDC_CLIENT_ID and BFF_OIDC_CLIENT_SECRET in .env"
+        echo "  ensure redirect URI is registered in id.updspace.com:"
+        echo "    http://aef.localhost/api/v1/auth/callback"
+    fi
     echo ""
 }
 
@@ -279,6 +332,30 @@ main() {
     echo -e "${BLUE}╚═══════════════════════════════════════════════════════════╝${NC}"
     echo ""
     
+    if [[ "$ID_MODE" != "local" && "$ID_MODE" != "remote" ]]; then
+        log_error "--id-mode must be 'local' or 'remote'"
+        exit 1
+    fi
+
+    if [[ "$ID_MODE" == "local" ]]; then
+        if [[ -z "$BFF_OIDC_CLIENT_ID" ]]; then
+            BFF_OIDC_CLIENT_ID="portal-dev-client"
+            export BFF_OIDC_CLIENT_ID
+            log_warn "BFF_OIDC_CLIENT_ID is not set, using local default: $BFF_OIDC_CLIENT_ID"
+        fi
+        if [[ -z "$BFF_OIDC_CLIENT_SECRET" ]]; then
+            BFF_OIDC_CLIENT_SECRET="portal-dev-secret"
+            export BFF_OIDC_CLIENT_SECRET
+            log_warn "BFF_OIDC_CLIENT_SECRET is not set, using local default."
+        fi
+    else
+        if [[ -z "$BFF_OIDC_CLIENT_ID" || -z "$BFF_OIDC_CLIENT_SECRET" ]]; then
+            log_error "Remote mode requires BFF_OIDC_CLIENT_ID and BFF_OIDC_CLIENT_SECRET in environment."
+            exit 1
+        fi
+    fi
+
+    log_info "ID mode: $ID_MODE"
     check_prerequisites
     start_services
     

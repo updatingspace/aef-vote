@@ -12,16 +12,6 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
 
-  db_id:
-    image: postgres:15-alpine
-    environment:
-      POSTGRES_DB: id_db
-      POSTGRES_USER: user
-      POSTGRES_PASSWORD: pass
-    volumes:
-      - pg_data_id:/var/lib/postgresql/data
-    ports:
-      - "5433:5432"
 
   db_access:
     image: postgres:15-alpine
@@ -105,43 +95,6 @@ services:
     ports:
       - "6379:6379"
 
-  updspaceid:
-    image: ${ID_SERVICE_IMAGE:-ghcr.io/updatingspace/id-service}:${ID_IMAGE_TAG:-latest}
-    pull_policy: always
-    command: gunicorn app.wsgi:application --bind 0.0.0.0:8001
-    ports:
-      - "8001:8001"
-    environment:
-      - DJANGO_DEBUG=True
-      - DJANGO_SECRET_KEY=dev-id-secret
-      - DATABASE_URL=postgres://user:pass@db_id:5432/id_db
-      - REDIS_URL=redis://redis:6379/0
-      - DJANGO_ALLOWED_HOSTS=*
-      - SESSION_COOKIE_SECURE=false
-      - CSRF_COOKIE_SECURE=false
-      # CORS for portal integration
-      - CORS_ALLOWED_ORIGINS=http://localhost:5175,http://id.localhost:5175,http://id.localhost,http://aef.localhost,http://localhost:5173
-      - CSRF_TRUSTED_ORIGINS=http://localhost:5175,http://id.localhost:5175,http://id.localhost,http://aef.localhost,http://localhost:5173
-      # Local SSO dev mode
-      - DEV_AUTH_MODE=true
-      - DEFAULT_TENANT_ID=00000000-0000-0000-0000-000000000001
-      - DEFAULT_TENANT_SLUG=aef
-      # Internal trust (BFF -> services)
-      - BFF_INTERNAL_HMAC_SECRET=dev-internal-hmac
-      - OIDC_ISSUER=http://id.localhost
-      - OIDC_PUBLIC_BASE_URL=http://id.localhost
-      - NINJA_SKIP_REGISTRY=1
-      - EMAIL_BACKEND=django.core.mail.backends.console.EmailBackend
-    depends_on:
-      - db_id
-      - redis
-    labels:
-      - traefik.enable=true
-      - traefik.http.routers.usid.rule=Host(`id.localhost`) && (PathPrefix(`/api/v1`) || PathPrefix(`/oauth`) || PathPrefix(`/accounts`) || PathPrefix(`/admin`) || PathPrefix(`/health`) || PathPrefix(`/.well-known`) || PathPrefix(`/static`) || PathPrefix(`/media`) || PathPrefix(`/avatars`))
-      - traefik.http.routers.usid.entrypoints=web
-      - traefik.http.routers.usid.priority=2
-      - traefik.http.services.usid.loadbalancer.server.port=8001
-
   bff:
     build:
       context: ../../services/bff
@@ -157,8 +110,8 @@ services:
       - REDIS_URL=redis://redis:6379/1
       - DJANGO_ALLOWED_HOSTS=*
       # Upstreams
-      - BFF_UPSTREAM_ID_URL=${BFF_UPSTREAM_ID_URL:-http://updspaceid:8001/api/v1}
-      - ID_BASE_URL=${ID_BASE_URL:-http://updspaceid:8001/api/v1}
+      - BFF_UPSTREAM_ID_URL=${BFF_UPSTREAM_ID_URL:-https://id.updspace.com/api/v1}
+      - ID_BASE_URL=${ID_BASE_URL:-https://id.updspace.com/api/v1}
       - ACCESS_BASE_URL=http://access:8002/api/v1
       - BFF_UPSTREAM_PORTAL_URL=http://portal:8003/api/v1
       - BFF_UPSTREAM_VOTING_URL=http://voting:8004/api/v1
@@ -174,14 +127,13 @@ services:
       # Internal trust
       - BFF_INTERNAL_HMAC_SECRET=dev-internal-hmac
       # Public IdP base URL used for OIDC login redirects
-      - ID_PUBLIC_BASE_URL=${ID_PUBLIC_BASE_URL:-http://id.localhost}
+      - ID_PUBLIC_BASE_URL=${ID_PUBLIC_BASE_URL:-https://id.updspace.com}
       # OIDC client credentials (must be provided via env for split-repo setup)
       - BFF_OIDC_CLIENT_ID=${BFF_OIDC_CLIENT_ID:?BFF_OIDC_CLIENT_ID is required}
       - BFF_OIDC_CLIENT_SECRET=${BFF_OIDC_CLIENT_SECRET:?BFF_OIDC_CLIENT_SECRET is required}
     depends_on:
       - db_bff
       - redis
-      - updspaceid
       - access
       - portal
       - voting
@@ -301,23 +253,6 @@ services:
     depends_on:
       - db_activity
 
-  id-frontend:
-    image: ${ID_FRONTEND_IMAGE:-ghcr.io/updatingspace/id-frontend}:${ID_IMAGE_TAG:-latest}
-    pull_policy: always
-    ports:
-      - "5175:5175"
-    environment:
-      - VITE_ID_API_BASE_URL=/api/v1
-      - VITE_ID_OIDC_BASE_URL=/oauth
-    depends_on:
-      - updspaceid
-    labels:
-      - traefik.enable=true
-      - traefik.http.routers.id-frontend.rule=Host(`id.localhost`)
-      - traefik.http.routers.id-frontend.entrypoints=web
-      - traefik.http.routers.id-frontend.priority=1
-      - traefik.http.services.id-frontend.loadbalancer.server.port=5175
-
   frontend:
     build:
       context: ../../web/portal-frontend
@@ -343,7 +278,6 @@ services:
       - traefik.http.services.frontend.loadbalancer.server.port=5173
 
 volumes:
-  pg_data_id:
   pg_data_bff:
   pg_data_access:
   pg_data_portal:
