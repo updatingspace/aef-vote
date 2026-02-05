@@ -1,0 +1,95 @@
+.app-shell {
+  min-height: 100vh;
+  height: 100vh;
+  background: var(--g-color-base-background, #f7f7f7);
+}
+
+.app-shell__aside {
+  height: 100%;
+}
+
+.app-shell__brand {
+  font-weight: 600;
+  font-size: 0.95rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  border: none;
+  background: transparent;
+  color: var(--g-color-text-primary, #1a1a1a);
+  text-align: left;
+  padding: 0;
+  cursor: pointer;
+}
+
+.app-shell__header {
+  height: var(--gn-aside-header-height, 64px);
+  min-height: var(--gn-aside-header-height, 64px);
+  padding: 0 24px;
+  border-bottom: 1px solid var(--g-color-line-generic, rgba(0, 0, 0, 0.08));
+  background: var(--g-color-base-background, #ffffff);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.app-shell__header--no-brand {
+  justify-content: flex-end;
+}
+
+.app-shell__header-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.app-shell__content-shell {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+}
+
+.app-shell__content {
+  flex: 1;
+  padding: 24px;
+  background: var(--g-color-base-background, #ffffff);
+  overflow: auto;
+}
+
+.app-shell__user-button {
+  border: 1px solid var(--g-color-line-generic, rgba(0, 0, 0, 0.1));
+  border-radius: 999px;
+  padding: 4px 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: transparent;
+  cursor: pointer;
+}
+
+.app-shell__user-name {
+  font-weight: 600;
+}
+
+.app-shell__theme-select button {
+  min-width: 72px;
+}
+
+@media (max-width: 960px) {
+  .app-shell {
+    height: auto;
+  }
+  .app-shell__content-shell {
+    height: auto;
+  }
+}
+
+.app-shell .gn-aside-header__content,
+.app-shell .gn-aside-header__panels {
+  height: 100%;
+}
+
+.app-shell .gn-aside-header__content {
+  overflow: hidden;
+}
