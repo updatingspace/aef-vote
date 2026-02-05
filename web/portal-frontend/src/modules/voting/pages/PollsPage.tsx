@@ -6,7 +6,7 @@ import { can } from '../../../features/rbac/can';
 import { PollCard } from '../../../features/voting/components/PollCard';
 import { isRateLimitError, usePolls } from '../../../features/voting';
 import type { PollStatus } from '../../../features/voting';
-import { getLocale } from '../../../shared/lib/locale';
+import { getLocale } from '@/shared/lib/locale';
 
 const PAGE_SIZE = 12;
 

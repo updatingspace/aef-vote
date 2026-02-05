@@ -44,7 +44,7 @@ import { toaster } from '../../../../toaster';
 import { notifyApiError } from '../../../../utils/apiErrorHandling';
 import type { NominationCreatePayload, NominationUpdatePayload, PollUpdatePayload } from '../../../../features/voting/types';
 import { POLL_STATUS_META, RESULTS_VISIBILITY_META, SCOPE_LABELS, VISIBILITY_META, formatDateTime, NOMINATION_KIND_LABELS } from '../../../../features/voting/utils/pollMeta';
-import { getLocale } from '../../../../shared/lib/locale';
+import { getLocale } from '@/shared/lib/locale';
 import { useAuth } from '../../../../contexts/AuthContext';
 
 const VISIBILITY_OPTIONS = [

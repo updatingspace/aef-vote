@@ -1,7 +1,7 @@
 import React, { createContext, useCallback, useContext, useMemo, useState } from 'react';
 
-import { getLocale, setLocale } from '../../shared/lib/locale';
-import type { Locale } from '../../shared/lib/locale';
+import { getLocale, setLocale } from '@/shared/lib/locale';
+import type { Locale } from '@/shared/lib/locale';
 
 type I18nContextValue = {
   locale: Locale;

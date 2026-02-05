@@ -4,8 +4,8 @@ import { Button, DropdownMenu, type DropdownMenuItem } from '@gravity-ui/uikit';
 
 import { useAuth } from '../../contexts/AuthContext';
 import { env } from '../../shared/config/env';
-import { getTenantFromHost } from '../../shared/lib/tenant';
-import { getLocale, setLocale, type Locale } from '../../shared/lib/locale';
+import { getTenantFromHost } from '@/shared/lib/tenant';
+import { getLocale, setLocale, type Locale } from '@/shared/lib/locale';
 
 export const PublicLayout: React.FC = () => {
   const { user } = useAuth();

@@ -19,7 +19,7 @@ import {
   formatDateTime,
   getScheduleMeta,
 } from '../../../features/voting/utils/pollMeta';
-import { getLocale } from '../../../shared/lib/locale';
+import { getLocale } from '@/shared/lib/locale';
 import { toaster } from '../../../toaster';
 import { notifyApiError } from '../../../utils/apiErrorHandling';
 
