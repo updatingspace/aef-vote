@@ -83,8 +83,8 @@ export const HomePageModalEditor: React.FC<HomePageModalEditorProps> = ({
               <label className="form-label">Текст кнопки</label>
               <TextInput
                 size="l"
-                value={draft.button_text ?? 'OK'}
-                onUpdate={(value) => onChangeDraft({ button_text: value })}
+                value={draft.buttonText ?? 'OK'}
+                onUpdate={(value) => onChangeDraft({ buttonText: value })}
                 placeholder="OK"
               />
             </div>
@@ -93,8 +93,8 @@ export const HomePageModalEditor: React.FC<HomePageModalEditorProps> = ({
               <label className="form-label">Ссылка кнопки</label>
               <TextInput
                 size="l"
-                value={draft.button_url ?? ''}
-                onUpdate={(value) => onChangeDraft({ button_url: value })}
+                value={draft.buttonUrl ?? ''}
+                onUpdate={(value) => onChangeDraft({ buttonUrl: value })}
                 placeholder="https://example.com"
               />
             </div>
@@ -104,8 +104,8 @@ export const HomePageModalEditor: React.FC<HomePageModalEditorProps> = ({
             <label className="form-label">Тип модалки</label>
             <Select
               size="l"
-              value={[draft.modal_type ?? 'info']}
-              onUpdate={(value) => onChangeDraft({ modal_type: value[0] as HomePageModal['modal_type'] })}
+              value={[draft.modalType ?? 'info']}
+              onUpdate={(value) => onChangeDraft({ modalType: value[0] as HomePageModal['modalType'] })}
               options={modalTypeOptions}
             />
           </div>
@@ -116,9 +116,9 @@ export const HomePageModalEditor: React.FC<HomePageModalEditorProps> = ({
               <input
                 type="datetime-local"
                 className="form-control"
-                value={toInputDateTime(draft.start_date)}
+                value={toInputDateTime(draft.startDate)}
                 onChange={(e) =>
-                  onChangeDraft({ start_date: e.target.value ? new Date(e.target.value).toISOString() : null })
+                  onChangeDraft({ startDate: e.target.value ? new Date(e.target.value).toISOString() : null })
                 }
               />
             </div>
@@ -128,9 +128,9 @@ export const HomePageModalEditor: React.FC<HomePageModalEditorProps> = ({
               <input
                 type="datetime-local"
                 className="form-control"
-                value={toInputDateTime(draft.end_date)}
+                value={toInputDateTime(draft.endDate)}
                 onChange={(e) =>
-                  onChangeDraft({ end_date: e.target.value ? new Date(e.target.value).toISOString() : null })
+                  onChangeDraft({ endDate: e.target.value ? new Date(e.target.value).toISOString() : null })
                 }
               />
             </div>
@@ -150,8 +150,8 @@ export const HomePageModalEditor: React.FC<HomePageModalEditorProps> = ({
             <div className="form-group">
               <Checkbox
                 size="l"
-                checked={draft.is_active ?? true}
-                onUpdate={(checked) => onChangeDraft({ is_active: checked })}
+                checked={draft.isActive ?? true}
+                onUpdate={(checked) => onChangeDraft({ isActive: checked })}
               >
                 Активна
               </Checkbox>
@@ -161,8 +161,8 @@ export const HomePageModalEditor: React.FC<HomePageModalEditorProps> = ({
           <div className="form-group">
             <Checkbox
               size="l"
-              checked={draft.display_once ?? false}
-              onUpdate={(checked) => onChangeDraft({ display_once: checked })}
+              checked={draft.displayOnce ?? false}
+              onUpdate={(checked) => onChangeDraft({ displayOnce: checked })}
             >
               Показать только один раз (для каждого пользователя)
             </Checkbox>

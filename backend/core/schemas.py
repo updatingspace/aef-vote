@@ -12,6 +12,7 @@ class HomePageModalOut(Schema):
     button_text: str
     button_url: str
     modal_type: str
+    is_active: bool
     display_once: bool
     start_date: datetime | None
     end_date: datetime | None

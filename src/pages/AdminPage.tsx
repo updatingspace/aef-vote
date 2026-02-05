@@ -1639,11 +1639,11 @@ export const AdminPage: React.FC = () => {
     setModalDraft({
       title: '',
       content: '',
-      button_text: 'OK',
-      button_url: '',
-      modal_type: 'info',
-      is_active: true,
-      display_once: false,
+      buttonText: 'OK',
+      buttonUrl: '',
+      modalType: 'info',
+      isActive: true,
+      displayOnce: false,
       order: 0,
     });
     setIsModalEditorOpen(true);
@@ -1655,12 +1655,13 @@ export const AdminPage: React.FC = () => {
     setModalDraft({
       title: modal.title,
       content: modal.content,
-      button_text: modal.button_text,
-      button_url: modal.button_url,
-      modal_type: modal.modal_type,
-      display_once: modal.display_once,
-      start_date: modal.start_date,
-      end_date: modal.end_date,
+      buttonText: modal.buttonText,
+      buttonUrl: modal.buttonUrl,
+      modalType: modal.modalType,
+      isActive: modal.isActive,
+      displayOnce: modal.displayOnce,
+      startDate: modal.startDate,
+      endDate: modal.endDate,
       order: modal.order,
     });
     setIsModalEditorOpen(true);
@@ -1683,13 +1684,13 @@ export const AdminPage: React.FC = () => {
       const payload: HomePageModalInput = {
         title: modalDraft.title,
         content: modalDraft.content,
-        button_text: modalDraft.button_text ?? 'OK',
-        button_url: modalDraft.button_url ?? '',
-        modal_type: modalDraft.modal_type ?? 'info',
-        is_active: modalDraft.is_active ?? true,
-        display_once: modalDraft.display_once ?? false,
-        start_date: modalDraft.start_date ?? null,
-        end_date: modalDraft.end_date ?? null,
+        buttonText: modalDraft.buttonText ?? 'OK',
+        buttonUrl: modalDraft.buttonUrl ?? '',
+        modalType: modalDraft.modalType ?? 'info',
+        isActive: modalDraft.isActive ?? true,
+        displayOnce: modalDraft.displayOnce ?? false,
+        startDate: modalDraft.startDate ?? null,
+        endDate: modalDraft.endDate ?? null,
         order: modalDraft.order ?? 0,
       };
 
@@ -1701,7 +1702,7 @@ export const AdminPage: React.FC = () => {
           theme: 'success',
           autoHiding: 3000,
         });
-      } else if (selectedModalId) {
+      } else if (selectedModalId !== null) {
         await updateHomePageModal(selectedModalId, payload);
         toaster.add({
           name: `modal-updated-${Date.now()}`,

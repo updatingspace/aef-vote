@@ -1,7 +1,6 @@
-from datetime import datetime
-
 from django.http import HttpRequest
 from django.shortcuts import get_object_or_404
+from django.utils import timezone
 from ninja import Router
 from ninja.errors import HttpError
 
@@ -16,7 +15,7 @@ router = Router()
 )
 def list_homepage_modals(request: HttpRequest):
     """Get active homepage modals for display"""
-    now = datetime.now()
+    now = timezone.now()
     modals = HomePageModal.objects.filter(is_active=True)
 
     # Filter by date range
@@ -47,7 +46,7 @@ def admin_create_homepage_modal(request: HttpRequest, payload: HomePageModalIn):
     if not request.user.is_authenticated or not request.user.is_superuser:
         raise HttpError(403, "Unauthorized")
 
-    modal = HomePageModal.objects.create(**payload.dict())
+    modal = HomePageModal.objects.create(**payload.model_dump())
     return modal
 
 
@@ -62,7 +61,7 @@ def admin_update_homepage_modal(
         raise HttpError(403, "Unauthorized")
 
     modal = get_object_or_404(HomePageModal, id=modal_id)
-    for attr, value in payload.dict().items():
+    for attr, value in payload.model_dump().items():
         setattr(modal, attr, value)
     modal.save()
     return modal

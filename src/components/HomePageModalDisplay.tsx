@@ -30,7 +30,7 @@ const markModalAsShown = (modalId: number): void => {
 
 const shouldShowModal = (modal: HomePageModal, shownModals: ShownModalsRecord): boolean => {
   // Check if modal should only be shown once and was already shown
-  if (modal.display_once && shownModals[modal.id]) {
+  if (modal.displayOnce && shownModals[modal.id]) {
     return false;
   }
 
@@ -71,7 +71,7 @@ export const HomePageModalDisplay: React.FC = () => {
     if (!currentModal) return;
 
     // Mark current modal as shown
-    if (currentModal.display_once) {
+    if (currentModal.displayOnce) {
       markModalAsShown(currentModal.id);
     }
 
@@ -84,8 +84,8 @@ export const HomePageModalDisplay: React.FC = () => {
   }, [currentModal, currentModalIndex, modals.length]);
 
   const handleButtonClick = useCallback(() => {
-    if (currentModal?.button_url) {
-      window.open(currentModal.button_url, '_blank', 'noopener,noreferrer');
+    if (currentModal?.buttonUrl) {
+      window.open(currentModal.buttonUrl, '_blank', 'noopener,noreferrer');
     }
     handleClose();
   }, [currentModal, handleClose]);
@@ -102,18 +102,18 @@ export const HomePageModalDisplay: React.FC = () => {
           {currentModal.content}
         </div>
         <div style={{ display: 'flex', gap: '12px', justifyContent: 'flex-end' }}>
-          {currentModal.button_url ? (
+          {currentModal.buttonUrl ? (
             <>
               <Button view="flat" size="l" onClick={handleClose}>
                 Закрыть
               </Button>
               <Button view="action" size="l" onClick={handleButtonClick}>
-                {currentModal.button_text}
+                {currentModal.buttonText}
               </Button>
             </>
           ) : (
             <Button view="action" size="l" onClick={handleClose}>
-              {currentModal.button_text}
+              {currentModal.buttonText}
             </Button>
           )}
         </div>

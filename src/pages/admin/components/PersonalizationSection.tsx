@@ -32,8 +32,6 @@ const formatDate = (date: string | null): string => {
   }
 };
 
-type TableRow = Omit<HomePageModal, 'id'> & { id: string };
-
 export const PersonalizationSection: React.FC<PersonalizationSectionProps> = ({
   modals,
   isLoading,
@@ -43,29 +41,29 @@ export const PersonalizationSection: React.FC<PersonalizationSectionProps> = ({
   onEditModal,
   onDeleteModal,
 }) => {
-  const columns: TableColumnConfig<TableRow>[] = [
+  const columns: TableColumnConfig<HomePageModal>[] = [
     {
       id: 'title',
       name: 'Заголовок',
       template: (item) => item.title,
     },
     {
-      id: 'modal_type',
+      id: 'modalType',
       name: 'Тип',
       width: 140,
-      template: (item) => modalTypeLabels[item.modal_type] ?? item.modal_type,
+      template: (item) => modalTypeLabels[item.modalType] ?? item.modalType,
     },
     {
-      id: 'start_date',
+      id: 'startDate',
       name: 'Начало показа',
       width: 180,
-      template: (item) => formatDate(item.start_date),
+      template: (item) => formatDate(item.startDate),
     },
     {
-      id: 'end_date',
+      id: 'endDate',
       name: 'Окончание показа',
       width: 180,
-      template: (item) => formatDate(item.end_date),
+      template: (item) => formatDate(item.endDate),
     },
     {
       id: 'order',
@@ -77,26 +75,32 @@ export const PersonalizationSection: React.FC<PersonalizationSectionProps> = ({
       id: 'actions',
       name: 'Действия',
       width: 220,
-      template: (item) => {
-        const originalModal = modals.find(m => String(m.id) === item.id);
-        return originalModal ? (
-          <div style={{ display: 'flex', gap: 8 }}>
-            <Button size="s" view="outlined" onClick={() => onEditModal(originalModal)}>
-              Редактировать
-            </Button>
-            <Button size="s" view="flat-danger" onClick={() => onDeleteModal(originalModal.id)}>
-              Удалить
-            </Button>
-          </div>
-        ) : null;
-      },
+      template: (item) => (
+        <div style={{ display: 'flex', gap: 8 }}>
+          <Button
+            size="s"
+            view="outlined"
+            onClick={(event) => {
+              event.stopPropagation();
+              onEditModal(item);
+            }}
+          >
+            Редактировать
+          </Button>
+          <Button
+            size="s"
+            view="flat-danger"
+            onClick={(event) => {
+              event.stopPropagation();
+              onDeleteModal(item.id);
+            }}
+          >
+            Удалить
+          </Button>
+        </div>
+      ),
     },
   ];
-  
-  const data: TableRow[] = modals.map((modal) => ({
-    ...modal,
-    id: String(modal.id),
-  }));
 
   return (
     <div className="admin-section">
@@ -128,10 +132,10 @@ export const PersonalizationSection: React.FC<PersonalizationSectionProps> = ({
         ) : modals.length > 0 ? (
           <div className="mt-3">
             <Table
-              data={data}
+              data={modals}
               columns={columns}
               getRowId={(item) => String(item.id)}
-              onRowClick={(item) => onSelectModal(Number(item.id))}
+              onRowClick={(item) => onSelectModal(item.id)}
             />
           </div>
         ) : (
