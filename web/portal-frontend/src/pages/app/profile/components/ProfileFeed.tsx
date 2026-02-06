@@ -83,7 +83,7 @@ export const ProfileFeed: React.FC<ProfileFeedProps> = ({
       ))}
       {hasNextPage && (
         <Button view="flat" size="m" onClick={onLoadMore} disabled={isFetchingNextPage}>
-          {isFetchingNextPage ? <Loader size="s" /> : profileHubStrings.retry}
+          {isFetchingNextPage ? <Loader size="s" /> : profileHubStrings.loadMore}
         </Button>
       )}
     </div>

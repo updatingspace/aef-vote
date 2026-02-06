@@ -87,6 +87,7 @@ export const useProfileHubData = (sessionInfo: SessionMe | null): UseProfileHubD
       user,
       sessionInfo,
       feedItems,
+      hasMoreFeedItems: Boolean(feedQuery.hasNextPage),
       achievements: achievementsQuery.data ?? [],
       communities: communitiesQuery.data ?? [],
       capabilities,
@@ -96,6 +97,7 @@ export const useProfileHubData = (sessionInfo: SessionMe | null): UseProfileHubD
     capabilities,
     communitiesQuery.data,
     feedItems,
+    feedQuery.hasNextPage,
     sessionInfo,
     user,
   ]);

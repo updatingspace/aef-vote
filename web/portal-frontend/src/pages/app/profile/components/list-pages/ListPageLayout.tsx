@@ -1,6 +1,7 @@
 import React from 'react';
 import { Button, Card, Text } from '@gravity-ui/uikit';
 import '../../profile-hub.css';
+import { profileHubStrings } from '../../strings/ru';
 
 type ListPageLayoutProps = {
   title: string;
@@ -23,14 +24,14 @@ export const ListPageLayout: React.FC<ListPageLayoutProps> = ({
     <div className="profile-list-page">
       <h1 className="profile-list-page__title">{title}</h1>
       <Card view="filled" className="profile-list-page__search-slot">
-        <Text variant="body-2" color="secondary">Поиск/фильтр появится в следующей итерации.</Text>
+        <Text variant="body-2" color="secondary">{profileHubStrings.listPage.searchBacklogHint}</Text>
       </Card>
 
       {isLoading ? (
-        <Card view="filled"><Text variant="body-2" color="secondary">Загрузка...</Text></Card>
+        <Card view="filled"><Text variant="body-2" color="secondary">{profileHubStrings.listPage.loading}</Text></Card>
       ) : isError ? (
         <Card view="filled" className="profile-list-page__state">
-          <Text variant="subheader-2">Не удалось загрузить список</Text>
+          <Text variant="subheader-2">{profileHubStrings.listPage.errorTitle}</Text>
           {onRetry && <Button view="outlined" size="m" onClick={onRetry}>Повторить</Button>}
         </Card>
       ) : items.length === 0 ? (

@@ -19,11 +19,12 @@ export const buildProfileHubVM = (params: {
   user: UserInfo;
   sessionInfo: SessionMe | null;
   feedItems: ActivityEvent[];
+  hasMoreFeedItems: boolean;
   achievements: Achievement[];
   communities: { id: string; name: string; description?: string | null }[];
   capabilities: ProfileHubVM['capabilities'];
 }): ProfileHubVM => {
-  const { user, sessionInfo, feedItems, achievements, communities, capabilities } = params;
+  const { user, sessionInfo, feedItems, hasMoreFeedItems, achievements, communities, capabilities } = params;
   const idProfileUser = (sessionInfo?.id_profile?.user as Record<string, unknown> | undefined) ?? undefined;
   const portalProfile = (sessionInfo?.portal_profile as Record<string, unknown> | undefined) ?? undefined;
 
@@ -48,8 +49,6 @@ export const buildProfileHubVM = (params: {
     user.displayName ||
     user.username;
 
-  const feedPostCount = feedItems.filter((item) => item.type === 'post.created' || item.type === 'news.posted').length;
-
   return {
     viewer: {
       id: user.id,
@@ -66,7 +65,9 @@ export const buildProfileHubVM = (params: {
       statusBadge: safeString((sessionInfo?.tenant_membership as Record<string, unknown> | undefined)?.status),
     },
     stats: {
-      posts: feedPostCount,
+      // Dedicated profile stats endpoint is not available yet.
+      // Keep numeric stats neutral to avoid presenting misleading counts.
+      posts: 0,
       following: 0,
       followers: 0,
       communities: communities.length,
@@ -97,7 +98,7 @@ export const buildProfileHubVM = (params: {
     },
     feed: {
       items: feedItems,
-      hasMore: false,
+      hasMore: hasMoreFeedItems,
     },
     capabilities,
   };

@@ -20,10 +20,18 @@ export const profileHubStrings = {
   feedErrorTitle: 'Не удалось загрузить ленту',
   feedErrorHint: 'Проверьте подключение и попробуйте ещё раз.',
   retry: 'Повторить',
+  loadMore: 'Показать ещё',
+  listPage: {
+    searchBacklogHint: 'Поиск/фильтр появится в следующей итерации.',
+    loading: 'Загрузка...',
+    errorTitle: 'Не удалось загрузить список',
+  },
   about: {
     title: 'О себе',
     empty: 'Нет информации',
     edit: 'Редактировать',
+    language: 'Язык',
+    timezone: 'Часовой пояс',
   },
   achievements: {
     title: 'Достижения',
@@ -69,6 +77,7 @@ export const profileHubStrings = {
     message: 'Сообщение',
     copyLink: 'Скопировать ссылку',
     copied: 'Ссылка скопирована',
+    copyFailed: 'Не удалось скопировать ссылку',
     privacySettings: 'Перейти к настройкам приватности',
     toHome: 'На главную',
   },

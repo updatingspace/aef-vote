@@ -11,6 +11,7 @@ type ProfileCompletionWidgetProps = {
 
 export const ProfileCompletionWidget: React.FC<ProfileCompletionWidgetProps> = ({ vm }) => {
   const navigate = useNavigate();
+  const hasPublishedPost = vm.feed.items.some((item) => item.type === 'news.posted' || item.type === 'post.created');
 
   const checklist = useMemo(
     () => [
@@ -18,9 +19,9 @@ export const ProfileCompletionWidget: React.FC<ProfileCompletionWidgetProps> = (
       { label: profileHubStrings.completion.checklist.bio, done: Boolean(vm.owner.bio) },
       { label: profileHubStrings.completion.checklist.contacts, done: Boolean(vm.about.contacts?.length) },
       { label: profileHubStrings.completion.checklist.follows, done: vm.previews.following.length > 0 },
-      { label: profileHubStrings.completion.checklist.firstPost, done: vm.stats.posts > 0 },
+      { label: profileHubStrings.completion.checklist.firstPost, done: hasPublishedPost },
     ],
-    [vm.about.contacts?.length, vm.owner.avatarUrl, vm.owner.bio, vm.previews.following.length, vm.stats.posts],
+    [hasPublishedPost, vm.about.contacts?.length, vm.owner.avatarUrl, vm.owner.bio, vm.previews.following.length],
   );
 
   const completed = checklist.filter((item) => item.done).length;

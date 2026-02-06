@@ -37,7 +37,7 @@ export const ProfileHeaderCard: React.FC<ProfileHeaderCardProps> = ({
     } catch {
       toaster.add({
         name: `profile-link-failed-${Date.now()}`,
-        title: profileHubStrings.publishError,
+        title: profileHubStrings.common.copyFailed,
         theme: 'danger',
       });
     }

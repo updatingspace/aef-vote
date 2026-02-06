@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import { Button } from '@gravity-ui/uikit';
 
 import { profileHubStrings } from '../strings/ru';
@@ -23,36 +23,55 @@ export const FeedFilters: React.FC<FeedFiltersProps> = ({
   active,
   onChange,
 }) => {
+  const safeActive = useMemo(
+    () => (segments.includes(active) ? active : segments[0] ?? 'posts'),
+    [active, segments],
+  );
+
   const handleKeyDown = useCallback(
     (event: React.KeyboardEvent<HTMLDivElement>) => {
       if (segments.length < 2) return;
-      const currentIndex = segments.indexOf(active);
+      const currentIndex = segments.indexOf(safeActive);
       if (currentIndex < 0) return;
 
       if (event.key === 'ArrowRight') {
         event.preventDefault();
         const next = segments[(currentIndex + 1) % segments.length];
         onChange(next);
+        requestAnimationFrame(() => {
+          const nextNode = event.currentTarget.querySelector<HTMLButtonElement>(
+            `[role="radio"][data-segment="${next}"]`,
+          );
+          nextNode?.focus();
+        });
       }
 
       if (event.key === 'ArrowLeft') {
         event.preventDefault();
         const next = segments[(currentIndex - 1 + segments.length) % segments.length];
         onChange(next);
+        requestAnimationFrame(() => {
+          const nextNode = event.currentTarget.querySelector<HTMLButtonElement>(
+            `[role="radio"][data-segment="${next}"]`,
+          );
+          nextNode?.focus();
+        });
       }
     },
-    [active, onChange, segments],
+    [onChange, safeActive, segments],
   );
 
   return (
-    <div className="profile-hub__filters" role="tablist" aria-label="Фильтры ленты" onKeyDown={handleKeyDown}>
+    <div className="profile-hub__filters" role="radiogroup" aria-label="Фильтры ленты" onKeyDown={handleKeyDown}>
       {segments.map((segment) => (
         <Button
           key={segment}
-          role="tab"
+          role="radio"
+          data-segment={segment}
           size="m"
-          view={segment === active ? 'action' : 'outlined'}
-          aria-selected={segment === active}
+          view={segment === safeActive ? 'action' : 'outlined'}
+          aria-checked={segment === safeActive}
+          tabIndex={segment === safeActive ? 0 : -1}
           onClick={() => onChange(segment)}
         >
           {SEGMENT_LABELS[segment]}

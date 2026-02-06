@@ -86,7 +86,7 @@ export const ProfileHubPage: React.FC = () => {
         title: profileHubStrings.publishError,
         theme: 'danger',
       });
-      throw new Error(profileHubStrings.publishError);
+      return;
     }
   };
 
