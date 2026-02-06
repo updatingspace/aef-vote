@@ -14,6 +14,8 @@ import {
 import { useQuery } from '@tanstack/react-query';
 
 import { useAuth } from '../../../contexts/AuthContext';
+import { createClientAccessDeniedError } from '../../../api/accessDenied';
+import { AccessDeniedScreen } from '../../../features/access-denied';
 import { can } from '../../../features/rbac/can';
 import { useAchievement, useCreateGrant, useGrantsList, useRevokeGrant } from '../../../hooks/useGamification';
 import type { Grant, GrantVisibility } from '../../../types/gamification';
@@ -39,12 +41,7 @@ export const AchievementDetailPage: React.FC = () => {
   const { user } = useAuth();
   const canAssign = can(user, 'gamification.achievements.assign');
   const canRevoke = can(user, 'gamification.achievements.revoke');
-  const hasAccess =
-    Boolean(user?.isSuperuser) ||
-    Boolean(
-      user?.capabilities?.some((cap) => cap.startsWith('gamification.achievements.')) ||
-        user?.roles?.some((role) => role.startsWith('gamification.achievements.')),
-    );
+  const hasAccess = Boolean(user);
 
   const { data: achievement, isLoading } = useAchievement(id);
   const [visibilityFilter, setVisibilityFilter] = useState<'all' | GrantVisibility>('all');
@@ -146,12 +143,13 @@ export const AchievementDetailPage: React.FC = () => {
   return (
     <div className="gamification-page" data-qa="achievement-detail-page">
       {!hasAccess ? (
-        <Card view="filled" className="gamification-empty">
-          <Text variant="subheader-2">Недостаточно прав для доступа к ачивке.</Text>
-          <Text variant="body-2" color="secondary">
-            Запросите доступ у администратора тенанта.
-          </Text>
-        </Card>
+        <AccessDeniedScreen
+          error={createClientAccessDeniedError({
+            requiredPermission: 'gamification.achievements.read',
+            tenant: user?.tenant,
+            reason: 'Ой... мы и сами в шоке, но у вашего аккаунта нет прав для просмотра этой ачивки.',
+          })}
+        />
       ) : (
         <>
           <div className="gamification-header">

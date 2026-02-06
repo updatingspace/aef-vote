@@ -1,4 +1,5 @@
 import { logger } from '../utils/logger';
+import { AccessDeniedError } from './accessDenied';
 
 export type ApiErrorKind =
   | 'network'
@@ -47,6 +48,13 @@ export const apiBaseUrl = baseUrl;
 
 const withLeadingSlash = (path: string) =>
   path.startsWith('/') ? path : `/${path}`;
+
+const getCurrentRouteSnapshot = (): string | null => {
+  if (typeof window === 'undefined') {
+    return null;
+  }
+  return `${window.location.pathname}${window.location.search}`;
+};
 
 const nowMs = () =>
   typeof performance !== 'undefined' && performance.now
@@ -271,6 +279,7 @@ export async function requestResult<T>(path: string, options: RequestOptions = {
   const normalizedPath = withLeadingSlash(path);
   const url = `${baseUrl}${normalizedPath}`;
   const method = (options.method ?? 'GET').toUpperCase();
+  const routeSnapshot = getCurrentRouteSnapshot();
   const shouldIncludeCsrf = !CSRF_SAFE_METHODS.has(method);
   const csrfToken = shouldIncludeCsrf ? getCsrfToken() : null;
   const csrfHeaders = csrfToken ? { [csrfHeaderName]: csrfToken } : null;
@@ -442,6 +451,15 @@ export async function requestResult<T>(path: string, options: RequestOptions = {
       data: { url: normalizedPath, method, status: response.status, duration_ms: durationMs },
       error: message,
     });
+    if (response.status === 403) {
+      throw new AccessDeniedError({
+        source: 'api',
+        reason: message,
+        requestId: responseRequestId,
+        details,
+        path: routeSnapshot,
+      });
+    }
     throw new ApiError(message, {
       status: response.status,
       kind: statusToKind(response.status),
@@ -466,8 +484,18 @@ export async function requestResult<T>(path: string, options: RequestOptions = {
 }
 
 export async function request<T>(path: string, options: RequestOptions = {}): Promise<T> {
+  const routeSnapshot = getCurrentRouteSnapshot();
   const result = await requestResult<T>(path, options);
   if (!result.ok) {
+    if (result.status === 403) {
+      throw new AccessDeniedError({
+        source: 'api',
+        reason: result.error.message,
+        requestId: extractApiRequestId(result.error.details) ?? undefined,
+        details: result.error.details,
+        path: routeSnapshot,
+      });
+    }
     throw new ApiError(result.error.message ?? `Запрос завершился с ошибкой (${result.status})`, {
       status: result.status,
       kind: statusToKind(result.status),

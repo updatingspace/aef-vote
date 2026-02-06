@@ -16,6 +16,8 @@ import {
 import { Plus } from '@gravity-ui/icons';
 
 import { useAuth } from '../../../contexts/AuthContext';
+import { createClientAccessDeniedError } from '../../../api/accessDenied';
+import { AccessDeniedScreen } from '../../../features/access-denied';
 import { can } from '../../../features/rbac/can';
 import { useAchievementsList, useCategories, useUpdateAchievement } from '../../../hooks/useGamification';
 import type { Achievement, AchievementStatus } from '../../../types/gamification';
@@ -52,23 +54,17 @@ export const GamificationDashboardPage: React.FC = () => {
   const canEdit = can(user, 'gamification.achievements.edit');
   const canPublish = can(user, 'gamification.achievements.publish');
   const canHide = can(user, 'gamification.achievements.hide');
-  const hasAccess =
-    Boolean(user?.isSuperuser) ||
-    Boolean(
-      user?.capabilities?.some((cap) => cap.startsWith('gamification.achievements.')) ||
-        user?.roles?.some((role) => role.startsWith('gamification.achievements.')),
-    );
+  const hasAccess = Boolean(user);
 
   if (!hasAccess) {
     return (
-      <div className="gamification-page" data-qa="gamification-page">
-        <Card view="filled" className="gamification-empty">
-          <Text variant="subheader-2">Недостаточно прав для доступа к геймификации.</Text>
-          <Text variant="body-2" color="secondary">
-            Запросите доступ у администратора тенанта.
-          </Text>
-        </Card>
-      </div>
+      <AccessDeniedScreen
+        error={createClientAccessDeniedError({
+          requiredPermission: 'gamification.achievements.*',
+          tenant: user?.tenant,
+          reason: 'Ой... мы и сами в шоке, но у вашего аккаунта нет прав на раздел геймификации.',
+        })}
+      />
     );
   }
 
